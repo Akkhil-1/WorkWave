@@ -1,0 +1,84 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+out/
+*.tgz
+
+# Dependency directories
+bower_components/
+jspm_packages/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Other files
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.orig
+
+# Coverage reports
+coverage/
+
+# Tests
+*.test.js
+*.spec.js
+
+# Miscellaneous
+*.iml
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Python (if applicable)
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Java (if applicable)
+*.class
+*.jar
+*.war
+*.ear
+
+# Ruby (if applicable)
+*.gem
+*.rbc
+.bundle/
+.config/
+*.rbc
+*.rbc
+
+# PHP (if applicable)
+vendor/
+composer.lock
+
+# Go (if applicable)
+bin/
+pkg/
