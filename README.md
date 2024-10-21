@@ -1,5 +1,7 @@
 # Booking Management System
 
+## Frontend Hosted Link :-
+
 ## Overview
 
 This is a Booking Management System built using the MERN stack (MongoDB, Express.js, React, Node.js). The application provides a user-friendly interface for managing bookings, with full user authentication, error handling, and various features designed to enhance the user experience.
@@ -36,4 +38,10 @@ This is a Booking Management System built using the MERN stack (MongoDB, Express
    ```bash
    git clone https://github.com/yourusername/booking-management-system.git
    cd booking-management-system
+   ```
+2. **Steps to Start Backend**:
+   ```bash
+   cd Backend
+   npm install
+   npm start
    ```
