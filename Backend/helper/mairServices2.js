@@ -1,16 +1,17 @@
 const nodemailer = require("nodemailer");
 
 exports.sendGreetMail2 = async (to, name) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'amber1251.be22@chitkara.edu.in',
-            pass: 'amberdhama@5678'
-        }
-    });
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.user,
+      pass: process.env.pass,
+    },
+  });
 
-    const subject = 'Subject: Welcome to WorkWave! Your Business Solutions Await 🌟';
-    const html = `
+  const subject =
+    "Subject: Welcome to WorkWave! Your Business Solutions Await 🌟";
+  const html = `
     <div style="font-family: Arial, sans-serif; color: #333;">
         <img src="https://res.cloudinary.com/dwd71kz3s/image/upload/v1724846253/cmvtodvvvgafvhfkgepi.jpg" 
          alt="WorkWave Admin" 
@@ -39,17 +40,17 @@ exports.sendGreetMail2 = async (to, name) => {
         </div>
     </div>`;
 
-    let mailOptions = {
-        from: 'amber1251.be22@chitkara.edu.in',
-        to: to,
-        subject: subject,
-        html: html
-    };
+  let mailOptions = {
+    from: "amber1251.be22@chitkara.edu.in",
+    to: to,
+    subject: subject,
+    html: html,
+  };
 
-    try {
-        let info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-    } catch (error) {
-        console.log('Error sending email: ' + error);
-    }
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+  } catch (error) {
+    console.log("Error sending email: " + error);
+  }
 };

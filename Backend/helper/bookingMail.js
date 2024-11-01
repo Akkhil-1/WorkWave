@@ -1,17 +1,17 @@
 const nodemailer = require("nodemailer");
 
 exports.sendBookingMail = async (to, name, bookingDate, bookingTime, guest) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'amber1251.be22@chitkara.edu.in',
-            pass: 'amberdhama@5678'
-        }
-    });
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.user,
+      pass: process.env.pass,
+    },
+  });
 
-    const subject = 'WorkWave - Your Booking is Confirmed!';
+  const subject = "WorkWave - Your Booking is Confirmed!";
 
-    const html = `
+  const html = `
     <div style="font-family: Arial, sans-serif; background-color: #1e1e1e; color: #ddd; padding: 20px;">
         <img src="https://res.cloudinary.com/dwd71kz3s/image/upload/v1724846253/cmvtodvvvgafvhfkgepi.jpg" 
          alt="WorkWave Booking Confirmation" 
@@ -40,19 +40,17 @@ exports.sendBookingMail = async (to, name, bookingDate, bookingTime, guest) => {
         </div>
     </div>`;
 
+  let mailOptions = {
+    from: "amber1251.be22@chitkara.edu.in",
+    to: to,
+    subject: subject,
+    html: html,
+  };
 
-
-    let mailOptions = {
-        from: 'amber1251.be22@chitkara.edu.in',
-        to: to,
-        subject: subject,
-        html: html
-    };
-
-    try {
-        let info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-    } catch (error) {
-        console.log('Error sending email: ' + error);
-    }
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+  } catch (error) {
+    console.log("Error sending email: " + error);
+  }
 };

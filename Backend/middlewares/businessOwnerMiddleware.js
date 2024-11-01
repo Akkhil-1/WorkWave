@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
-const { JWT_SECRET } = require("../config");
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -11,12 +10,11 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ msg: "No token, authorization denied" });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const admin = await Admin.findById(decoded._id);
     if (!admin) {
       return res.status(401).json({ msg: "Unauthorized" });
     }
-
     req.user = admin;
     next();
   } catch (err) {

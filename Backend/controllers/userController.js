@@ -2,7 +2,6 @@ const User = require("../models/users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sendGreetMail } = require("../helper/mailServices");
-const { JWT_SECRET } = require("../config");
 const bookingDetails = require("../models/bookingDetails");
 
 const register = async (req, res) => {
@@ -27,7 +26,7 @@ const register = async (req, res) => {
       gender,
       address,
     });
-    const token = jwt.sign({ email: user.email, _id: user._id }, JWT_SECRET, {
+    const token = jwt.sign({ email: user.email, _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     console.log(token);
@@ -80,7 +79,7 @@ const login = async (req, res) => {
       console.log("Password does not match");
       return res.status(401).json({ msg: "Incorrect credentials" });
     }
-    const token = jwt.sign({ email: user.email, _id: user._id }, JWT_SECRET, {
+    const token = jwt.sign({ email: user.email, _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     console.log(token);

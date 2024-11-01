@@ -1,6 +1,5 @@
 const Admin = require("../models/admin");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
 const bcrypt = require("bcrypt");
 const { sendGreetMail2 } = require("../helper/mairServices2");
 const mongoose = require("mongoose");
@@ -95,7 +94,7 @@ const login = async (req, res) => {
     }
 
     // Generate JWT token if authentication is successful
-    const token = jwt.sign({ email: admin.email, _id: admin._id }, JWT_SECRET, {
+    const token = jwt.sign({ email: admin.email, _id: admin._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     res.cookie("token", token, {
