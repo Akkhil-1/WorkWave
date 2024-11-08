@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const dbConnect = require("../Backend/middlewares/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
@@ -9,7 +9,7 @@ const bookingRouter = require("./routes/bookingRouter");
 const otpRoute = require("./routes/otpRoute");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-require('dotenv').config();
+require("dotenv").config();
 app.use(express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
