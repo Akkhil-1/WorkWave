@@ -26,15 +26,6 @@ const register = async (req, res) => {
       gender,
       address,
     });
-    const token = jwt.sign({ email: user.email, _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    console.log(token);
-    res.cookie("token", token, {
-      httpOnly: false,
-      maxAge: 60 * 60 * 1000,
-      ameSite: "none",
-    });
     if (email && name) {
       try {
         await sendGreetMail(email, name);
@@ -79,7 +70,7 @@ const login = async (req, res) => {
       console.log("Password does not match");
       return res.status(401).json({ msg: "Incorrect credentials" });
     }
-    const token = jwt.sign({ email: user.email, _id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email: user.email, _id: user._id , userRole : user.role}, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     console.log(token);

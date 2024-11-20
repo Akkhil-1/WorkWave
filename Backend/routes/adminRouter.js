@@ -4,7 +4,7 @@ const adminController = require("../controllers/adminController");
 const userValidation = require("../middlewares/userValidate");
 
 router.post("/signup", userValidation, adminController.register);
-router.post("/login", adminController.login);
+router.post("/login",  adminController.login);
 // forgot password api
 // delete user
 router.post("/delete-admin/:_id", adminController.deleteAdmin);

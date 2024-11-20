@@ -28,24 +28,6 @@ const register = async (req, res) => {
       gender,
       address,
     });
-    // let token;
-    // try {
-    //   token = jwt.sign({ email: admin.email, _id: admin._id }, JWT_SECRET, {
-    //     expiresIn: "1h",
-    //   });
-    //   console.log("Generated token:", token);
-    // } catch (error) {
-    //   console.error("Error generating token:", error);
-    //   return res.status(500).json({
-    //     msg: "Failed to generate token",
-    //   });
-    // }
-    // res.cookie("token", token, {
-    //   httpOnly: false,
-    //   maxAge: 60 * 60 * 1000, // 1 hour
-    //   sameSite: "none",
-    // });
-
     if (email && name) {
       try {
         await sendGreetMail2(email, name);
@@ -94,22 +76,27 @@ const login = async (req, res) => {
     }
 
     // Generate JWT token if authentication is successful
-    const token = jwt.sign({ email: admin.email, _id: admin._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ email: admin.email, _id: admin._id, userRole: admin.role }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
     res.cookie("token", token, {
       httpOnly: false,
       maxAge: 60 * 60 * 1000,
       sameSite: "none",
+      secure: true,
     });
 
     console.log("Login successful, returning token");
-    return res.status(200).json({ token });
+    return res.status(200).json({
+      token,
+      role: admin.role,
+    });
   } catch (err) {
     console.error("Error during login:", err);
     return res.status(500).json({ msg: "An error occurred during login" });
   }
 };
+
 const updateAdmin = async (req, res) => {
   try {
     const id = req.params._id;

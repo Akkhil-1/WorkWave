@@ -3,8 +3,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import HeroSection from "./HeroSection";
 import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
-import toast from 'react-hot-toast'
+import toast from 'react-hot-toast';
 import homeIcon from "./icons8-home-24.png";
+import Cookies from 'js-cookie';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ const LoginForm = () => {
     password: "",
   });
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const filteredFormData = Object.keys(formData)
@@ -30,8 +32,19 @@ const LoginForm = () => {
         { withCredentials: true, credentials: "include" }
       );
       console.log(respo);
-      toast.success("Logged in successfully!");
-      navigate("/");
+      if (respo.data.role) {
+        Cookies.set('role', respo.data.role, { expires: 7 });
+
+        toast.success("Logged in successfully!");
+        if (respo.data.role === 'admin') {
+          navigate("/");
+        } else {
+          navigate("/userLandingPage");
+        }
+      } else {
+        toast.error("Role not found in response!");
+      }
+
     } catch (e) {
       toast.error("Invalid email or password");
     }
@@ -54,8 +67,6 @@ const LoginForm = () => {
             <div
               style={{
                 display: "flex",
-                // alignItems: "left",
-                // justifyContent: "center",
                 height: "auto",
               }}
             >
@@ -132,9 +143,9 @@ const LoginForm = () => {
           </p>
         </div>
       </div>
-      <ToastContainerWrapper />{" "}
-      {/* Add this line to render the ToastContainer */}
+      <ToastContainerWrapper />
     </div>
   );
 };
+
 export default LoginForm;
