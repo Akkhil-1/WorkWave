@@ -58,6 +58,7 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/userLandingPage" element={<UserLandingPage />}/>
           <Route path="/loginAdmin" element={<LoginForm />} />
           <Route path="/signupAdmin" element={<RegisterForm />} />
           <Route path="/loginUser" element={<LoginFormUser />} />
@@ -65,7 +66,6 @@ function App() {
         
           {/* User Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
-            <Route path="/userLandingPage" element={<UserLandingPage />} />
             <Route path="/BusinessList" element={<BusinessList />} />
             <Route path="/business/:id" element={<BusinessDetails />} />
             <Route path="/BookingForm" element={<BookingForm />} />
@@ -75,10 +75,7 @@ function App() {
           {/* Admin Protected Routes */}
           <Route element={<AdminProtectedRoute allowedRoles={["admin"]} />}>
             <Route path="/businessForm" element={<BusinessForm />} />
-            {/* Add more admin-only routes here */}
           </Route>
-
-          {/* Catch-all route for unauthorized access */}
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Routes>
         <ToastContainerWrapper />
@@ -86,8 +83,6 @@ function App() {
     </>
   );
 }
-
-// UnauthorizedPage component when users try to access restricted areas
 const UnauthorizedPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-red-100">
