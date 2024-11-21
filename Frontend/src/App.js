@@ -75,6 +75,7 @@ function App() {
           {/* Admin Protected Routes */}
           <Route element={<AdminProtectedRoute allowedRoles={["admin"]} />}>
             <Route path="/business-add-business" element={<BusinessForm />} />
+            {/* admin-dashboard */}
           </Route>
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Routes>
