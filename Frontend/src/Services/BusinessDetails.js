@@ -100,7 +100,7 @@ const BusinessDetails = () => {
                     <p>Seats Available: {service.noOfSeats}</p>
                     <p>Description: {service.serviceDescription}</p>
                     <p>Price: ${service.servicePrice}</p>
-                    <NavLink to="/BookingForm">  
+                    <NavLink to="/business/servive/bookingform">  
                       <button className="mt-2 bg-[#591B5F] text-white py-2 px-4 rounded">
                           Book Now
                       </button>

@@ -4,6 +4,7 @@ import axios from "axios";
 import HeroSection from "./HeroSectionUser";
 import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
 import toast from "react-hot-toast";
+import Cookies from 'js-cookie';
 const LoginFormUser = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -24,7 +25,7 @@ const LoginFormUser = () => {
         email,
       });
       toast.success("OTP sent successfully!");
-      navigate("/forgot", { state: { email } });
+      navigate("/user-forgot-password", { state: { email } });
     } catch (error) {
       if (error.response && error.response.status === 400) {
         toast.error("User not found", {
@@ -60,7 +61,19 @@ const LoginFormUser = () => {
       );
       console.log(respo);
       toast.success("User Logged In Successfully");
-      navigate("/BusinessList");
+      if (respo.data.role) {
+        Cookies.set('role', respo.data.role, { expires: 1 });
+
+        toast.success("Logged in successfully!");
+        if (respo.data.role === 'user') {
+          navigate("/user-landingpage");
+        } else {
+          navigate("/");
+        }
+      } else {
+        toast.error("Role not found in response!");
+      }
+      navigate("/businesses/allbusinesses");
     } catch (e) {
       toast.error("Error logging in");
     }
@@ -152,7 +165,7 @@ const LoginFormUser = () => {
           <p className="mt-6 text-center text-gray-600 text-sm">
             Don't have an account?
             <NavLink
-              to="/signupUser"
+              to="/user-signup"
               className="text-indigo-600 hover:text-indigo-500"
             >
               Sign up for free

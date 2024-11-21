@@ -20,6 +20,7 @@ const schemaOne = zod.object({
 });
 function validateBusiness(req, res, next) {
   try {
+    console.log(req.body);
     const {
       businessName,
       address,

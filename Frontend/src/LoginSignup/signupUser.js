@@ -36,7 +36,7 @@ const RegisterFormUser = () => {
       console.log(respo);
       toast.success("Logged in successfully!");
       setTimeout(() => {
-        navigate("/loginUser");
+        navigate("/user-login");
       }, 1000);
     } catch (e) {
       toast.error("Error registering admin");
@@ -209,7 +209,7 @@ const RegisterFormUser = () => {
           <p className="mt-6 text-center text-gray-600 text-sm">
             Already have an account?
             <NavLink
-              to="/loginUser"
+              to="/user-login"
               className="text-indigo-600 hover:text-indigo-500"
             >
               login

@@ -25,7 +25,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
   console.log(userRole);
 
   if (!userRole || !allowedRoles.includes(userRole)) {
-    return <Navigate to="/loginUser" replace />;
+    return <Navigate to="/user-login" replace />;
   }
 
   return <Outlet />;
@@ -35,7 +35,7 @@ const AdminProtectedRoute = () => {
   console.log(userRole);
 
   if (userRole !== "admin") {
-    return <Navigate to="/loginAdmin" replace />;
+    return <Navigate to="/admin-login" replace />;
   }
 
   return <Outlet />;
@@ -58,23 +58,23 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/userLandingPage" element={<UserLandingPage />}/>
-          <Route path="/loginAdmin" element={<LoginForm />} />
-          <Route path="/signupAdmin" element={<RegisterForm />} />
-          <Route path="/loginUser" element={<LoginFormUser />} />
-          <Route path="/signUpUser" element={<RegisterFormUser />} />
-        
+          <Route path="/user-landingpage" element={<UserLandingPage />} />
+          <Route path="/admin-login" element={<LoginForm />} />
+          <Route path="/admin-signup" element={<RegisterForm />} />
+          <Route path="/user-login" element={<LoginFormUser />} />
+          <Route path="/user-signup" element={<RegisterFormUser />} />
+
           {/* User Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
-            <Route path="/BusinessList" element={<BusinessList />} />
+            <Route path="/businesses/allbusinesses" element={<BusinessList />} />
             <Route path="/business/:id" element={<BusinessDetails />} />
-            <Route path="/BookingForm" element={<BookingForm />} />
-            <Route path="/forgot" element={<ForgotPassword />} />
+            <Route path="/business/servive/bookingform" element={<BookingForm />} />
+            <Route path="/user-forgot-password" element={<ForgotPassword />} />
           </Route>
 
           {/* Admin Protected Routes */}
           <Route element={<AdminProtectedRoute allowedRoles={["admin"]} />}>
-            <Route path="/businessForm" element={<BusinessForm />} />
+            <Route path="/business-add-business" element={<BusinessForm />} />
           </Route>
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Routes>

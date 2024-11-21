@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
 const Business = require("../models/business");
+
 const { sendBookingMail } = require("../helper/bookingMail");
 const addBooking = async (req, res) => {
   try {

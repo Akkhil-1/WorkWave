@@ -33,7 +33,7 @@ const RegisterForm = () => {
       console.log(respo);
       toast.success("Registered Successfully");
       setTimeout(() => {
-        navigate("/loginAdmin");
+        navigate("/admin-login");
       }, 1000);
     } catch (e) {
       toast.error("Please Enter the Correct details!");
@@ -59,7 +59,7 @@ const RegisterForm = () => {
       <HeroSection />
       <div className="w-1/2 flex items-center justify-center">
         <div className="w-full max-w-md p-8">
-          <NavLink to={"/loginAdmin"} className="text-gray-600 mb-8">
+          <NavLink to={"/admin-login"} className="text-gray-600 mb-8">
             <div
               style={{
                 display: "flex",
@@ -177,7 +177,7 @@ const RegisterForm = () => {
           <p className="mt-6 text-center text-gray-600 text-sm">
             Already have an account?
             <NavLink
-              to="/loginAdmin"
+              to="/admin-login"
               className="text-indigo-600 hover:text-indigo-500"
             >
               Login

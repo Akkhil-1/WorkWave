@@ -135,7 +135,7 @@ const LoginForm = () => {
           <p className="mt-6 text-center text-gray-600 text-sm">
             Don't have an account?
             <NavLink
-              to="/signupAdmin"
+              to="/admin-signup"
               className="text-indigo-600 hover:text-indigo-500"
             >
               Sign up for free

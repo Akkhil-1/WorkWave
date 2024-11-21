@@ -41,7 +41,7 @@ const Hero = () => {
             Unleash the power of real-time within Workwave. Upgrade your
             productivity with Workwave.
           </p>
-          <NavLink to='/userLandingPage'>
+          <NavLink to='/user-landingpage'>
           <button
             className="px-7 py-4 rounded-lg font-medium w-[150px] inline-flex items-center justify-center tracking-tight bg-[#0F0C17]
         text-white"

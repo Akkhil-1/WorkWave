@@ -32,7 +32,7 @@ const ForgotPassword = () => {
 
       if (response.data.nextPage) {
         toast.success("Password reset successfully!");
-        navigate("/loginUser");
+        navigate("/user-login");
       }
     } catch (err) {
       toast.error(

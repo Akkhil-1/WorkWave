@@ -1,15 +1,16 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
-
+// no token
 const authMiddleware = async (req, res, next) => {
   try {
     const token = req.cookies.token;
+    console.log(req.cookies)
     console.log(token);
-    console.log("hi");
-    if (!token) {
-      return res.status(401).json({ msg: "No token, authorization denied" });
+    if(!token){
+      console.log("Unauthorized: No token provided")
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
-
+    console.log("hi");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const admin = await Admin.findById(decoded._id);
     if (!admin) {

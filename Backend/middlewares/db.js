@@ -4,7 +4,7 @@ const url = process.env.DB_URL;
 
 const dbConnect = async () => {
   try {
-    console.log(url);
+    // console.log(url);
     
     await mongoose.connect(url);
     console.log("Db connected");

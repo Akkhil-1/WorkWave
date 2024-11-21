@@ -75,12 +75,12 @@ const Header = () => {
 
             {/* <MenuIcon className='h-5 w-5 md:hidden' /> */}
             <nav className="hidden md:flex gap-10 text-black/75 items-center font-bold">
-              <NavLink to="/userLandingPage">Home</NavLink>
+              <NavLink to="/user-landingpage">Home</NavLink>
               {/* <NavLink to="/BusinessList">Services</NavLink> */}
-              <NavLink to="/BusinessList">Services</NavLink>
+              <NavLink to="/businesses/allbusinesses">Services</NavLink>
               <a href="#customer">Testimonials</a>
               <a href="#help">Help</a>
-              <NavLink to="/loginUser">
+              <NavLink to="/user-login">
                 <button className="bg-black text-white px-4 py-2 rounded-lg font-medium inline-flex items-center justify-center tracking-tight">
                   Login
                 </button>
