@@ -54,7 +54,6 @@ const LoginFormUser = () => {
 
     try {
       const respo = await axios.post(
-        // "http://localhost:3001/admin/login",
         "http://localhost:3001/user/login",
         filteredFormData,
         { withCredentials: true, credentials: "include" }
@@ -73,7 +72,7 @@ const LoginFormUser = () => {
       } else {
         toast.error("Role not found in response!");
       }
-      navigate("/businesses/allbusinesses");
+      // navigate("/businesses/allbusinesses");
     } catch (e) {
       toast.error("Error logging in");
     }

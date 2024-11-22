@@ -76,9 +76,13 @@ const login = async (req, res) => {
     }
 
     // Generate JWT token if authentication is successful
-    const token = jwt.sign({ email: admin.email, _id: admin._id, userRole: admin.role }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { email: admin.email, _id: admin._id, userRole: admin.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
     res.cookie("token", token, {
       httpOnly: false,
       maxAge: 60 * 60 * 1000,
@@ -169,9 +173,32 @@ const deleteAdmin = async (req, res) => {
     console.log(error);
   }
 };
+const getProfile = async (req, res) => {
+  try {
+    const adminId = req.admin._id;
+
+    if (!adminId) {
+      return res.status(401).json({ msg: "Unauthorized - Admin ID not found" });
+    }
+
+    const admin = await Admin.findById(adminId).select("name email");
+
+    if (!admin) {
+      return res.status(404).json({ msg: "Admin not found" });
+    }
+
+    res.json({
+      name: admin.name,
+      email: admin.email,
+    });
+  } catch (error) {
+    res.status(500).json({ msg: "Error fetching admin details" });
+  }
+};
 module.exports = {
   register,
   login,
   updateAdmin,
   deleteAdmin,
+  getProfile
 };
