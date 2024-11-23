@@ -97,7 +97,7 @@ const Header = () => {
               <NavLink to="/">Home</NavLink>
               <NavLink to="/business-add-business">Add Business</NavLink>
               <a href="#customer">Testimonials</a>
-              <a href="#help">Help</a>
+              <a href="/help">Help</a>
 
               {!isLoggedIn ? (
                 <NavLink to="/admin-login">
