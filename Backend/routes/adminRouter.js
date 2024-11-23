@@ -10,6 +10,7 @@ router.post("/login",  adminController.login);
 // delete user
 router.post("/delete-admin/:_id", adminController.deleteAdmin);
 // update info of user
-router.post("/update-admin/:_id", adminController.updateAdmin);
+router.post("/update-admin/:_id", adminController.updateAdmin); // Use PATCH instead of POST
+
 router.get("/admin-profile", authMiddleware, adminController.getProfile);
 module.exports = router

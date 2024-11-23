@@ -16,7 +16,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom
 import Cookies from "js-cookie";
 import AdmindashRoutes from './AdminDashboard/routes/Router'; // Import routes for Admin Dashboard
 import FullLayout from './AdminDashboard/layouts/FullLayout'
-// 
+import UpdateForm from './BusinessForm/UpdateForm'
 
 // Protected Route for user
 const ProtectedRoute = ({ allowedRoles }) => {
@@ -58,6 +58,7 @@ function App() {
           <Route path="/admin-signup" element={<RegisterForm />} />
           <Route path="/user-login" element={<LoginFormUser />} />
           <Route path="/user-signup" element={<RegisterFormUser />} />
+          <Route path="/update-form" element={<UpdateForm/>} />
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (

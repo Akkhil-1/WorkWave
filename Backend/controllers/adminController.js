@@ -105,25 +105,6 @@ const updateAdmin = async (req, res) => {
   try {
     const id = req.params._id;
     const update = req.body;
-    // Get the schema paths (field names)
-    const schemaFields = Object.keys(Admin.schema.paths);
-
-    // Check for any unknown fields
-    for (const key in update) {
-      if (!schemaFields.includes(key)) {
-        return res.status(400).json({
-          status: 400,
-          msg: `Unknown field: ${key}`,
-        });
-      }
-      if (!update[key] || update[key].trim() === "") {
-        return res.status(400).json({
-          status: 400,
-          msg: `Field ${key} is missing or empty`,
-        });
-      }
-    }
-
     if (update.password) {
       update.password = await bcrypt.hash(update.password, 10);
     }
@@ -181,7 +162,7 @@ const getProfile = async (req, res) => {
       return res.status(401).json({ msg: "Unauthorized - Admin ID not found" });
     }
 
-    const admin = await Admin.findById(adminId).select("name email");
+    const admin = await Admin.findById(adminId).select("name email mobile_number gender address _id");
 
     if (!admin) {
       return res.status(404).json({ msg: "Admin not found" });
@@ -190,6 +171,10 @@ const getProfile = async (req, res) => {
     res.json({
       name: admin.name,
       email: admin.email,
+      mobile_number  : admin.mobile_number,
+      gender : admin.gender,
+      address : admin.address,
+      _id : admin._id
     });
   } catch (error) {
     res.status(500).json({ msg: "Error fetching admin details" });

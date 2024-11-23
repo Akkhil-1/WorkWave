@@ -96,7 +96,7 @@ const Header = () => {
             <nav className="hidden md:flex gap-10 text-white/60 items-center">
               <NavLink to="/">Home</NavLink>
               <NavLink to="/business-add-business">Add Business</NavLink>
-              <a href="#customer">Testimonials</a>
+              <NavLink to="/update-form" >Form</NavLink>
               <a href="/help">Help</a>
 
               {!isLoggedIn ? (
@@ -113,7 +113,7 @@ const Header = () => {
                       <NavLink to="/dashboard" className="block px-4 py-2">
                         Dashboard
                       </NavLink>
-                      <NavLink to="/update-profile" className="block px-4 py-2">
+                      <NavLink to="/update-form" className="block px-4 py-2">
                         Update Profile
                       </NavLink>
                       <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-500">
