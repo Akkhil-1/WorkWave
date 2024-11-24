@@ -18,7 +18,7 @@ const FullLayout = () => {
         {/********Content Area**********/}
         <div className="flex-1 bg-gray-50">
           {/********Header**********/}
-          <Header />
+          {/* <Header /> */}
 
           {/********Middle Content**********/}
           <div className="p-4">

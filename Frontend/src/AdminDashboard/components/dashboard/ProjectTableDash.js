@@ -57,7 +57,7 @@ const ProjectTables = () => {
   return (
     <div className="overflow-x-auto">
       <div className="bg-white shadow-lg rounded-lg p-6">
-        <h5 className="text-2xl font-semibold mb-2">Bookings List</h5>
+        <h5 className="text-2xl font-semibold mb-2 text-black">Bookings List</h5>
         <p className="text-sm text-gray-500 mb-4">Overview of the bookings</p>
 
         <table className="min-w-full table-auto">
@@ -81,12 +81,12 @@ const ProjectTables = () => {
                       alt="avatar"
                     />
                     <div className="ml-3">
-                      <h6 className="text-sm font-medium">{tdata.name}</h6>
+                      <h6 className="text-sm font-medium text-black">{tdata.name}</h6>
                       <span className="text-xs text-gray-500">{tdata.email}</span>
                     </div>
                   </div>
                 </td>
-                <td className="py-4 px-4 text-sm">{tdata.project}</td>
+                <td className="py-4 px-4 text-sm text-black">{tdata.project}</td>
                 <td className="py-4 px-4">
                   {tdata.status === "pending" ? (
                     <span className="p-2 bg-red-500 rounded-full text-white text-xs inline-block"></span>
@@ -96,8 +96,8 @@ const ProjectTables = () => {
                     <span className="p-2 bg-green-500 rounded-full text-white text-xs inline-block"></span>
                   )}
                 </td>
-                <td className="py-4 px-4 text-sm">{tdata.weeks}</td>
-                <td className="py-4 px-4 text-sm">{tdata.budget}</td>
+                <td className="py-4 px-4 text-sm text-black">{tdata.weeks}</td>
+                <td className="py-4 px-4 text-sm text-black">{tdata.budget}</td>
               </tr>
             ))}
           </tbody>

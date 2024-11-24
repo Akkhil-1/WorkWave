@@ -122,7 +122,7 @@ const Header = () => {
                   </button>
                   {dropdownVisible && (
                     <div className="absolute right-0 mt-2 bg-white text-black shadow-lg rounded-lg p-2 w-40">
-                      <NavLink to="/dashboard" className="block px-4 py-2">
+                      <NavLink to="/user-dashboard" className="block px-4 py-2">
                         Dashboard
                       </NavLink>
                       <NavLink to="/user-update-form" className="block px-4 py-2">

@@ -8,6 +8,7 @@ const businessRouter = require("./routes/businessRouter");
 const bookingRouter = require("./routes/bookingRouter");
 const serviceRouter = require("./routes/serviceRouter");
 const otpRoute = require("./routes/otpRoute");
+const userDashboard  = require('./routes/userDashboard')
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
@@ -23,6 +24,7 @@ app.use("/business", businessRouter);
 app.use("/booking", bookingRouter);
 app.use("/services",serviceRouter);
 app.use("/otp", otpRoute);
+app.use('/usdashboard', userDashboard);
 
 
 app.listen(PORT, () => {

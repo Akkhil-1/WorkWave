@@ -10,19 +10,15 @@ const bookingschema = new mongoose.Schema(
       required: true,
       lowercase: true,
     },
-    age: {
-      type: Number,
-      required: true,
-    },
-    mobile_number: {
+    dateOfBirth: {
       type: String,
       required: true,
     },
-    // serviceName :{
-    //   type : String,
-    //   required : true
-    // },
-    guest: {
+    mobileNumber: {
+      type: String,
+      required: true,
+    },
+    guestCount: {
       type: Number,
       default: 1,
     },
@@ -34,10 +30,10 @@ const bookingschema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // status: {
-    //   type: String,
-    //   enum: ["Confirmed", "Cancelled", "Completed", "Pending"],
-    // },
+    status: {
+      type: String,
+      default:"Pending"
+    },
     customerNotes: {
       type: String,
       default: "",

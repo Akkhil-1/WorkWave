@@ -8,14 +8,14 @@ const bookingSchema = zod.object({
     .string()
     .email("Invalid email address")
     .nonempty("Email is required"),
-  age: zod.string().min(1, "Age is required"),
-  mobile_number: zod
+  dateOfBirth: zod.string().min(1, "date of birth is required"),
+  mobileNumber: zod
     .string()
     .length(10, "Mobile number must be exactly 10 digits")
     .regex(/^\d+$/, "Mobile number must contain only digits"),
   // serviceName : zod
   //   .string().min(2 , "Booking Details length should be atleast 2"),
-  guest: zod
+  guestCount: zod
     .string()
     .min(1, "At least one guest is required")
     .default(1),
@@ -32,25 +32,21 @@ function validateBooking(req, res, next) {
     const {
       name,
       email,
-      age,
-      mobile_number,
-      // serviceName,
-      guest,
+      dateOfBirth,
+      mobileNumber,
+      guestCount,
       bookingDate,
       bookingTime,
-      status,
       customerNotes,
     } = req.body;
     const result = bookingSchema.safeParse({
       name,
       email,
-      age,
-      mobile_number,
-      // serviceName,
-      guest,
+      dateOfBirth,
+      mobileNumber,
+      guestCount,
       bookingDate,
       bookingTime,
-      status,
       customerNotes,
     });
 

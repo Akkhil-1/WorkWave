@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Card, CardBody, CardTitle, CardSubtitle, Table, Input, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Button } from "reactstrap";
+import { Card, CardBody, CardTitle, CardSubtitle, Table, Input } from "reactstrap";
 import user1 from "../../assets/images/users/user1.jpg";
 import user2 from "../../assets/images/users/user2.jpg";
 import user3 from "../../assets/images/users/user3.jpg";
 import user4 from "../../assets/images/users/user4.jpg";
 import user5 from "../../assets/images/users/user5.jpg";
-import DatePicker from "react-datepicker";
-import { FaChevronDown } from "react-icons/fa";
 
 const tableData = [
   {
@@ -64,8 +62,10 @@ const tableData = [
 const ProjectTables = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState({ status: false });
+  const [dateFilter, setDateFilter] = useState(null); 
+  const [dropdownOpen, setDropdownOpen] = useState({
+    status: false,
+  });
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -92,7 +92,9 @@ const ProjectTables = () => {
       row.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
       row.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === "All" || row.status === statusFilter;
+      const matchesStatus =
+      statusFilter === "All" || row.status === statusFilter;
+
     const matchesDate =
       !dateFilter || row.date.toDateString() === dateFilter.toDateString();
 
@@ -105,7 +107,7 @@ const ProjectTables = () => {
         <CardBody>
           <div className="flex justify-between mb-4">
             <div>
-              <CardTitle tag="h5" className="text-xl font-bold">Bookings List</CardTitle>
+              <CardTitle tag="h5" className="text-xl font-bold text-black">Bookings List</CardTitle>
               <CardSubtitle className="text-sm text-gray-500">Overview of the bookings</CardSubtitle>
             </div>
             <Input
@@ -113,64 +115,38 @@ const ProjectTables = () => {
               placeholder="Search"
               value={searchTerm}
               onChange={handleSearchChange}
-              className="w-1/3 p-2 rounded-lg border border-gray-300"
+              className="w-1/3 p-2 rounded-lg border border-gray-300 bg-white text-black"
             />
           </div>
 
-          <Table className="mt-3 align-middle border-separate" responsive>
+          <Table className="mt-3 align-middle border-separate w-full" responsive>
             <thead>
               <tr>
-                <th className="text-left">Client Name</th>
-                <th className="text-left">Service</th>
-                <th className="text-left">
-                  <div className="flex items-center">
-                    <span className="mr-2">Status:</span>
-                    <Dropdown isOpen={dropdownOpen.status} toggle={() => toggleDropdown("status")}>
-                      <DropdownToggle caret className="bg-blue-500 text-white p-2 rounded-md">
-                        {statusFilter}
-                      </DropdownToggle>
-                      <DropdownMenu>
-                        <DropdownItem onClick={() => handleFilterChange("status", "All")}>All</DropdownItem>
-                        <DropdownItem onClick={() => handleFilterChange("status", "pending")}>Pending</DropdownItem>
-                        <DropdownItem onClick={() => handleFilterChange("status", "approved")}>Completed</DropdownItem>
-                        <DropdownItem onClick={() => handleFilterChange("status", "cancelled")}>Cancelled</DropdownItem>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </div>
-                </th>
-                <th className="text-left">Time</th>
-                <th className="text-left">
-                  <div className="flex items-center">
-                    <label className="mr-2">Date:</label>
-                    <DatePicker
-                      selected={dateFilter}
-                      onChange={handleDateChange}
-                      dateFormat="yyyy/MM/dd"
-                      isClearable
-                      className="form-control p-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                </th>
+                <th className="text-left text-gray-700 p-3">Client Name</th>
+                <th className="text-left text-gray-700 p-3">Service</th>
+                <th className="text-left text-gray-700 p-3">Status</th>
+                <th className="text-left text-gray-700 p-3">Time</th>
+                <th className="text-left text-gray-700 p-3">Date</th>
               </tr>
             </thead>
             <tbody>
               {filteredData.map((tdata, index) => (
                 <tr key={index}>
-                  <td className="p-3 flex items-center">
+                  <td className="p-3 flex items-center space-x-3">
                     <img src={tdata.avatar} className="rounded-full w-12 h-12" alt="avatar" />
-                    <div className="ml-3">
-                      <h6 className="font-semibold">{tdata.name}</h6>
+                    <div>
+                      <h6 className="font-semibold text-black">{tdata.name}</h6>
                       <span className="text-gray-500">{tdata.email}</span>
                     </div>
                   </td>
-                  <td className="p-3">{tdata.project}</td>
+                  <td className="p-3 text-black">{tdata.project}</td>
                   <td className="p-3">
                     <span
                       className={`inline-block w-3 h-3 rounded-full ${tdata.status === "pending" ? 'bg-yellow-500' : tdata.status === 'approved' ? 'bg-green-500' : 'bg-red-500'}`}
                     />
                   </td>
-                  <td className="p-3">{tdata.weeks}</td>
-                  <td className="p-3">{tdata.date.toLocaleDateString()}</td>
+                  <td className="p-3 text-black">{tdata.weeks}</td>
+                  <td className="p-3 text-black">{tdata.date.toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

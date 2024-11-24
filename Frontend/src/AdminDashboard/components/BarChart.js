@@ -38,7 +38,7 @@ const SalesBarChart = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white rounded-lg shadow-lg p-6 ">
       <h5 className="text-xl font-semibold">Sales Summary</h5>
       <h6 className="text-gray-600 mb-4">Yearly Sales Report</h6>
       <Chart

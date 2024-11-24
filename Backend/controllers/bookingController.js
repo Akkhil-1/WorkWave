@@ -9,10 +9,10 @@ const addBooking = async (req, res) => {
     const {
       name,
       email,
-      age,
-      mobile_number,
+      dateOfBirth,
+      mobileNumber,
       // serviveName,
-      guest,
+      guestCount,
       bookingDate,
       bookingTime,
       // status,
@@ -29,15 +29,15 @@ const addBooking = async (req, res) => {
     const booking = await Booking.create({
       name,
       email,
-      age,
-      mobile_number,
+      dateOfBirth,
+      mobileNumber,
       // serviveName,
-      guest,
+      guestCount,
       bookingDate,
       bookingTime,
       // status,
       customerNotes,
-    });
+    }); 
     await User.findByIdAndUpdate(
       userId,
       {
@@ -54,7 +54,7 @@ const addBooking = async (req, res) => {
     //   { $push: { bookings: booking._id } },
     //   { new: true }
     // );
-    await sendBookingMail(email, name, bookingDate, bookingTime, guest);
+    await sendBookingMail(email, name, bookingDate, bookingTime, guestCount);
     res.json({
       msg: "Booking done successfully",
       data: booking,
@@ -147,4 +147,33 @@ const deleteBooking = async (req, res) => {
   }
 };
 
-module.exports = { addBooking, getBusinesses, updateBookingDetails, deleteBooking };
+
+const getBooking = async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    return res.status(401).json({ msg: "Unauthorized - User ID not found" });
+  }
+
+  try {
+    const user = await User.findById(userId)
+      .select("bookingDetails")
+      .populate({
+        path: "bookingDetails",
+        select: "name bookingDate bookingTime status",
+      });
+
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    return res.status(200).json({
+      bookings: user.bookingDetails,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Server error" });
+  }
+};
+
+module.exports = { addBooking, getBusinesses,getBooking, updateBookingDetails, deleteBooking };

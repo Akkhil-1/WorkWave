@@ -17,7 +17,7 @@ const Feeds = () => {
     <div className="flex gap-10">
       <div className="w-1/2">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h5 className="text-xl font-semibold">Notifications</h5>
+          <h5 className="text-xl font-semibold text-black">Notifications</h5>
           <h6 className="text-gray-600 mb-4">Widget you can use</h6>
 
           <ul>
@@ -26,12 +26,15 @@ const Feeds = () => {
                 <button className={`rounded-full p-2 ${feed.color} text-white mr-3`}>
                   <i className={feed.icon}></i>
                 </button>
-                <div className="flex-grow">{feed.title}</div>
+                <div className="flex-grow text-black">{feed.title}</div>
                 <small className="text-gray-500">{feed.date}</small>
               </li>
             ))}
           </ul>
         </div>
+      </div>
+      <div className="w-1/2 bg-white rounded-lg shadow-md p-6">
+
       </div>
     </div>
   );

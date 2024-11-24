@@ -3,12 +3,14 @@ import SalesChart from "../components/dashboard/SalesChart";
 import Feeds from "../components/dashboard/Feeds";
 import ProjectTables from "../components/dashboard/ProjectTableDash";
 import TopCards from "../components/dashboard/TopCards";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 
 const Starter = () => {
   return (
     <div>
       {/* Top Cards */}
-      <Row className="gap-6">
+      <Row className="gap-6 flex flex-col sm:flex-row">
         <Col sm="6" lg="3">
           <TopCards
             bg="bg-green-100 text-green-600"
@@ -48,8 +50,8 @@ const Starter = () => {
       </Row>
       
       {/* Sales & Feed */}
-      <Row className="gap-6">
-        <Col sm="6" lg="6" xl="7">
+      <Row className="gap-6 flex flex-col sm:flex-row">
+        <Col sm="6" lg="6" xl="7" className="w-[650px]">
           <SalesChart />
         </Col>
         <Col sm="6" lg="6" xl="5">

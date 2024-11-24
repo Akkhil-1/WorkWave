@@ -5,32 +5,32 @@ import { Link, useLocation } from "react-router-dom";
 const navigation = [
   {
     title: "Dashboard",
-    href: "/starter",
+    href: "/dashboard/starter",
     icon: "bi bi-speedometer2",
   },
   {
     title: "Alert",
-    href: "/alerts",
+    href: "/dashboard/alerts",
     icon: "bi bi-bell",
   },
   {
     title: "Bookings",
-    href: "/table",
+    href: "/dashboard/table",
     icon: "bi bi-patch-check",
   },
   {
     title: "Chat",
-    href: "/buttons",
+    href: "/dashboard/buttons",
     icon: "bi bi-hdd-stack",
   },
   {
     title: "Add Services",
-    href: "/cards",
+    href: "/dashboard/cards",
     icon: "bi bi-card-text",
   },
   {
     title: "Sales Tracker",
-    href: "/grid",
+    href: "/dashboard/grid",
     icon: "bi bi-columns",
   },
 ];
@@ -43,8 +43,8 @@ const Sidebar = () => {
   let location = useLocation();
 
   return (
-    <div className="p-4">
-      <div className="flex items-center">
+    <div className="fixed top-0 left-0 h-full bg-gray-900 p-4 w-64">
+      <div className="flex items-center text-white">
         <img src={Logo} alt="saaslogo" className="h-10 w-10" />
         <h3 className="ml-2 text-xl font-bold">WorkWave</h3>
         <span className="ms-auto block lg:hidden">
@@ -65,7 +65,7 @@ const Sidebar = () => {
                 className={`${
                   location.pathname === navi.href
                     ? "text-blue-500"
-                    : "text-gray-700"
+                    : "text-white"
                 } flex items-center py-3 hover:text-blue-500 transition-colors duration-200`}
               >
                 <i className={`${navi.icon} text-xl mr-3`}></i>

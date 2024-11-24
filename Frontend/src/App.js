@@ -18,6 +18,7 @@ import AdmindashRoutes from './AdminDashboard/routes/Router'; // Import routes f
 import FullLayout from './AdminDashboard/layouts/FullLayout'
 import UpdateForm from './BusinessForm/UpdateForm'
 import UserUpdateForm from "./BusinessForm/UserUpdateForm";
+import UserDashBoard from './UserLandingPage/components/Dashboard';
 
 // Protected Route for user
 const ProtectedRoute = ({ allowedRoles }) => {
@@ -61,6 +62,7 @@ function App() {
           <Route path="/user-signup" element={<RegisterFormUser />} />
           <Route path="/update-form" element={<UpdateForm/>} />
           <Route path="/user-update-form" element={<UserUpdateForm/>} />
+          <Route path='/user-dashboard' element={<UserDashBoard/>} />
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (

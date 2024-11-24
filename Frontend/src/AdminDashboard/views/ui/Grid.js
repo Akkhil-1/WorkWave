@@ -16,16 +16,28 @@ const Grid = () => {
   return (
     <div>
       <div className="flex gap-3 mb-3">
-        <Button className="btn" color="secondary" onClick={() => handleChartSelect("area")}>
+        <Button
+          className="btn text-black bg-blue-300 hover:bg-blue-600 px-3 rounded-lg py-1" // Added bg color and hover effect
+          onClick={() => handleChartSelect("area")}
+        >
           Area Plot
         </Button>
-        <Button className="btn" color="secondary" onClick={() => handleChartSelect("bar")}>
+        <Button
+          className="btn text-black bg-green-300 hover:bg-green-600 px-3 rounded-lg py-1" // Added bg color and hover effect
+          onClick={() => handleChartSelect("bar")}
+        >
           Bar Plot
         </Button>
-        <Button className="btn" color="secondary" onClick={() => handleChartSelect("pie")}>
+        <Button
+          className="btn text-black bg-yellow-300 hover:bg-yellow-600 px-3 rounded-lg py-1" // Added bg color and hover effect
+          onClick={() => handleChartSelect("pie")}
+        >
           Pie Plot
         </Button>
-        <Button className="btn" color="secondary" onClick={() => handleChartSelect("scatter")}>
+        <Button
+          className="btn text-black bg-purple-300 hover:bg-purple-600 px-3 rounded-lg py-1" // Added bg color and hover effect
+          onClick={() => handleChartSelect("scatter")}
+        >
           Scatter Plot
         </Button>
       </div>
@@ -35,10 +47,11 @@ const Grid = () => {
       {selectedChart === "pie" && <PieChart />}
       {selectedChart === "scatter" && <ScatterChart />}
 
-      <Row className="mt-6">
+      
+      <Row className="mt-6 flex flex-cols">
         <Col sm="6" lg="3">
           <TopCards
-            bg="bg-green-100 text-green-600"
+            bg="bg-green-100 text-green-600 "
             title="Profit"
             subtitle="Yearly Earning"
             earning="$21k"

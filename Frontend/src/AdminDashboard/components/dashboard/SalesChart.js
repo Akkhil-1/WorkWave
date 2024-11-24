@@ -13,25 +13,29 @@ const SalesChart = () => {
       stroke: { curve: "smooth", width: 1 },
       grid: { strokeDashArray: 3 },
       xaxis: {
-        categories: [
-          "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"
-        ],
+        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
       },
     },
   };
 
   return (
-    <Card className="shadow-md">
-      <CardBody>
-        <CardTitle tag="h5" className="text-xl font-semibold">Sales Summary</CardTitle>
-        <CardSubtitle className="text-sm text-gray-500">Yearly Sales Report</CardSubtitle>
-        <Chart
-          type="area"
-          width="100%"
-          height="390"
-          options={chartOptions.options}
-          series={chartOptions.series}
-        />
+    <Card className="shadow-md mt-5">
+      <CardBody className="px-6 py-6 flex flex-col w-full h-[500px]">
+        <CardTitle tag="h5" className="text-xl font-semibold text-black">
+          Sales Summary
+        </CardTitle>
+        <CardSubtitle className="text-sm text-gray-500">
+          Yearly Sales Report
+        </CardSubtitle>
+        <div className="flex-grow">
+          <Chart
+            type="area"
+            width="100%"
+            height="100%"
+            options={chartOptions.options}
+            series={chartOptions.series}
+          />
+        </div>
       </CardBody>
     </Card>
   );
