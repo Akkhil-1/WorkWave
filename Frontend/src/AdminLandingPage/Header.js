@@ -71,11 +71,14 @@ const Header = () => {
   }, []); // Empty dependency array ensures this effect runs once on mount
 
   const handleLogout = () => {
-    // Clear the token cookie and set logged out state
+    // Clear the 'token' and 'role' cookies by setting their expiration date to the past
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-    setIsLoggedIn(false);
-    navigate("/admin-login");
+    document.cookie = "role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+    
+    setIsLoggedIn(false); // Set logged out state
+    navigate("/"); // Redirect to the homepage
   };
+  
 
   const toggleDropdown = () => {
     setDropdownVisible((prev) => !prev);

@@ -74,31 +74,7 @@ const Cards = () => {
         </div>
       </Row>
 
-      {/* --------------------------------------------------------------------------------*/}
-      {/* Blog Cards*/}
-      {/* --------------------------------------------------------------------------------*/}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-        {BlogData.map((item, index) => (
-          <div key={index} className="bg-white shadow-lg rounded-lg overflow-hidden">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Blog"
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-4">
-              <h5 className="text-lg font-semibold">{item.title}</h5>
-              <p className="text-sm text-gray-500 mt-2">{item.subtitle}</p>
-              <p className="text-gray-700 mt-2">{item.description}</p>
-              <Button
-                color="light-danger"
-                className="mt-4 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-              >
-                Read More
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+      
     </div>
   );
 };

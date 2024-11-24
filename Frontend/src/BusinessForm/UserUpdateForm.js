@@ -21,11 +21,12 @@ const UserUpdateForm = () => {
     const fetchUserData = async () => {
       try {
         const token = document.cookie.split('; ').find(row => row.startsWith('token')).split('=')[1];
-        const response = await axios.get('http://localhost:3001/admin/admin-profile', {
+        const response = await axios.get('http://localhost:3001/user/user-profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const user = response.data;
+        // console.log(user);
         setUserId(user._id); // Extract user ID
         setFormData({
           name: user.name || '',
@@ -61,14 +62,14 @@ const UserUpdateForm = () => {
     }
     try {
       const token = document.cookie.split('; ').find(row => row.startsWith('token')).split('=')[1];
-      const response = await axios.post(`http://localhost:3001/admin/update-admin/${userId}`, formData, {
+      const response = await axios.post(`http://localhost:3001/user/update-user/${userId}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
       console.log('Profile updated:', response.data);
       toast.success('Profile updated successfully!'); // Display success toast
       setTimeout(() => {
-        navigate('/'); // Redirect to landing page after 2 seconds
+        navigate('/user-landingpage'); // Redirect to landing page after 2 seconds
       }, 1500);
     } catch (error) {
       console.error('Error updating profile:', error);

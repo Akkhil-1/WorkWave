@@ -11,7 +11,7 @@ router.post("/login", userController.login);
 // delete user
 router.post("/delete-user/:_id", userLogin , userController.deleteUser);
 // update info of user
-router.post("/update-user/:_id", userLogin , userController.updateUser);
+router.post("/update-user/:_id", userController.updateUser);
 router.get("/my-bookings", userLogin, userController.getUserBookings);
 router.get("/user-profile" , userAuth , userController.getProfile);
 

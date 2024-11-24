@@ -75,8 +75,9 @@ const Header = () => {
   const handleLogout = () => {
     // Clear the token cookie and set logged out state
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+    document.cookie = "role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
     setIsLoggedIn(false);
-    navigate("/user-login");
+    navigate("/user-landingpage");
   };
 
   const toggleDropdown = () => {
@@ -124,7 +125,7 @@ const Header = () => {
                       <NavLink to="/dashboard" className="block px-4 py-2">
                         Dashboard
                       </NavLink>
-                      <NavLink to="/update-profile" className="block px-4 py-2">
+                      <NavLink to="/user-update-form" className="block px-4 py-2">
                         Update Profile
                       </NavLink>
                       <button

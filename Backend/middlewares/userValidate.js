@@ -4,11 +4,12 @@ const genderSchema = zod
   .string()
   .refine(
     (value) =>
-      ["Male", "Female", "Other", "male", "female", "other"].includes(value),
+      ["male", "female", "other"].includes(value.toLowerCase()),
     {
       message: "Invalid gender value",
     }
   );
+
 
 const schemaOne = zod.object({
   name: zod.string().min(1, "Name is required"),

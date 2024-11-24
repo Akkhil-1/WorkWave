@@ -97,21 +97,21 @@ const updateUser = async (req, res) => {
   try {
     const id = req.params._id;
     const update = req.body;
-    const schemaFields = Object.keys(User.schema.paths);
-    for (const key in update) {
-      if (!schemaFields.includes(key)) {
-        return res.status(400).json({
-          status: 400,
-          msg: `Unknown field: ${key}`,
-        });
-      }
-      if (!update[key] || update[key].trim() === "") {
-        return res.status(400).json({
-          status: 400,
-          msg: `Field ${key} is missing or empty`,
-        });
-      }
-    }
+    // const schemaFields = Object.keys(User.schema.paths);
+    // for (const key in update) {
+    //   if (!schemaFields.includes(key)) {
+    //     return res.status(400).json({
+    //       status: 400,
+    //       msg: `Unknown field: ${key}`,
+    //     });
+    //   }
+    //   if (!update[key] || update[key].trim() === "") {
+    //     return res.status(400).json({
+    //       status: 400,
+    //       msg: `Field ${key} is missing or empty`,
+    //     });
+    //   }
+    // }
 
     if (update.password) {
       update.password = await bcrypt.hash(update.password, 10);
@@ -201,7 +201,7 @@ const getProfile = async (req, res) => {
       return res.status(401).json({ msg: "Unauthorized - User ID not found" });
     }
 
-    const user = await User.findById(userId).select("name email");
+    const user = await User.findById(userId).select("name email mobile_number gender address _id");
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
@@ -210,6 +210,10 @@ const getProfile = async (req, res) => {
     res.json({
       name: user.name,
       email: user.email,
+      mobile_number : user.mobile_number,
+      gender : user.gender,
+      address : user.address,
+      _id : user._id
     });
   } catch (error) {
     res.status(500).json({ msg: "Error fetching user details" });
