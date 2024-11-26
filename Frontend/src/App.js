@@ -79,7 +79,7 @@ function App() {
           {/* User Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
             <Route path="/businesses/allbusinesses" element={<BusinessList />} />
-            <Route path="/business/:id" element={<BusinessDetails />} />
+            <Route path="/business/getBusiness/:id" element={<BusinessDetails />} />
             <Route path="/business/servive/bookingform" element={<BookingForm />} />
             <Route path="/user-forgot-password" element={<ForgotPassword />} />
           </Route>

@@ -108,9 +108,34 @@ const getBusinesses = async (req, res) => {
       getData,
     });
   } catch (err) {
-    console.log(err);
+    console.log("error fetchinhhg business details");
   }
+  // try {
+  //   const id = req.params.id;
+  //   const business = await Business.findById(id);
+  //   if (!business) {
+  //     return res.status(404).json({ status: 404, msg: "Business not found" });
+  //   }
+  //   res.json({ status: 200, msg: "Business found", data: business });
+  // } catch (err) {
+  //   console.error("Error fetching business:", err);
+  //   res.status(500).json({ status: 500, msg: "Internal server error" });
+  // }
 };
+const  getBusiness = async(req,res)=>{
+    try {
+    const id = req.params.id;
+    console.log("Backend: Received id:", id);
+    const business = await Business.findById(id);
+    if (!business) {
+      return res.status(404).json({ status: 404, msg: "Business not found" });
+    }
+    res.json({ status: 200, msg: "Business found", data: business });
+  } catch (err) {
+    console.error("Error fetching business:", err);
+    res.status(500).json({ status: 500, msg: "Internal server error" });
+  }
+}
 
 const updateBusiness = async (req, res) => {
   try {
@@ -167,4 +192,4 @@ const deleteBusiness = async (req, res) => {
     console.log(error);
   }
 };
-module.exports = { register, getBusinesses, updateBusiness, deleteBusiness };
+module.exports = { register, getBusinesses,getBusiness, updateBusiness, deleteBusiness };
