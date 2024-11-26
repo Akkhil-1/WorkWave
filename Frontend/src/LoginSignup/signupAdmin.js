@@ -19,8 +19,6 @@ const RegisterForm = () => {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
-  // Phone number validation function (10 digits)
   const validatePhoneNumber = (phone) => {
     const phonePattern = /^[0-9]{10}$/;
     return phonePattern.test(phone);
@@ -46,12 +44,17 @@ const RegisterForm = () => {
 
     if (!formData.name) formErrors.name = "Name is required.";
     if (!formData.email) formErrors.email = "Email is required.";
-    else if (!validateEmail(formData.email)) formErrors.email = "Invalid email format.";
-    if (!formData.mobile_number) formErrors.mobile_number = "Mobile number is required.";
-    else if (!validatePhoneNumber(formData.mobile_number)) formErrors.mobile_number = "Mobile number must be 10 digits.";
+    else if (!validateEmail(formData.email))
+      formErrors.email = "Invalid email format.";
+    if (!formData.mobile_number)
+      formErrors.mobile_number = "Mobile number is required.";
+    else if (!validatePhoneNumber(formData.mobile_number))
+      formErrors.mobile_number = "Mobile number must be 10 digits.";
     if (!formData.password) formErrors.password = "Password is required.";
-    else if (!validatePasswordLength(formData.password)) formErrors.password = "Password must be at least 6 characters.";
-    if (formData.password !== formData.confirm_password) formErrors.confirm_password = "Passwords do not match.";
+    else if (!validatePasswordLength(formData.password))
+      formErrors.password = "Password must be at least 6 characters.";
+    if (formData.password !== formData.confirm_password)
+      formErrors.confirm_password = "Passwords do not match.";
     if (!formData.gender) formErrors.gender = "Gender is required.";
     if (!formData.address) formErrors.address = "Address is required.";
 
@@ -74,6 +77,7 @@ const RegisterForm = () => {
         navigate("/admin-login");
       }, 1000);
     } catch (e) {
+      console.log(e);
       toast.error("Admin already exists.");
     }
   };
@@ -94,8 +98,6 @@ const RegisterForm = () => {
       }));
     }
   };
-
-  // Handle onBlur for real-time validation
   const handleBlur = (e) => {
     const { name, value } = e.target;
     const formErrors = { ...errors };
@@ -107,17 +109,20 @@ const RegisterForm = () => {
         break;
       case "email":
         if (!value) formErrors.email = "Email is required.";
-        else if (!validateEmail(value)) formErrors.email = "Invalid email format.";
+        else if (!validateEmail(value))
+          formErrors.email = "Invalid email format.";
         else delete formErrors.email;
         break;
       case "mobile_number":
         if (!value) formErrors.mobile_number = "Mobile number is required.";
-        else if (!validatePhoneNumber(value)) formErrors.mobile_number = "Mobile number must be 10 digits.";
+        else if (!validatePhoneNumber(value))
+          formErrors.mobile_number = "Mobile number must be 10 digits.";
         else delete formErrors.mobile_number;
         break;
       case "password":
         if (!value) formErrors.password = "Password is required.";
-        else if (!validatePasswordLength(value)) formErrors.password = "Password must be at least 6 characters.";
+        else if (!validatePasswordLength(value))
+          formErrors.password = "Password must be at least 6 characters.";
         else delete formErrors.password;
         break;
       case "confirm_password":
@@ -174,13 +179,15 @@ const RegisterForm = () => {
                 name="name"
                 id="name"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.name}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Name"
               />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
+              )}
             </div>
 
             {/* Email Field */}
@@ -190,13 +197,15 @@ const RegisterForm = () => {
                 name="email"
                 id="email"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.email}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Email"
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
             </div>
 
             {/* Mobile Number Field */}
@@ -206,13 +215,15 @@ const RegisterForm = () => {
                 name="mobile_number"
                 id="mobile_number"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.mobile_number}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Mobile Number"
               />
-              {errors.mobile_number && <p className="text-red-500 text-sm">{errors.mobile_number}</p>}
+              {errors.mobile_number && (
+                <p className="text-red-500 text-sm">{errors.mobile_number}</p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -222,13 +233,15 @@ const RegisterForm = () => {
                 name="password"
                 id="password"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Password"
               />
-              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
             </div>
 
             {/* Confirm Password Field */}
@@ -238,13 +251,17 @@ const RegisterForm = () => {
                 name="confirm_password"
                 id="confirm_password"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.confirm_password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Confirm Password"
               />
-              {errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password}</p>}
+              {errors.confirm_password && (
+                <p className="text-red-500 text-sm">
+                  {errors.confirm_password}
+                </p>
+              )}
             </div>
 
             {/* Gender Field (Dropdown) */}
@@ -253,7 +270,7 @@ const RegisterForm = () => {
                 name="gender"
                 id="gender"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.gender}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
@@ -263,7 +280,9 @@ const RegisterForm = () => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-              {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
+              {errors.gender && (
+                <p className="text-red-500 text-sm">{errors.gender}</p>
+              )}
             </div>
 
             {/* Address Field */}
@@ -273,13 +292,15 @@ const RegisterForm = () => {
                 name="address"
                 id="address"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.address}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Address"
               />
-              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address}</p>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -293,7 +314,10 @@ const RegisterForm = () => {
 
           <p className="mt-6 text-center text-gray-600 text-sm">
             Already have an account?
-            <NavLink to="/admin-login" className="text-indigo-600 hover:text-indigo-500">
+            <NavLink
+              to="/admin-login"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
               Login
             </NavLink>
           </p>

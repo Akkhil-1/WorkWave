@@ -8,6 +8,7 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const navigate = useNavigate();
 
   const getCookie = (name) => {
@@ -84,6 +85,17 @@ const Header = () => {
     setDropdownVisible((prev) => !prev);
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev); // Toggle mobile menu
+
+    // Block/Enable scroll based on menu state
+    if (isMenuOpen) {
+      document.body.style.overflow = "auto"; // Enable scrolling
+    } else {
+      document.body.style.overflow = "hidden"; // Disable scrolling
+    }
+  };
+
   return (
     <header
       className={`sticky top-0 z-20 ${
@@ -95,11 +107,92 @@ const Header = () => {
           <div className="flex items-center justify-between">
             <div className="flex justify-center items-center">
               <img src={Logo} alt="saaslogo" className="h-10 w-10" />
-              <h1 className="font-semibold text-[1.5rem] ml-1 mt-1">
-                WorkWave
-              </h1>
+              <h1 className="font-semibold text-[1.5rem] ml-1 mt-1">WorkWave</h1>
             </div>
 
+            {/* Hamburger Icon for mobile */}
+            <div className="md:hidden flex items-center">
+              <button onClick={toggleMenu} className="text-black">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Mobile Dropdown Menu */}
+            {isMenuOpen && (
+              <div className="mobile-menu fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex flex-col justify-start items-center text-white text-xl z-10">
+                <button
+                  onClick={toggleMenu}
+                  className="absolute top-5 right-5 text-white text-3xl"
+                >
+                  &times;
+                </button>
+                <NavLink
+                  to="/user-landingpage"
+                  onClick={toggleMenu}
+                  className="py-4 px-6 w-full text-center mt-[100px] text-[40px]"
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/businesses/allbusinesses"
+                  onClick={toggleMenu}
+                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
+                >
+                  Services
+                </NavLink>
+                <a href="#customer" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
+                  Testimonials
+                </a>
+                <a href="#help" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
+                  Help
+                </a>
+
+                {!isLoggedIn ? (
+                  <NavLink to="/user-login" onClick={toggleMenu}>
+                    <button className="bg-white text-black px-4 py-2 rounded-lg font-medium mt-[70px] text-[20px]">
+                      Login
+                    </button>
+                  </NavLink>
+                ) : (
+                  <div className="relative py-2 px-4 w-full text-center">
+                    <button onClick={toggleDropdown} className="bg-transparent text-white font-medium">
+                      <span>{userName || "Account"}</span>
+                    </button>
+                    {dropdownVisible && (
+                      <div className="absolute top-0 left-0 w-full bg-white text-black p-4 shadow-lg">
+                        <NavLink to="/user-dashboard" className="block py-2 text-center">
+                          Dashboard
+                        </NavLink>
+                        <NavLink to="/user-update-form" className="block py-2 text-center">
+                          Update Profile
+                        </NavLink>
+                        <button
+                          onClick={handleLogout}
+                          className="block py-2 w-full text-left text-red-500"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Desktop menu */}
             <nav className="hidden md:flex gap-10 text-black/75 items-center font-bold">
               <NavLink to="/user-landingpage">Home</NavLink>
               <NavLink to="/businesses/allbusinesses">Services</NavLink>

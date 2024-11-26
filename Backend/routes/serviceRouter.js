@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const servicesController = require("../controllers/servicesController");
-const authMiddleware = require('../middlewares/businessOwnerMiddleware')
+const authMiddleware = require("../middlewares/businessOwnerMiddleware"); // Uncomment this if you want to enforce authentication
 
+// Route to add a new service
 router.post(
-    "/addservice",
-    authMiddleware,
-    servicesController.addService
-  );
-  
+  "/addservice",
+  // authMiddleware, // Uncomment this line if you want to secure the route
+  servicesController.addService
+);
+
+router.get("/:id", servicesController.getService);
 module.exports = router;

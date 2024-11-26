@@ -2,8 +2,8 @@ import axios from "axios";
 
 export const fetchBusinesses = async () => {
   try {
-    const response = await axios.get("http://localhost:3001/business/getBusiness", {
-      withCredentials: true,
+    const response = await axios.get(`http://localhost:3001/business/getBusiness`, {
+      credentials: "include"
     });
     return response.data; // Assuming response.data contains the businesses data
   } catch (error) {
@@ -11,4 +11,3 @@ export const fetchBusinesses = async () => {
     throw error;
   }
 };
-

@@ -12,13 +12,21 @@ import BookingForm from "./Services/BookingForm";
 import { ToastContainerWrapper } from "./LoginSignup/Helper/ToastNotify";
 import { Toaster } from "react-hot-toast";
 import ForgotPassword from "./ForgotPassword/ForgotPassword";
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import Cookies from "js-cookie";
-import AdmindashRoutes from './AdminDashboard/routes/Router'; // Import routes for Admin Dashboard
-import FullLayout from './AdminDashboard/layouts/FullLayout'
-import UpdateForm from './BusinessForm/UpdateForm'
+import AdmindashRoutes from "./AdminDashboard/routes/Router"; // Import routes for Admin Dashboard
+import FullLayout from "./AdminDashboard/layouts/FullLayout";
+import UpdateForm from "./BusinessForm/UpdateForm";
 import UserUpdateForm from "./BusinessForm/UserUpdateForm";
-import UserDashBoard from './UserLandingPage/components/Dashboard';
+import UserDashBoard from "./UserLandingPage/components/Dashboard";
+import FinalBusinessDetails from "./Services/BookingDetailsFinal";
+import AboutUs from "./AboutUs/AboutUs";
 
 // Protected Route for user
 const ProtectedRoute = ({ allowedRoles }) => {
@@ -60,16 +68,21 @@ function App() {
           <Route path="/admin-signup" element={<RegisterForm />} />
           <Route path="/user-login" element={<LoginFormUser />} />
           <Route path="/user-signup" element={<RegisterFormUser />} />
-          <Route path="/update-form" element={<UpdateForm/>} />
-          <Route path="/user-update-form" element={<UserUpdateForm/>} />
-          <Route path='/user-dashboard' element={<UserDashBoard/>} />
+          <Route path="/update-form" element={<UpdateForm />} />
+          <Route path="/user-update-form" element={<UserUpdateForm />} />
+          <Route path="/user-dashboard" element={<UserDashBoard />} />
+          <Route path="/AboutUs" element={<AboutUs />} />
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (
               <Route key={route.path} path={route.path} element={route.element}>
                 {route.children &&
                   route.children.map((child) => (
-                    <Route key={child.path} path={child.path} element={child.element} />
+                    <Route
+                      key={child.path}
+                      path={child.path}
+                      element={child.element}
+                    />
                   ))}
               </Route>
             ))}
@@ -78,12 +91,20 @@ function App() {
 
           {/* User Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
-            <Route path="/businesses/allbusinesses" element={<BusinessList />} />
-            <Route path="/business/getBusiness/:id" element={<BusinessDetails />} />
-            <Route path="/business/servive/bookingform" element={<BookingForm />} />
+            <Route
+              path="/businesses/allbusinesses"
+              element={<BusinessList />}
+            />
+            <Route
+              path="/business/getBusiness/:id"
+              element={<FinalBusinessDetails />}
+            />
+            <Route
+              path="/business/service/bookingform/:id"
+              element={<BookingForm />}
+            />
             <Route path="/user-forgot-password" element={<ForgotPassword />} />
           </Route>
-
           {/* Admin Protected Routes */}
           <Route element={<AdminProtectedRoute />}>
             <Route path="/business-add-business" element={<BusinessForm />} />

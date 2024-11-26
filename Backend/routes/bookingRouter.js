@@ -1,25 +1,29 @@
+// bookingRoutes.js (Router)
 const express = require("express");
 const router = express.Router();
 const bookingController = require("../controllers/bookingController");
 const bookingValidate = require("../middlewares/bookingValidate");
 const bookingDetailsAuth = require("../middlewares/bookingDetailsAuth");
+const userauthMiddleware = require("../middlewares/UserAuthMiddleware");
 
-// const extractBusinessId = (req, res, next) => {
-//   req.businessId = req.params.businessId;
-//   next();
-// };
-
+const extractBusinessId = (req, res, next) => {
+  req.businessId = req.params.businessId;
+   // Assuming you're passing the businessId in the URL
+  console.log(req.businessId);
+  
+  next();
+};
 router.post(
-  // '/business/:businessId/addbooking',
-  "/business/addbooking",
-  bookingValidate,
+  "/addbooking/:businessId",
+  userauthMiddleware,
+  bookingValidate, 
   bookingDetailsAuth,
-  // extractBusinessId,
+  extractBusinessId,
   bookingController.addBooking
-);
-router.get("/getBooking", bookingController.getBusinesses);
+)
+module.exports = router;
 
-// Update booking with booking ID in the URL
+router.get("/getBooking", bookingController.getBusinesses);
 router.post("/update-booking/:id", bookingController.updateBookingDetails);
 router.post("/delete-booking/:id", bookingController.deleteBooking);
 

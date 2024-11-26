@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 const dbConnect = require("../Backend/middlewares/db");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
@@ -11,13 +11,15 @@ const otpRoute = require("./routes/otpRoute");
 const userDashboard  = require('./routes/userDashboard')
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 require("dotenv").config();
 app.use(express.json());
-app.use(cors({ origin: true, credentials: true }));
-app.use(cookieParser());
-
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,               
+};
+app.use(cors(corsOptions));
 dbConnect();
-
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/business", businessRouter);

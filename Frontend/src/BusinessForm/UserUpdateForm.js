@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirect
-import toast from 'react-hot-toast'; // Import toast for notifications
+import { useNavigate } from 'react-router-dom'; 
+import toast from 'react-hot-toast';
 
 const UserUpdateForm = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +14,8 @@ const UserUpdateForm = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null); // State to store the user ID
-  const navigate = useNavigate(); // Hook to redirect user
+  const [userId, setUserId] = useState(null); 
+  const navigate = useNavigate(); 
 
   // Fetch user info from the API on component mount
   useEffect(() => {
@@ -26,8 +27,7 @@ const UserUpdateForm = () => {
         });
 
         const user = response.data;
-        // console.log(user);
-        setUserId(user._id); // Extract user ID
+        setUserId(user._id); 
         setFormData({
           name: user.name || '',
           email: user.email || '',
@@ -54,26 +54,69 @@ const UserUpdateForm = () => {
     }));
   };
 
+  // Validation function
+  const validate = () => {
+    const errors = [];
+
+    // Name validation
+    if (!formData.name.trim()) {
+      errors.push("Name is required.");
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      errors.push("Email is required.");
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.push("Invalid email format.");
+    }
+
+    // Mobile number validation
+    if (!/^\d{10}$/.test(formData.mobile_number)) {
+      errors.push("Mobile number must be 10 digits.");
+    }
+
+    // Gender validation
+    if (!formData.gender.trim()) {
+      errors.push("Gender is required.");
+    }
+
+    // Address validation
+    if (!formData.address.trim()) {
+      errors.push("Address is required.");
+    }
+
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form data
+    const errors = validate();
+    if (errors.length > 0) {
+      // Show error toast notifications
+      errors.forEach((error) => toast.error(error));
+      return;
+    }
+
     if (!userId) {
       toast.error('User ID is missing!');
       return;
     }
+
     try {
       const token = document.cookie.split('; ').find(row => row.startsWith('token')).split('=')[1];
       const response = await axios.post(`http://localhost:3001/user/update-user/${userId}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
-      console.log('Profile updated:', response.data);
-      toast.success('Profile updated successfully!'); // Display success toast
+      toast.success('Profile updated successfully!');
       setTimeout(() => {
-        navigate('/user-landingpage'); // Redirect to landing page after 2 seconds
+        navigate('/user-landingpage'); 
       }, 1500);
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile.'); // Display error toast
+      toast.error('Failed to update profile.');
     }
   };
 
@@ -123,7 +166,7 @@ const UserUpdateForm = () => {
           <input
             type="tel"
             id="mobile_number"
-            name="mobile_number" // Ensure the name is correct here
+            name="mobile_number"
             value={formData.mobile_number}
             onChange={handleChange}
             placeholder="Enter your mobile number"

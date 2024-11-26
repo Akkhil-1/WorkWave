@@ -11,7 +11,7 @@ router.post(
   businessController.register
 );
 router.get("/getBusiness", businessController.getBusinesses);
-router.get("/getBusines/:id" ,businessController.getBusiness)
+router.get("/getBusiness/:id" ,businessController.getBusiness)
 router.post("/update-business/_:id", businessController.updateBusiness);
 router.post("/delete-business/_:id", businessController.deleteBusiness);
 

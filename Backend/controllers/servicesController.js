@@ -1,57 +1,41 @@
-const Services = require("../models/services");
-const Business = require("../models/business");
-const jwt = require("jsonwebtoken");
-const Admin = require("../models/admin");
-
+const Service = require("../models/services");
 const addService = async (req, res) => {
-    try {
-        const { serviceName, description, price } = req.body;
-
-        if (!serviceName || !description || !price) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-
-        const token = req.cookies.token;
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized: No token provided" });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const adminId = decoded._id;
-
-        const admin = await Admin.findById(adminId).populate("adminBusinesses");
-        if (!admin) {
-            return res.status(404).json({ message: "Admin not found" });
-        }
-
-        const businessId = admin.adminBusinesses[0];
-        if (!businessId) {
-            return res.status(404).json({ message: "No business found for this admin" });
-        }
-
-        const newService = new Services({ serviceName, description, price });
-        const savedService = await newService.save();
-
-        const business = await Business.findById(businessId);
-        if (!business) {
-            return res.status(404).json({ message: "Business not found" });
-        }
-
-        business.services.push(savedService._id);
-        await business.save();
-
-        res.status(201).json({
-            message: "Service added successfully",
-            service: savedService,
-            business,
-        });
-    } catch (error) {
-        console.error(error);
-        if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ message: "Unauthorized: Invalid token" });
-        }
-        res.status(500).json({ message: "Internal server error", error });
+  try {
+    const { name, description, price, businessId } = req.body;
+    if (!name || !description || !price || !businessId) {
+      return res.status(400).json({ message: "All fields are required" });
     }
+    const newService = new Service({
+      name,
+      description,
+      price,
+      business: businessId,
+    });
+    await newService.save();
+    res
+      .status(201)
+      .json({ message: "Service added successfully", data: newService });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Failed to add service", error: error.message });
+  }
 };
 
-module.exports = { addService };
+const getService = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("Backend: Received id:", id);
+    const service = await Service.findById(id);
+    if (!service) {
+      return res.status(404).json({ status: 404, msg: "Service not found" });
+    }
+    res.json({ status: 200, msg: "Service found", data: service });
+  } catch (err) {
+    console.error("Error fetching Service:", err);
+    res.status(500).json({ status: 500, msg: "Internal server error" });
+  }
+};
+
+module.exports = { addService, getService };

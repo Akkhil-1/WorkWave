@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirect
-import toast from 'react-hot-toast'; // Import toast for notifications
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
-const UserUpdateForm = () => {
+const AdminUpdateForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,12 +12,12 @@ const UserUpdateForm = () => {
     gender: '',
     address: '',
   });
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null); // State to store the user ID
-  const navigate = useNavigate(); // Hook to redirect user
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
 
-  // Fetch user info from the API on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -26,7 +27,7 @@ const UserUpdateForm = () => {
         });
 
         const user = response.data;
-        setUserId(user._id); // Extract user ID
+        setUserId(user._id);
         setFormData({
           name: user.name || '',
           email: user.email || '',
@@ -44,6 +45,33 @@ const UserUpdateForm = () => {
 
     fetchUserData();
   }, []);
+  const validate = () => {
+    const errors = [];
+  
+    if (!formData.name.trim()) {
+      errors.push("Name is required.");
+    }
+  
+    if (!formData.email.trim()) {
+      errors.push("Email is required.");
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.push("Invalid email format.");
+    }
+  
+    if (!/^\d{10}$/.test(formData.mobile_number)) {
+      errors.push("Mobile number must be 10 digits.");
+    }
+  
+    if (!formData.gender.trim()) {
+      errors.push("Gender is required.");
+    }
+  
+    if (!formData.address.trim()) {
+      errors.push("Address is required.");
+    }
+  
+    return errors;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,27 +80,42 @@ const UserUpdateForm = () => {
       [name]: value,
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userId) {
-      toast.error('User ID is missing!');
+    const validationErrors = validate();
+  
+    if (validationErrors.length > 0) {
+      validationErrors.forEach((error) => toast.error(error));
       return;
     }
+  
+    if (!userId) {
+      toast.error("User ID is missing!");
+      return;
+    }
+  
     try {
-      const token = document.cookie.split('; ').find(row => row.startsWith('token')).split('=')[1];
-      const response = await axios.post(`http://localhost:3001/admin/update-admin/${userId}`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      console.log('Profile updated:', response.data);
-      toast.success('Profile updated successfully!'); // Display success toast
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token"))
+        .split("=")[1];
+  
+      const response = await axios.post(
+        `http://localhost:3001/admin/update-admin/${userId}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      console.log("Profile updated:", response.data);
+      toast.success("Profile updated successfully!"); // Display success toast
       setTimeout(() => {
-        navigate('/'); // Redirect to landing page after 2 seconds
+        navigate("/"); // Redirect to landing page after 2 seconds
       }, 1500);
     } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile.'); // Display error toast
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile."); // Display error toast
     }
   };
 
@@ -100,6 +143,7 @@ const UserUpdateForm = () => {
             placeholder="Enter your full name"
             className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
 
         {/* Email */}
@@ -114,20 +158,22 @@ const UserUpdateForm = () => {
             placeholder="Enter your email"
             className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
         </div>
 
         {/* Mobile Number */}
         <div className="space-y-1">
-          <label htmlFor="mobileNumber" className="text-white text-sm">Mobile Number</label>
+          <label htmlFor="mobile_number" className="text-white text-sm">Mobile Number</label>
           <input
             type="tel"
             id="mobile_number"
-            name="mobile_number" // Ensure the name is correct here
+            name="mobile_number"
             value={formData.mobile_number}
             onChange={handleChange}
             placeholder="Enter your mobile number"
             className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
+          {errors.mobile_number && <p className="text-red-500 text-sm">{errors.mobile_number}</p>}
         </div>
 
         {/* Gender */}
@@ -145,6 +191,7 @@ const UserUpdateForm = () => {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
+          {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
         </div>
 
         {/* Address */}
@@ -159,6 +206,7 @@ const UserUpdateForm = () => {
             rows="4"
             className="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
+          {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
         </div>
 
         {/* Submit Button */}
@@ -175,4 +223,4 @@ const UserUpdateForm = () => {
   );
 };
 
-export default UserUpdateForm;
+export default AdminUpdateForm;
