@@ -192,4 +192,7 @@ const deleteBusiness = async (req, res) => {
     console.log(error);
   }
 };
-module.exports = { register, getBusinesses,getBusiness, updateBusiness, deleteBusiness };
+
+
+
+module.exports = { register, getBusinesses,getBusiness, updateBusiness, deleteBusiness,  };

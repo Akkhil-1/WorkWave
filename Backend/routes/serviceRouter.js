@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/businessOwnerMiddleware"); // Unc
 // Route to add a new service
 router.post(
   "/addservice",
-  // authMiddleware, // Uncomment this line if you want to secure the route
+  authMiddleware, // Uncomment this line if you want to secure the route
   servicesController.addService
 );
 

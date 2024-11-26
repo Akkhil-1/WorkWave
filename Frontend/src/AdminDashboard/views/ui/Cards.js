@@ -6,7 +6,7 @@ import { Row } from "reactstrap";
 const Cards = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    serviceName: "",
+    name: "",
     description: "",
     price: "",
   });
@@ -89,8 +89,8 @@ const Cards = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <input
                   type="text"
-                  name="serviceName"
-                  value={formData.serviceName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   placeholder="Name of the service"
                   className="w-full px-6 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-lg"
