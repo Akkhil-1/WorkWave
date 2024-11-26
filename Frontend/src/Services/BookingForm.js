@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import backgroundImage from "../assets/roadmap/bookingFormbkg.jpg";
 
 const BookingForm = () => {
-  const { id } = useParams(); // Match 'id' to useParams()
+  const { id, serviceId } = useParams(); // Match 'id' to useParams()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -42,7 +42,7 @@ const BookingForm = () => {
             "Content-Type": "application/json",
           },
           credentials: "include", // Ensure credentials (cookies) are included in the request
-          body: JSON.stringify(formData),
+          body: JSON.stringify({ ...formData, serviceId }),
         }
       );
       console.log("1");

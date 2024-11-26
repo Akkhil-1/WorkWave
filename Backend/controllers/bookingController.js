@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
 const Business = require("../models/business");
+const Services = require("../models/services");
 const { sendBookingMail } = require("../helper/bookingMail");
 
 const addBooking = async (req, res) => {
   try {
-    console.log(req.body); // Log the request body to ensure the data is coming through
-
+    console.log("Request Body:", req.body);
     const {
       name,
       email,
@@ -18,13 +18,17 @@ const addBooking = async (req, res) => {
       bookingDate,
       bookingTime,
       customerNotes,
+      serviceId,
     } = req.body;
 
-    const userId = req.user._id; // Get user from middleware
-    const businessId = req.params.businessId; // Get businessId from URL parameter
-    console.log("!");
+    const userId = req.user._id;
+    const businessId = req.params.businessId;
 
-    console.log(businessId); // Log businessId to check if it's coming through
+    console.log("User ID:", userId);
+    console.log("Business ID:", businessId);
+    console.log("Service ID:", serviceId);
+
+    // Validate user
     const userDetails = await User.findById(userId);
     if (!userDetails) {
       return res.status(404).json({ msg: "User not found" });
@@ -36,7 +40,13 @@ const addBooking = async (req, res) => {
       return res.status(404).json({ msg: "Business not found" });
     }
 
-    // Create booking
+    // Check if service exists (optional but recommended)
+    if (serviceId) {
+      const serviceDetails = await Services.findById(serviceId);
+      if (!serviceDetails) {
+        return res.status(404).json({ msg: "Service not found" });
+      }
+    }
     const booking = await Booking.create({
       name,
       email,
@@ -46,17 +56,17 @@ const addBooking = async (req, res) => {
       bookingDate,
       bookingTime,
       customerNotes,
+      business: businessId,
+      service: serviceId || null,
     });
 
-    // Update user and business with booking data
     await User.findByIdAndUpdate(
       userId,
       {
-        $push: { bookingDetails: { _id: booking._id } },
+        $push: { bookingDetails: booking._id },
       },
       { new: true }
     );
-
     await Business.findByIdAndUpdate(
       businessId,
       {
@@ -64,11 +74,18 @@ const addBooking = async (req, res) => {
       },
       { new: true }
     );
+    console.log("Created Booking:", booking);
 
-    res.json({ msg: "Booking done successfully", data: booking });
+    res.status(201).json({
+      msg: "Booking done successfully",
+      data: booking,
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "An error occurred while booking" });
+    console.error("Booking Creation Error:", err);
+    res.status(500).json({
+      msg: "An error occurred while booking",
+      error: err.message,
+    });
   }
 };
 
@@ -154,27 +171,50 @@ const deleteBooking = async (req, res) => {
 
 const getBooking = async (req, res) => {
   const userId = req.user._id;
-
   if (!userId) {
     return res.status(401).json({ msg: "Unauthorized - User ID not found" });
   }
-
   try {
-    const user = await User.findById(userId).select("bookingDetails").populate({
+    const user = await User.findById(userId).populate({
       path: "bookingDetails",
-      select: "name bookingDate bookingTime status",
+      populate: [
+        {
+          path: "business",
+          model: "Business", // Ensure this matches exactly
+          select: "businessName",
+        },
+        {
+          path: "service",
+          model: "Services", // Ensure this matches exactly
+          select: "name",
+        },
+      ],
     });
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
 
+    // Detailed debugging logs
+    console.log("Bookings Length:", user.bookingDetails.length);
+
+    user.bookingDetails.forEach((booking, index) => {
+      console.log(`Booking ${index}:`);
+      console.log("Booking ID:", booking._id);
+      console.log("Business:", booking.business);
+      console.log("Service:", booking.service);
+    });
+
     return res.status(200).json({
       bookings: user.bookingDetails,
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ msg: "Server error" });
+    console.error("Detailed Error:", err);
+    return res.status(500).json({
+      msg: "Server error",
+      error: err.message,
+      stack: err.stack,
+    });
   }
 };
 

@@ -102,7 +102,7 @@ function App() {
               element={<FinalBusinessDetails />}
             />
             <Route
-              path="/business/service/bookingform/:id"
+              path="/business/service/bookingform/:id/:serviceId"
               element={<BookingForm />}
             />
             <Route path="/user-forgot-password" element={<ForgotPassword />} />

@@ -32,11 +32,19 @@ const bookingschema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default:"Pending"
+      default: "Pending",
     },
     customerNotes: {
       type: String,
       default: "",
+    },
+    business: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Business' 
+    },
+    service: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Services' 
     },
   },
   { timestamps: true }

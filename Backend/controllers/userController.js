@@ -97,22 +97,6 @@ const updateUser = async (req, res) => {
   try {
     const id = req.params._id;
     const update = req.body;
-    // const schemaFields = Object.keys(User.schema.paths);
-    // for (const key in update) {
-    //   if (!schemaFields.includes(key)) {
-    //     return res.status(400).json({
-    //       status: 400,
-    //       msg: `Unknown field: ${key}`,
-    //     });
-    //   }
-    //   if (!update[key] || update[key].trim() === "") {
-    //     return res.status(400).json({
-    //       status: 400,
-    //       msg: `Field ${key} is missing or empty`,
-    //     });
-    //   }
-    // }
-
     if (update.password) {
       update.password = await bcrypt.hash(update.password, 10);
     }
@@ -128,7 +112,6 @@ const updateUser = async (req, res) => {
         msg: "User not found",
       });
     }
-
     res.json({
       status: 200,
       msg: "User updated successfully",
@@ -165,27 +148,56 @@ const deleteUser = async (req, res) => {
 const getUserBookings = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log(userId);
-
     const userWithBookings = await User.findById(userId).populate({
       path: "bookingDetails",
       model: "bookingDetails",
       select:
-        "name email age mobile_number guest bookingDate bookingTime status customerNotes",
+        "business service name email age mobile_number guest bookingDate bookingTime status customerNotes",
+      populate: [
+        {
+          path: "business",
+          model: "Business",
+          select: "businessName",
+        },
+        {
+          path: "service",
+          model: "Services",
+          select: "name",
+        },
+      ],
     });
 
-    console.log(userWithBookings);
+    // Debugging: Log the populated booking details
+    console.log(userWithBookings.bookingDetails);
 
-    if (!userWithBookings) {
-      return res.status(404).json({ msg: "User not found" });
+    // Ensure the user has bookings
+    if (!userWithBookings || userWithBookings.bookingDetails.length === 0) {
+      return res.status(404).json({ msg: "User has no bookings" });
     }
 
+    // Check if business or service is missing for any booking
+    if (
+      userWithBookings.bookingDetails.some(
+        (booking) => !booking.business || !booking.service
+      )
+    ) {
+      return res
+        .status(500)
+        .json({
+          msg: "Some bookings are missing business or service information",
+        });
+    }
+
+    // Return the booking details with populated business and service names
     res.json({
       status: 200,
       msg: "User bookings retrieved successfully",
-      data: userWithBookings.bookingDetails,
+      data: userWithBookings.bookingDetails.map((booking) => ({
+        ...booking.toObject(),
+        businessName: booking.business ? booking.business.businessName : null,
+        serviceName: booking.service ? booking.service.name : null,
+      })),
     });
-    console.log(userWithBookings.bookingDetails);
   } catch (err) {
     console.log("Error in getUserBookings:", err);
     res.status(500).json({
@@ -202,7 +214,9 @@ const getProfile = async (req, res) => {
       return res.status(401).json({ msg: "Unauthorized - User ID not found" });
     }
 
-    const user = await User.findById(userId).select("name email mobile_number gender address _id");
+    const user = await User.findById(userId).select(
+      "name email mobile_number gender address _id"
+    );
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
@@ -211,13 +225,20 @@ const getProfile = async (req, res) => {
     res.json({
       name: user.name,
       email: user.email,
-      mobile_number : user.mobile_number,
-      gender : user.gender,
-      address : user.address,
-      _id : user._id
+      mobile_number: user.mobile_number,
+      gender: user.gender,
+      address: user.address,
+      _id: user._id,
     });
   } catch (error) {
     res.status(500).json({ msg: "Error fetching user details" });
   }
 };
-module.exports = { register, login, updateUser, deleteUser, getUserBookings , getProfile};
+module.exports = {
+  register,
+  login,
+  updateUser,
+  deleteUser,
+  getUserBookings,
+  getProfile,
+};

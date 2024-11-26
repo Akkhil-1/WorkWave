@@ -7,7 +7,6 @@ const  userController = require('../controllers/userController');
 const bookingController = require('../controllers/bookingController');
 
 router.get('/user', userAuth, userController.getProfile);
-router.get('/bookings',userAuth,bookingController.getBooking);
-
+router.get('/bookings',userAuth, bookingController.getBooking);
 
 module.exports = router;

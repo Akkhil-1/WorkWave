@@ -160,15 +160,15 @@ const FinalBusinessDetails = () => {
                   key={service._id}
                   className="border p-4 mb-4 rounded-lg shadow-md bg-gray-50 text-gray-700"
                 >
-                  <h3 className="text-xl font-semibold">
-                    {service.serviceName}
-                  </h3>
+                  <h3 className="text-xl font-semibold">{service.name}</h3>
                   <p className="mb-2">
                     Description:{" "}
                     {service.description || "No description provided"}
                   </p>
                   <p className="mb-2 font-bold">Price: ${service.price}</p>
-                  <NavLink to={`/business/service/bookingform/${id}`}>
+                  <NavLink
+                    to={`/business/service/bookingform/${id}/${service._id}`}
+                  >
                     <button className="mt-2 bg-[#591B5F] text-white py-2 px-4 rounded">
                       Book Now
                     </button>
