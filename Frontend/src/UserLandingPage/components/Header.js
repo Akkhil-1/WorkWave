@@ -153,6 +153,7 @@ const Header = () => {
                 >
                   Services
                 </NavLink>
+                <NavLink to="/AboutUs/User">About Us</NavLink>
                 <a href="#customer" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
                   Testimonials
                 </a>
@@ -196,6 +197,7 @@ const Header = () => {
             <nav className="hidden md:flex gap-10 text-black/75 items-center font-bold">
               <NavLink to="/user-landingpage">Home</NavLink>
               <NavLink to="/businesses/allbusinesses">Services</NavLink>
+              <NavLink to="/AboutUs/User">About Us</NavLink>
               <a href="#customer">Testimonials</a>
               <a href="#help">Help</a>
 

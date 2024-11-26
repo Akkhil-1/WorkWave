@@ -27,6 +27,7 @@ import UserUpdateForm from "./BusinessForm/UserUpdateForm";
 import UserDashBoard from "./UserLandingPage/components/Dashboard";
 import FinalBusinessDetails from "./Services/BookingDetailsFinal";
 import AboutUs from "./AboutUs/AboutUs";
+import AboutUsUser from "./AboutUs/AboutUsUser";
 
 // Protected Route for user
 const ProtectedRoute = ({ allowedRoles }) => {
@@ -72,6 +73,7 @@ function App() {
           <Route path="/user-update-form" element={<UserUpdateForm />} />
           <Route path="/user-dashboard" element={<UserDashBoard />} />
           <Route path="/AboutUs" element={<AboutUs />} />
+          <Route path="/AboutUs/user" element={<AboutUsUser/>}/>
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (

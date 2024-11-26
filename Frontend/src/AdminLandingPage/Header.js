@@ -149,6 +149,7 @@ const Header = () => {
                 >
                   Add Business
                 </NavLink>
+                <NavLink to="/AboutUs">About Us</NavLink>
                 <NavLink
                   to="/update-form"
                   onClick={toggleMenu}
@@ -211,6 +212,7 @@ const Header = () => {
             >
               <NavLink to="/">Home</NavLink>
               <NavLink to="/business-add-business">Add Business</NavLink>
+              <NavLink to="/AboutUs">About Us</NavLink>
               <NavLink to="/update-form">Form</NavLink>
               <a href="/help">Help</a>
 
