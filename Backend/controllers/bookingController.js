@@ -1,10 +1,10 @@
-// bookingController.js
 const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
 const Business = require("../models/business");
-const Services = require("../models/services");
+const Services = require("../models/business");
 const { sendBookingMail } = require("../helper/bookingMail");
+const jwt = require("jsonwebtoken");
 
 const addBooking = async (req, res) => {
   try {
@@ -28,19 +28,15 @@ const addBooking = async (req, res) => {
     console.log("Business ID:", businessId);
     console.log("Service ID:", serviceId);
 
-    // Validate user
     const userDetails = await User.findById(userId);
     if (!userDetails) {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    // Check if business exists
     const businessDetails = await Business.findById(businessId);
     if (!businessDetails) {
       return res.status(404).json({ msg: "Business not found" });
     }
-
-    // Check if service exists (optional but recommended)
     if (serviceId) {
       const serviceDetails = await Services.findById(serviceId);
       if (!serviceDetails) {
@@ -88,8 +84,6 @@ const addBooking = async (req, res) => {
     });
   }
 };
-
-// Get all businesses with their bookings
 const getBusinesses = async (req, res) => {
   try {
     const businesses = await Business.find().populate("bookings"); // Populate bookings
@@ -105,8 +99,6 @@ const getBusinesses = async (req, res) => {
     });
   }
 };
-
-// Update booking details
 const updateBookingDetails = async (req, res) => {
   try {
     const id = req.params.id; // Changed from _id to id
@@ -194,8 +186,6 @@ const getBooking = async (req, res) => {
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
-
-    // Detailed debugging logs
     console.log("Bookings Length:", user.bookingDetails.length);
 
     user.bookingDetails.forEach((booking, index) => {
@@ -224,4 +214,5 @@ module.exports = {
   getBooking,
   updateBookingDetails,
   deleteBooking,
+
 };

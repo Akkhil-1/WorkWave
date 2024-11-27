@@ -1,103 +1,122 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import user1 from "../../assets/images/users/user1.jpg";
 import user2 from "../../assets/images/users/user2.jpg";
 import user3 from "../../assets/images/users/user3.jpg";
 import user4 from "../../assets/images/users/user4.jpg";
 import user5 from "../../assets/images/users/user5.jpg";
+import axios from "axios";
 
-const tableData = [
-  {
-    avatar: user1,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Flexy React",
-    status: "pending",
-    weeks: "35",
-    budget: "95K",
-  },
-  {
-    avatar: user2,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Lading pro React",
-    status: "done",
-    weeks: "35",
-    budget: "95K",
-  },
-  {
-    avatar: user3,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Elite React",
-    status: "holt",
-    weeks: "35",
-    budget: "95K",
-  },
-  {
-    avatar: user4,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Flexy React",
-    status: "pending",
-    weeks: "35",
-    budget: "95K",
-  },
-  {
-    avatar: user5,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Ample React",
-    status: "done",
-    weeks: "35",
-    budget: "95K",
-  },
+const imageData = [
+  { avatar: user1 },
+  { avatar: user2 },
+  { avatar: user3 },
+  { avatar: user4 },
+  { avatar: user5 },
 ];
 
-const ProjectTables = () => {
+const ProjectTables = ({ businessId }) => {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/business/getBookings`,
+          { withCredentials: true }
+        );
+        console.log(response.data);
+        setBookings(response.data.bookings);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch bookings");
+        setLoading(false);
+        console.log("Error fetching bookings:", err);
+      }
+    };
+
+    fetchBookings();
+  }, [businessId]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  const handleStatusChange = (index, event) => {
+    const updatedBookings = [...bookings];
+    updatedBookings[index].status = event.target.value;
+    setBookings(updatedBookings);
+  };
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-400";
+      case "Cancel":
+        return "bg-red-600";
+      case "confirmed":
+        return "bg-green-600";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       <div className="bg-white shadow-lg rounded-lg p-6">
-        <h5 className="text-2xl font-semibold mb-2 text-black">Bookings List</h5>
-        <p className="text-sm text-gray-500 mb-4">Overview of the bookings</p>
+        <h5 className="text-2xl font-semibold mb-2 text-black text-center">
+          Bookings List
+        </h5>
+        <p className="text-sm text-gray-500 mb-4 text-center">
+          Overview of the bookings
+        </p>
 
-        <table className="min-w-full table-auto">
+        <table className="min-w-full table-auto text-center">
           <thead className="bg-gray-100">
             <tr>
-              <th className="py-2 px-4 text-left text-sm font-medium text-gray-600">Client Name</th>
-              <th className="py-2 px-4 text-left text-sm font-medium text-gray-600">Service</th>
-              <th className="py-2 px-4 text-left text-sm font-medium text-gray-600">Status</th>
-              <th className="py-2 px-4 text-left text-sm font-medium text-gray-600">Time</th>
-              <th className="py-2 px-4 text-left text-sm font-medium text-gray-600">Budget</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Client Name</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Email</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Mobile Number</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Guest</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Booking Time</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Date of Booking</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Status</th>
             </tr>
           </thead>
           <tbody>
-            {tableData.map((tdata, index) => (
-              <tr key={index} className={`border-t ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}>
-                <td className="py-4 px-4">
-                  <div className="flex items-center">
+            {bookings.map((booking, index) => (
+              <tr
+                key={index}
+                className={`border-t ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+              >
+                <td className="py-4 px-4 text-center">
+                  <div className="flex items-center justify-start">
                     <img
-                      src={tdata.avatar}
+                      src={imageData[index % imageData.length].avatar}
                       className="rounded-full w-12 h-12"
                       alt="avatar"
                     />
-                    <div className="ml-3">
-                      <h6 className="text-sm font-medium text-black">{tdata.name}</h6>
-                      <span className="text-xs text-gray-500">{tdata.email}</span>
+                    <div className="ml-3 text-start">
+                      <h6 className="text-sm font-medium text-black">
+                        {booking.name}
+                      </h6>
                     </div>
                   </div>
                 </td>
-                <td className="py-4 px-4 text-sm text-black">{tdata.project}</td>
-                <td className="py-4 px-4">
-                  {tdata.status === "pending" ? (
-                    <span className="p-2 bg-red-500 rounded-full text-white text-xs inline-block"></span>
-                  ) : tdata.status === "holt" ? (
-                    <span className="p-2 bg-yellow-500 rounded-full text-white text-xs inline-block"></span>
-                  ) : (
-                    <span className="p-2 bg-green-500 rounded-full text-white text-xs inline-block"></span>
-                  )}
+                <td className="py-4 px-4 text-sm text-black">{booking.email}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.mobileNumber}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.guestCount}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.bookingTime}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.bookingDate}</td>
+                <td className="py-4 px-4 text-center">
+                  <select
+                    value={booking.status}
+                    onChange={(event) => handleStatusChange(index, event)}
+                    className={`px-3 py-1 rounded-full border text-md ${getStatusClass(booking.status)}`}
+                  >
+                    <option value="pending" className="text-black">Pending</option>
+                    <option value="Cancel" className="text-black">Cancel</option>
+                    <option value="confirmed" className="text-black">Confirmed</option>
+                  </select>
                 </td>
-                <td className="py-4 px-4 text-sm text-black">{tdata.weeks}</td>
-                <td className="py-4 px-4 text-sm text-black">{tdata.budget}</td>
               </tr>
             ))}
           </tbody>

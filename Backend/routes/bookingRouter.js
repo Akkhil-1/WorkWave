@@ -26,5 +26,7 @@ module.exports = router;
 router.get("/getBooking", bookingController.getBusinesses);
 router.post("/update-booking/:id", bookingController.updateBookingDetails);
 router.post("/delete-booking/:id", bookingController.deleteBooking);
+// router.get("/getBookingOfBusiness", bookingController.getBookingsByBusiness);
+
 
 module.exports = router;

@@ -1,158 +1,131 @@
-import React, { useState } from "react";
-import { Card, CardBody, CardTitle, CardSubtitle, Table, Input } from "reactstrap";
+import React, { useEffect, useState } from "react";
 import user1 from "../../assets/images/users/user1.jpg";
 import user2 from "../../assets/images/users/user2.jpg";
 import user3 from "../../assets/images/users/user3.jpg";
 import user4 from "../../assets/images/users/user4.jpg";
 import user5 from "../../assets/images/users/user5.jpg";
+import axios from "axios";
 
-const tableData = [
-  {
-    avatar: user1,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Flexy React",
-    status: "pending",
-    weeks: "35",
-    budget: "95K",
-    date: new Date("2024-11-01"),
-  },
-  {
-    avatar: user2,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Lading pro React",
-    status: "approved",
-    weeks: "35",
-    budget: "95K",
-    date: new Date("2024-11-05"),
-  },
-  {
-    avatar: user3,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Elite React",
-    status: "cancelled",
-    weeks: "35",
-    budget: "95K",
-    date: new Date("2024-11-07"),
-  },
-  {
-    avatar: user4,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Flexy React",
-    status: "pending",
-    weeks: "35",
-    budget: "95K",
-    date: new Date("2024-11-10"),
-  },
-  {
-    avatar: user5,
-    name: "Hanna Gover",
-    email: "hgover@gmail.com",
-    project: "Ample React",
-    status: "approved",
-    weeks: "35",
-    budget: "95K",
-    date: new Date("2024-11-15"),
-  },
+const imageData = [
+  { avatar: user1 },
+  { avatar: user2 },
+  { avatar: user3 },
+  { avatar: user4 },
+  { avatar: user5 },
 ];
 
-const ProjectTables = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState(null); 
-  const [dropdownOpen, setDropdownOpen] = useState({
-    status: false,
-  });
+const ProjectTables = ({ businessId }) => {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3001/business/getBookings`,
+          { withCredentials: true }
+        );
+        console.log(response.data);
+        setBookings(response.data.bookings); // assuming `response.data.bookings` contains the list of bookings
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch bookings");
+        setLoading(false);
+        console.log("Error fetching bookings:", err);
+      }
+    };
+
+    fetchBookings();
+  }, [businessId]); // Re-fetch if businessId changes
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  // Function to handle the change in status
+  const handleStatusChange = (index, event) => {
+    const updatedBookings = [...bookings];
+    updatedBookings[index].status = event.target.value;
+    setBookings(updatedBookings);
   };
 
-  const toggleDropdown = (column) => {
-    setDropdownOpen((prevState) => ({
-      ...prevState,
-      [column]: !prevState[column],
-    }));
+  // Helper function to get the background color based on status
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-400";
+      case "Cancel":
+        return "bg-red-600";
+      case "confirmed":
+        return "bg-green-600";
+      default:
+        return "bg-gray-500";
+    }
   };
-
-  const handleFilterChange = (column, value) => {
-    if (column === "status") setStatusFilter(value);
-  };
-
-  const handleDateChange = (date) => {
-    setDateFilter(date);
-  };
-
-  const filteredData = tableData.filter((row) => {
-    const matchesSearch =
-      row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.email.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesStatus =
-      statusFilter === "All" || row.status === statusFilter;
-
-    const matchesDate =
-      !dateFilter || row.date.toDateString() === dateFilter.toDateString();
-
-    return matchesSearch && matchesStatus && matchesDate;
-  });
 
   return (
-    <div className="mb-8">
-      <Card className="shadow-md">
-        <CardBody>
-          <div className="flex justify-between mb-4">
-            <div>
-              <CardTitle tag="h5" className="text-xl font-bold text-black">Bookings List</CardTitle>
-              <CardSubtitle className="text-sm text-gray-500">Overview of the bookings</CardSubtitle>
-            </div>
-            <Input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-1/3 p-2 rounded-lg border border-gray-300 bg-white text-black"
-            />
-          </div>
+    <div className="overflow-x-auto">
+      <div className="bg-white shadow-lg rounded-lg p-6">
+        <h5 className="text-2xl font-semibold mb-2 text-black text-center">
+          Bookings List
+        </h5>
+        <p className="text-sm text-gray-500 mb-4 text-center">
+          Overview of the bookings
+        </p>
 
-          <Table className="mt-3 align-middle border-separate w-full" responsive>
-            <thead>
-              <tr>
-                <th className="text-left text-gray-700 p-3">Client Name</th>
-                <th className="text-left text-gray-700 p-3">Service</th>
-                <th className="text-left text-gray-700 p-3">Status</th>
-                <th className="text-left text-gray-700 p-3">Time</th>
-                <th className="text-left text-gray-700 p-3">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((tdata, index) => (
-                <tr key={index}>
-                  <td className="p-3 flex items-center space-x-3">
-                    <img src={tdata.avatar} className="rounded-full w-12 h-12" alt="avatar" />
-                    <div>
-                      <h6 className="font-semibold text-black">{tdata.name}</h6>
-                      <span className="text-gray-500">{tdata.email}</span>
-                    </div>
-                  </td>
-                  <td className="p-3 text-black">{tdata.project}</td>
-                  <td className="p-3">
-                    <span
-                      className={`inline-block w-3 h-3 rounded-full ${tdata.status === "pending" ? 'bg-yellow-500' : tdata.status === 'approved' ? 'bg-green-500' : 'bg-red-500'}`}
+        <table className="min-w-full table-auto text-center">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Client Name</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Email</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Mobile Number</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Guest</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Booking Time</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Date of Booking</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {bookings.map((booking, index) => (
+              <tr
+                key={index}
+                className={`border-t ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+              >
+                <td className="py-4 px-4 text-center">
+                  <div className="flex items-center justify-start">
+                    <img
+                      src={imageData[index % imageData.length].avatar}
+                      className="rounded-full w-12 h-12"
+                      alt="avatar"
                     />
-                  </td>
-                  <td className="p-3 text-black">{tdata.weeks}</td>
-                  <td className="p-3 text-black">{tdata.date.toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </CardBody>
-      </Card>
+                    <div className="ml-3 text-start">
+                      <h6 className="text-sm font-medium text-black">
+                        {booking.name}
+                      </h6>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-4 px-4 text-sm text-black">{booking.email}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.mobileNumber}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.guestCount}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.bookingTime}</td>
+                <td className="py-4 px-4 text-sm text-black">{booking.bookingDate}</td>
+                <td className="py-4 px-4 text-center">
+                  <select
+                    value={booking.status}
+                    onChange={(event) => handleStatusChange(index, event)}
+                    className={`px-3 py-1 rounded-full border text-md ${getStatusClass(booking.status)}`}
+                  >
+                    <option value="pending" className="text-black">Pending</option>
+                    <option value="Cancel" className="text-black">Cancel</option>
+                    <option value="confirmed" className="text-black">Confirmed</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

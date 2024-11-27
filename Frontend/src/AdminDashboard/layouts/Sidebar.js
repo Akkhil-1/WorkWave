@@ -33,6 +33,11 @@ const navigation = [
     href: "/dashboard/grid",
     icon: "bi bi-columns",
   },
+  {
+    title:  "Back to Home",
+    href: "/",
+    icon: "bi bi-house-door",
+  }
 ];
 
 const Sidebar = () => {

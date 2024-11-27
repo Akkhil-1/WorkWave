@@ -1,6 +1,7 @@
 const Admin = require("../models/admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const Business = require("../models/business")
 const { sendGreetMail2 } = require("../helper/mairServices2");
 const mongoose = require("mongoose");
 const register = async (req, res) => {
@@ -75,14 +76,16 @@ const login = async (req, res) => {
       return res.status(401).json({ msg: "Incorrect credentials" });
     }
 
-    // Generate JWT token if authentication is successful
+    const business = await Business.findOne({ ownerDetails: admin._id });
+    const businessId = business ? business._id : null;
     const token = jwt.sign(
-      { email: admin.email, _id: admin._id, userRole: admin.role },
+      { email: admin.email, _id: admin._id, userRole: admin.role, businessId },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
       }
     );
+
     res.cookie("token", token, {
       httpOnly: false,
       maxAge: 60 * 60 * 1000,
@@ -100,7 +103,6 @@ const login = async (req, res) => {
     return res.status(500).json({ msg: "An error occurred during login" });
   }
 };
-
 const updateAdmin = async (req, res) => {
   try {
     const id = req.params._id;
