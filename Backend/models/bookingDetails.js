@@ -32,7 +32,7 @@ const bookingschema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Pending",
+      default: ["Pending" , "Confirmed" , "Cancel"],
     },
     customerNotes: {
       type: String,
