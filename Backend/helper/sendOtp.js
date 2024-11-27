@@ -8,7 +8,7 @@ const sendOtp = async (req,res) => {
         service: 'gmail',
         auth:{
             user: 'amber1251.be22@chitkara.edu.in',
-            pass: 'amberdhama@5678'
+            pass: 'dhamaamber@5678'
         }
     })
     const {email} = req.body;

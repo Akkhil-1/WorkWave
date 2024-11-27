@@ -8,7 +8,6 @@ const userauthMiddleware = require("../middlewares/UserAuthMiddleware");
 
 const extractBusinessId = (req, res, next) => {
   req.businessId = req.params.businessId;
-   // Assuming you're passing the businessId in the URL
   console.log(req.businessId);
   
   next();

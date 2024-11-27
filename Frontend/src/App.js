@@ -74,6 +74,7 @@ function App() {
           <Route path="/user-dashboard" element={<UserDashBoard />} />
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/AboutUs/user" element={<AboutUsUser/>}/>
+          <Route path="/user-forgot-password" element={<ForgotPassword />} />
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (
@@ -105,7 +106,6 @@ function App() {
               path="/business/service/bookingform/:id/:serviceId"
               element={<BookingForm />}
             />
-            <Route path="/user-forgot-password" element={<ForgotPassword />} />
           </Route>
           {/* Admin Protected Routes */}
           <Route element={<AdminProtectedRoute />}>

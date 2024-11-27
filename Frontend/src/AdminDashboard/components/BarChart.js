@@ -4,11 +4,9 @@ const SalesBarChart = () => {
   const chartoptions = {
     series: [
       {
-        name: "idk",
         data: [0, 31, 40, 28, 51, 42, 109, 100],
       },
       {
-        name: "Oneplue 9",
         data: [0, 11, 32, 45, 32, 34, 52, 41],
       },
     ],

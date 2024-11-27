@@ -4,8 +4,8 @@ import Chart from "react-apexcharts";
 const SalesChart = () => {
   const chartOptions = {
     series: [
-      { name: "idk", data: [0, 31, 40, 28, 51, 42, 109, 100] },
-      { name: "Oneplue 9", data: [0, 11, 32, 45, 32, 34, 52, 41] },
+      {data: [0, 31, 40, 28, 51, 42, 109, 100] },
+      { data: [0, 11, 32, 45, 32, 34, 52, 41] },
     ],
     options: {
       chart: { type: "area" },

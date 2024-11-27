@@ -1,34 +1,34 @@
-import React, { useState } from 'react';
-import { Clock } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AddBusinessDetails = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    businessName: '',
-    address: '',
-    state: '',
-    city: '',
-    pincode: '',
-    landmark: 'Near the location',
-    businessType: '',
-    openingTime: '',
-    closingTime: '',
-    offDays: '',
-    contactEmail: '',
-    contactPhone: '',
+    businessName: "",
+    address: "",
+    state: "",
+    city: "",
+    pincode: "",
+    landmark: "Near the location",
+    businessType: "",
+    openingTime: "",
+    closingTime: "",
+    offDays: "",
+    contactEmail: "",
+    contactPhone: "",
     businessLogo: null,
     businessImages: [],
   });
 
   const handleChange = (e) => {
     const { name, type, files, value } = e.target;
-    if (type === 'file') {
-      if (name === 'businessImages') {
+    if (type === "file") {
+      if (name === "businessImages") {
         setFormData((prev) => ({
           ...prev,
           businessImages: [...prev.businessImages, ...files],
@@ -57,99 +57,64 @@ const AddBusinessDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    // Check if businessLogo and businessImages are properly set
+    if (!formData.businessLogo) {
+      toast.error("Please upload a business logo");
+      return;
+    }
+
+    if (formData.businessImages.length === 0) {
+      toast.error("Please upload at least one business image");
+      return;
+    }
+
     // Create FormData for file upload
     const formDataToSubmit = new FormData();
-    
+
     // Append all text fields
     Object.keys(formData).forEach((key) => {
-      if (key !== 'businessLogo' && key !== 'businessImages') {
+      if (key !== "businessLogo" && key !== "businessImages") {
         formDataToSubmit.append(key, formData[key]);
       }
     });
 
     // Append logo file
     if (formData.businessLogo) {
-      formDataToSubmit.append('businessLogo', formData.businessLogo);
+      formDataToSubmit.append("businessLogo", formData.businessLogo);
     }
 
     // Append multiple image files
     if (formData.businessImages.length > 0) {
       formData.businessImages.forEach((file) => {
-        formDataToSubmit.append('businessImages', file);
+        formDataToSubmit.append("businessImages", file);
       });
     }
 
     try {
       const response = await axios.post(
-        'http://localhost:3001/business/addbusiness',
+        "http://localhost:3001/business/addbusiness",
         formDataToSubmit,
         {
           withCredentials: true,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      
       console.log(response);
-      toast.success('Business Added successfully');
-      navigate('/');
+      toast.success("Business Added successfully");
+      navigate("/");
     } catch (error) {
-      console.error('Error submitting business details:', error);
-      toast.error(error.response?.data?.message || 'Please Check the Details Carefully');
+      console.error("Error submitting business details:", error);
+      toast.error(
+        error.response?.data?.message || "Please Check the Details Carefully"
+      );
     }
   };
 
-  // Refined Animation Variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0, scale: 0.95 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 15,
-      },
-    },
-    hover: {
-      scale: 1.02,
-      transition: {
-        type: 'spring',
-        stiffness: 700,
-        damping: 8,
-        duration: 0.1,
-      },
-    },
-  };
-
-  const inputVariants = {
-    initial: {
-      borderColor: 'rgb(209, 213, 219)', // gray-300
-      boxShadow: '0 0 0 0px rgba(124, 58, 237, 0)',
-    },
-    focus: {
-      borderColor: 'rgb(124, 58, 237)', // purple-600
-      boxShadow: '0 0 0 4px rgba(124, 58, 237, 0.2)',
-    },
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Left side - Background Image Section */}
+    <div className="min-h-screen bg-gray-100 flex text-black">
       <motion.div
         initial={{ opacity: 0, scale: 1.1 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -160,29 +125,6 @@ const AddBusinessDetails = () => {
         }}
       >
         <div className="absolute inset-0 bg-purple-950 opacity-60"></div>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="absolute inset-0 flex flex-col justify-center items-center text-white text-center p-8"
-        >
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="text-4xl font-bold mb-4"
-          >
-            Welcome to Business Registration
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            className="text-xl opacity-80"
-          >
-            Provide your business details and get started with your digital presence
-          </motion.p>
-        </motion.div>
       </motion.div>
 
       {/* Right side - Form Section */}
@@ -205,134 +147,91 @@ const AddBusinessDetails = () => {
 
             <motion.form
               onSubmit={handleSubmit}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
               className="space-y-6"
             >
+              {/* Form fields go here */}
               {[
-                { label: 'Business Name', name: 'businessName', type: 'text' },
-                { label: 'Business Type', name: 'businessType', type: 'text' },
-                { label: 'State', name: 'state', type: 'text' },
-                { label: 'City', name: 'city', type: 'text' },
-                { label: 'Pincode', name: 'pincode', type: 'text' },
-                { label: 'Full Address', name: 'address', type: 'textarea' },
-                { label: 'Opening Time', name: 'openingTime', type: 'time' },
-                { label: 'Closing Time', name: 'closingTime', type: 'time' },
-                { label: 'Off Days', name: 'offDays', type: 'text' },
-                { label: 'Contact Email', name: 'contactEmail', type: 'email' },
-                { label: 'Contact Phone', name: 'contactPhone', type: 'tel' },
+                { label: "Business Name", name: "businessName", type: "text" },
+                { label: "Business Type", name: "businessType", type: "text" },
+                { label: "State", name: "state", type: "text" },
+                { label: "City", name: "city", type: "text" },
+                { label: "Pincode", name: "pincode", type: "text" },
+                { label: "Full Address", name: "address", type: "textarea" },
+                { label: "Opening Time", name: "openingTime", type: "time" },
+                { label: "Closing Time", name: "closingTime", type: "time" },
+                { label: "Off Days", name: "offDays", type: "text" },
+                { label: "Contact Email", name: "contactEmail", type: "email" },
+                { label: "Contact Phone", name: "contactPhone", type: "tel" },
               ].map((field) => (
-                <motion.div
-                  key={field.name}
-                  variants={itemVariants}
-                  whileHover="hover"
-                  className="space-y-2"
-                >
-                  <motion.label
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="block text-sm font-medium text-black"
-                  >
+                <div key={field.name} className="space-y-2">
+                  <label className="block text-sm font-medium text-black">
                     {field.label} <span className="text-red-500">*</span>
-                  </motion.label>
+                  </label>
 
-                  <AnimatePresence>
-                    {field.type === 'textarea' ? (
-                      <motion.textarea
+                  {field.type === "textarea" ? (
+                    <textarea
+                      name={field.name}
+                      value={formData[field.name]}
+                      onChange={handleChange}
+                      className="w-full p-3 text-sm bg-white rounded-lg border"
+                      placeholder={`Enter ${field.label.toLowerCase()}`}
+                      rows="3"
+                      required
+                    />
+                  ) : field.type === "time" ? (
+                    <div className="relative">
+                      <Clock className="absolute left-3 top-3.5 h-4 w-4 text-black" />
+                      <input
+                        type="time"
                         name={field.name}
                         value={formData[field.name]}
                         onChange={handleChange}
-                        variants={inputVariants}
-                        initial="initial"
-                        whileFocus="focus"
-                        whileHover="hover"
-                        className="w-full p-3 text-sm bg-white rounded-lg border transition-all duration-300 ease-in-out text-black"
-                        placeholder={`Enter ${field.label.toLowerCase()}`}
-                        rows="3"
+                        className="w-full pl-10 p-3 text-sm bg-white rounded-lg border"
                         required
                       />
-                    ) : field.type === 'time' ? (
-                      <div className="relative">
-                        <Clock className="absolute left-3 top-3.5 h-4 w-4 text-black" />
-                        <motion.input
-                          type="time"
-                          name={field.name}
-                          value={formData[field.name]}
-                          onChange={handleChange}
-                          variants={inputVariants}
-                          initial="initial"
-                          whileFocus="focus"
-                          whileHover="hover"
-                          className="w-full pl-10 p-3 text-sm bg-white rounded-lg border transition-all duration-300 ease-in-out text-black"
-                          required
-                        />
-                      </div>
-                    ) : (
-                      <motion.input
-                        type={field.type}
-                        name={field.name}
-                        value={formData[field.name]}
-                        onChange={handleChange}
-                        variants={inputVariants}
-                        initial="initial"
-                        whileFocus="focus"
-                        whileHover="hover"
-                        className="w-full p-3 text-sm bg-white rounded-lg border transition-all duration-300 ease-in-out text-black"
-                        placeholder={`Enter ${field.label.toLowerCase()}`}
-                        required
-                      />
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                    </div>
+                  ) : (
+                    <input
+                      type={field.type}
+                      name={field.name}
+                      value={formData[field.name]}
+                      onChange={handleChange}
+                      className="w-full p-3 text-sm bg-white rounded-lg border"
+                      placeholder={`Enter ${field.label.toLowerCase()}`}
+                      required
+                    />
+                  )}
+                </div>
               ))}
 
-              <motion.div variants={itemVariants} whileHover="hover">
-                <motion.label
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="block text-sm font-medium text-black"
-                >
+              <div>
+                <label className="block text-sm font-medium text-black">
                   Business Logo <span className="text-red-500">*</span>
-                </motion.label>
-
-                <motion.input
+                </label>
+                <input
                   type="file"
                   name="businessLogo"
                   accept="image/*"
                   onChange={handleChange}
-                  variants={inputVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  whileFocus="focus"
-                  className="w-full file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-none file:text-sm file:font-semibold file:bg-purple-700 file:text-white file:transition-all file:duration-300 file:ease-in-out hover:file:bg-purple-800 text-sm text-gray-900"
+                  className="w-full file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-none file:text-sm file:font-semibold file:bg-purple-700 file:text-white"
                   required
                 />
-              </motion.div>
+              </div>
 
-              <motion.div variants={itemVariants} whileHover="hover">
-                <motion.label
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="block text-sm font-medium text-black"
-                >
+              <div>
+                <label className="block text-sm font-medium text-black">
                   Business Images <span className="text-red-500">*</span>
-                </motion.label>
-
-                <motion.input
+                </label>
+                <input
                   type="file"
                   name="businessImages"
                   multiple
                   accept="image/*"
                   onChange={handleChange}
-                  variants={inputVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  whileFocus="focus"
-                  className="w-full file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-none file:text-sm file:font-semibold file:bg-purple-700 file:text-white file:transition-all file:duration-300 file:ease-in-out hover:file:bg-purple-800 text-sm text-gray-900"
+                  className="w-full file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-none file:text-sm file:font-semibold file:bg-purple-700 file:text-white"
                   required
                 />
-                
+
                 {/* Show added images */}
                 {formData.businessImages.length > 0 && (
                   <div className="mt-4 flex gap-4">
@@ -354,16 +253,16 @@ const AddBusinessDetails = () => {
                     ))}
                   </div>
                 )}
-              </motion.div>
+              </div>
 
-              <motion.div variants={itemVariants} whileHover="hover" className="flex justify-center">
-                <motion.button
+              <div className="flex justify-center">
+                <button
                   type="submit"
-                  className="bg-purple-700 hover:bg-purple-800 text-white text-sm font-semibold py-3 px-5 rounded-lg transition-all duration-300 ease-in-out"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
                 >
                   Submit
-                </motion.button>
-              </motion.div>
+                </button>
+              </div>
             </motion.form>
           </div>
         </div>

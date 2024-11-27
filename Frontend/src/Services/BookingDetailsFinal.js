@@ -165,7 +165,7 @@ const FinalBusinessDetails = () => {
                     Description:{" "}
                     {service.description || "No description provided"}
                   </p>
-                  <p className="mb-2 font-bold">Price: ${service.price}</p>
+                  <p className="mb-2 font-bold">Price: ₹{service.price}</p>
                   <NavLink
                     to={`/business/service/bookingform/${id}/${service._id}`}
                   >

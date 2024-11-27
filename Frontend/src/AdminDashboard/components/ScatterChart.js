@@ -4,13 +4,13 @@ const SalesScatterChart = () => {
   const chartoptions = {
     series: [
       {
-        name: "Product A",
+        // name: "Product A",
         data: [
           [16, 29], [20, 45], [30, 56], [40, 70], [60, 91], [70, 120], [80, 150], [90, 200],
         ],
       },
       {
-        name: "Product B",
+        // name: "Product B",
         data: [
           [18, 22], [24, 30], [33, 44], [41, 60], [55, 85], [67, 110], [75, 150], [85, 190],
         ],

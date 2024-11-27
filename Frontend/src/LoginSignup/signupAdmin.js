@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import HeroSection from "./HeroSectionUser";
-import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
+import HeroSection from "./HeroSection";
+import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify"; // Import Toast and ToastContainerWrapper
 import toast from "react-hot-toast";
 import homeIcon from "./icons8-home-24.png";
 
-const RegisterFormUser = () => {
+const RegisterForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,64 +18,71 @@ const RegisterFormUser = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-
-  // Validate Phone Number
   const validatePhoneNumber = (phone) => {
     const phonePattern = /^[0-9]{10}$/;
     return phonePattern.test(phone);
   };
 
-  // Updated Email Validation
+  // Validate email format using regex
   const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._-]*@[a-zA-Z][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);
   };
 
-  // Validate Password Length
+  // Validate password length (6 characters minimum)
   const validatePasswordLength = (password) => {
     return password.length >= 6;
   };
 
-  // Handle Form Submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate all fields
     const formErrors = {};
 
     if (!formData.name) formErrors.name = "Name is required.";
     if (!formData.email) formErrors.email = "Email is required.";
-    else if (!validateEmail(formData.email)) formErrors.email = "Invalid email format.";
-    if (!formData.mobile_number) formErrors.mobile_number = "Mobile number is required.";
-    else if (!validatePhoneNumber(formData.mobile_number)) formErrors.mobile_number = "Mobile number must be 10 digits.";
+    else if (!validateEmail(formData.email))
+      formErrors.email = "Invalid email format.";
+    if (!formData.mobile_number)
+      formErrors.mobile_number = "Mobile number is required.";
+    else if (!validatePhoneNumber(formData.mobile_number))
+      formErrors.mobile_number = "Mobile number must be 10 digits.";
     if (!formData.password) formErrors.password = "Password is required.";
-    else if (!validatePasswordLength(formData.password)) formErrors.password = "Password must be at least 6 characters.";
-    if (formData.password !== formData.confirm_password) formErrors.confirm_password = "Passwords do not match.";
+    else if (!validatePasswordLength(formData.password))
+      formErrors.password = "Password must be at least 6 characters.";
+    if (formData.password !== formData.confirm_password)
+      formErrors.confirm_password = "Passwords do not match.";
     if (!formData.gender) formErrors.gender = "Gender is required.";
     if (!formData.address) formErrors.address = "Address is required.";
 
+    // Set errors and stop form submission if there are validation errors
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
 
+    // If no errors, proceed with the API call
     try {
       const respo = await axios.post(
-        "http://localhost:3001/user/signup",
+        "http://localhost:3001/admin/signup",
         formData,
         { withCredentials: true, credentials: "include" }
       );
+      console.log(respo);
       toast.success("Registered Successfully");
       setTimeout(() => {
-        navigate("/user-login");
+        navigate("/admin-login");
       }, 1000);
     } catch (e) {
-      toast.error("User already exists.");
+      console.log(e);
+      toast.error("Admin already exists.");
     }
   };
 
+  // Handle change for form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -83,21 +90,62 @@ const RegisterFormUser = () => {
       [name]: value,
     }));
 
-    if (errors[name]) {
-      setErrors((prevErrors) => {
-        const newErrors = { ...prevErrors };
-        delete newErrors[name];
-        return newErrors;
-      });
+    // Clear error on password or confirm password change without triggering the mismatch validation
+    if (name === "password" || name === "confirm_password") {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        confirm_password: "", // Clear confirm_password mismatch error on any change
+      }));
     }
   };
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const formErrors = { ...errors };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+    switch (name) {
+      case "name":
+        if (!value) formErrors.name = "Name is required.";
+        else delete formErrors.name;
+        break;
+      case "email":
+        if (!value) formErrors.email = "Email is required.";
+        else if (!validateEmail(value))
+          formErrors.email = "Invalid email format.";
+        else delete formErrors.email;
+        break;
+      case "mobile_number":
+        if (!value) formErrors.mobile_number = "Mobile number is required.";
+        else if (!validatePhoneNumber(value))
+          formErrors.mobile_number = "Mobile number must be 10 digits.";
+        else delete formErrors.mobile_number;
+        break;
+      case "password":
+        if (!value) formErrors.password = "Password is required.";
+        else if (!validatePasswordLength(value))
+          formErrors.password = "Password must be at least 6 characters.";
+        else delete formErrors.password;
+        break;
+      case "confirm_password":
+        // Only check password mismatch when the user has finished typing and is moving to the next field
+        if (formData.password && value && formData.password !== value) {
+          formErrors.confirm_password = "Passwords do not match.";
+        } else {
+          delete formErrors.confirm_password; // Clear error if passwords match or user clears confirm_password field
+        }
+        break;
+      case "gender":
+        if (!value) formErrors.gender = "Gender is required.";
+        else delete formErrors.gender;
+        break;
+      case "address":
+        if (!value) formErrors.address = "Address is required.";
+        else delete formErrors.address;
+        break;
+      default:
+        break;
+    }
 
-  const toggleShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
+    setErrors(formErrors);
   };
 
   return (
@@ -105,8 +153,13 @@ const RegisterFormUser = () => {
       <HeroSection />
       <div className="w-1/2 flex items-center justify-center">
         <div className="w-full max-w-md p-8">
-          <NavLink to={"/user-login"} className="text-gray-600 mb-8">
-            <div style={{ display: "flex", height: "auto" }}>
+          <NavLink to={"/admin-login"} className="text-gray-600 mb-8">
+            <div
+              style={{
+                display: "flex",
+                height: "auto",
+              }}
+            >
               <img
                 src={homeIcon}
                 alt="Home Icon"
@@ -126,11 +179,15 @@ const RegisterFormUser = () => {
                 name="name"
                 id="name"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.name}
-                className={`mt-1 block w-full px-3 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
                 placeholder="Name"
               />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
+              )}
             </div>
 
             {/* Email Field */}
@@ -140,11 +197,15 @@ const RegisterFormUser = () => {
                 name="email"
                 id="email"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.email}
-                className={`mt-1 block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
                 placeholder="Email"
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
             </div>
 
             {/* Mobile Number Field */}
@@ -154,106 +215,117 @@ const RegisterFormUser = () => {
                 name="mobile_number"
                 id="mobile_number"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.mobile_number}
-                className={`mt-1 block w-full px-3 py-2 border ${errors.mobile_number ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
                 placeholder="Mobile Number"
               />
-              {errors.mobile_number && <p className="text-red-500 text-sm">{errors.mobile_number}</p>}
+              {errors.mobile_number && (
+                <p className="text-red-500 text-sm">{errors.mobile_number}</p>
+              )}
             </div>
 
-            {/* Password Field with Show Icon */}
-            <div className="mb-4 relative">
+            {/* Password Field */}
+            <div className="mb-4">
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 name="password"
                 id="password"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.password}
-                className={`mt-1 block w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
                 placeholder="Password"
               />
-              <div
-                onClick={toggleShowPassword}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              >
-                {showPassword ? (
-                  <span className="text-gray-500">👁️</span>
-                ) : (
-                  <span className="text-gray-500">👁️‍🗨️</span>
-                )}
-              </div>
-              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
             </div>
 
-            {/* Confirm Password Field with Show Icon */}
-            <div className="mb-4 relative">
+            {/* Confirm Password Field */}
+            <div className="mb-4">
               <input
-                type={showConfirmPassword ? "text" : "password"}
+                type="password"
                 name="confirm_password"
                 id="confirm_password"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.confirm_password}
-                className={`mt-1 block w-full px-3 py-2 border ${errors.confirm_password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
                 placeholder="Confirm Password"
               />
-              <div
-                onClick={toggleShowConfirmPassword}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              >
-                {showConfirmPassword ? (
-                  <span className="text-gray-500">👁️</span>
-                ) : (
-                  <span className="text-gray-500">👁️‍🗨️</span>
-                )}
-              </div>
-              {errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password}</p>}
+              {errors.confirm_password && (
+                <p className="text-red-500 text-sm">
+                  {errors.confirm_password}
+                </p>
+              )}
             </div>
 
-            {/* Gender Field */}
+            {/* Gender Field (Dropdown) */}
             <div className="mb-4">
               <select
                 name="gender"
                 id="gender"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.gender}
-                className={`mt-1 block w-full px-3 py-2 border ${errors.gender ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
               >
                 <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
               </select>
-              {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
+              {errors.gender && (
+                <p className="text-red-500 text-sm">{errors.gender}</p>
+              )}
             </div>
 
             {/* Address Field */}
             <div className="mb-4">
-              <textarea
+              <input
+                type="text"
                 name="address"
                 id="address"
                 onChange={handleChange}
+                onBlur={handleBlur} // Trigger validation on blur
                 value={formData.address}
-                rows="4"
-                className={`mt-1 block w-full px-3 py-2 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                required
                 placeholder="Address"
               />
-              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address}</p>
+              )}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-indigo-500 text-white py-2 rounded-md shadow-md focus:outline-none hover:bg-indigo-600"
+              className="w-full bg-indigo-600 text-white py-2 rounded-md"
             >
               Register
             </button>
           </form>
 
-          <ToastContainerWrapper />
+          <p className="mt-6 text-center text-gray-600 text-sm">
+            Already have an account?
+            <NavLink
+              to="/admin-login"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
+              Login
+            </NavLink>
+          </p>
         </div>
       </div>
+      <ToastContainerWrapper />
     </div>
   );
 };
 
-export default RegisterFormUser;
+export default RegisterForm;

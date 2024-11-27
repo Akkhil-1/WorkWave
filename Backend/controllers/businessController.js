@@ -42,7 +42,7 @@ const register = async (req, res) => {
 
       res.json({
         msg: "Business added successfully",
-        data: business,
+        // data: business,
       });
     });
   } catch (err) {

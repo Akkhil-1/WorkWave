@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
 const Business = require("../models/business");
-const Services = require("../models/business");
+const Services = require("../models/services");
 const { sendBookingMail } = require("../helper/bookingMail");
 const jwt = require("jsonwebtoken");
 
@@ -39,6 +39,7 @@ const addBooking = async (req, res) => {
     }
     if (serviceId) {
       const serviceDetails = await Services.findById(serviceId);
+      console.log(serviceDetails);
       if (!serviceDetails) {
         return res.status(404).json({ msg: "Service not found" });
       }

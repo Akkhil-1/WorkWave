@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import backgroundImage from "../assets/roadmap/bookingFormbkg.jpg";
 
 const BookingForm = () => {
   const { id, serviceId } = useParams(); // Match 'id' to useParams()
-
+  console.log(id);
+  console.log(serviceId);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,6 +16,7 @@ const BookingForm = () => {
     bookingDate: "",
     bookingTime: "",
     customerNotes: "",
+    serviceId: serviceId,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -42,10 +44,12 @@ const BookingForm = () => {
             "Content-Type": "application/json",
           },
           credentials: "include", // Ensure credentials (cookies) are included in the request
-          body: JSON.stringify({ ...formData, serviceId }),
+          body: JSON.stringify({ ...formData}),
         }
       );
       console.log("1");
+      alert("Booking done!");
+      // Navigate("/user-landingpage")
 
       console.log(response);
       if (response.ok) {
