@@ -20,8 +20,7 @@ import {
   Outlet,
 } from "react-router-dom";
 import Cookies from "js-cookie";
-import AdmindashRoutes from "./AdminDashboard/routes/Router"; // Import routes for Admin Dashboard
-import FullLayout from "./AdminDashboard/layouts/FullLayout";
+import AdmindashRoutes from "./AdminDashboard/routes/Router";
 import UpdateForm from "./BusinessForm/UpdateForm";
 import UserUpdateForm from "./BusinessForm/UserUpdateForm";
 import UserDashBoard from "./UserLandingPage/components/Dashboard";
@@ -29,7 +28,6 @@ import FinalBusinessDetails from "./Services/BookingDetailsFinal";
 import AboutUs from "./AboutUs/AboutUs";
 import AboutUsUser from "./AboutUs/AboutUsUser";
 
-// Protected Route for user
 const ProtectedRoute = ({ allowedRoles }) => {
   const userRole = Cookies.get("role");
   if (!userRole || !allowedRoles.includes(userRole)) {
@@ -38,7 +36,6 @@ const ProtectedRoute = ({ allowedRoles }) => {
   return <Outlet />;
 };
 
-// Protected Route for Admin
 const AdminProtectedRoute = () => {
   const userRole = Cookies.get("role");
   if (userRole !== "admin") {
@@ -69,11 +66,8 @@ function App() {
           <Route path="/admin-signup" element={<RegisterForm />} />
           <Route path="/user-login" element={<LoginFormUser />} />
           <Route path="/user-signup" element={<RegisterFormUser />} />
-          <Route path="/update-form" element={<UpdateForm />} />
-          <Route path="/user-update-form" element={<UserUpdateForm />} />
-          <Route path="/user-dashboard" element={<UserDashBoard />} />
           <Route path="/AboutUs" element={<AboutUs />} />
-          <Route path="/AboutUs/user" element={<AboutUsUser/>}/>
+          <Route path="/AboutUs/user" element={<AboutUsUser />} />
           <Route path="/user-forgot-password" element={<ForgotPassword />} />
 
           <Route element={<AdminProtectedRoute />}>
@@ -90,7 +84,6 @@ function App() {
               </Route>
             ))}
           </Route>
-          {/* <Route path="/abc" element={<FullLayout/>}/> */}
 
           {/* User Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
@@ -106,10 +99,13 @@ function App() {
               path="/business/service/bookingform/:id/:serviceId"
               element={<BookingForm />}
             />
+            <Route path="/user-update-form" element={<UserUpdateForm />} />
+            <Route path="/user-dashboard" element={<UserDashBoard />} />
           </Route>
           {/* Admin Protected Routes */}
           <Route element={<AdminProtectedRoute />}>
             <Route path="/business-add-business" element={<BusinessForm />} />
+            <Route path="/update-form" element={<UpdateForm />} />
           </Route>
 
           <Route path="/unauthorized" element={<UnauthorizedPage />} />

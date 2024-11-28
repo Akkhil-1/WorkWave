@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import backgroundImage from "../assets/roadmap/bookingFormbkg.jpg";
 
 const BookingForm = () => {
-  const { id, serviceId } = useParams(); // Match 'id' to useParams()
-  console.log(id);
-  console.log(serviceId);
+  const { id, serviceId } = useParams();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,9 +18,20 @@ const BookingForm = () => {
     serviceId: serviceId,
   });
 
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  // Define focused state if necessary for input fields
-  const [focused, setFocused] = useState(false); // This is needed for managing input focus
+
+  // Validation functions
+  const validateName = (name) => /^[a-zA-Z\s]+$/.test(name); // No numbers or special characters
+  const validateEmail = (email) =>
+    /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/.test(email); // Specific email domains
+  const validatePhoneNumber = (number) => /^[0-9]{10}$/.test(number); // Exactly 10 digits
+
+  const validateBookingDate = (date) => {
+    const today = new Date();
+    const selectedDate = new Date(date);
+    return selectedDate > today; // Ensure the booking date is in the future
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,12 +39,51 @@ const BookingForm = () => {
       ...prevState,
       [name]: value,
     }));
+
+    // Clear specific field errors on change
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
+    // Validate fields
+    const formErrors = {};
+    if (!formData.name) {
+      formErrors.name = "Name is required.";
+    } else if (!validateName(formData.name)) {
+      formErrors.name = "Name cannot contain numbers or special characters.";
+    }
+
+    if (!formData.email) {
+      formErrors.email = "Email is required.";
+    } else if (!validateEmail(formData.email)) {
+      formErrors.email = "Invalid email format";
+    }
+
+    if (!formData.mobileNumber) {
+      formErrors.mobileNumber = "Mobile number is required.";
+    } else if (!validatePhoneNumber(formData.mobileNumber)) {
+      formErrors.mobileNumber = "Mobile number must be exactly 10 digits.";
+    }
+
+    if (!formData.bookingDate) {
+      formErrors.bookingDate = "Booking date is required.";
+    } else if (!validateBookingDate(formData.bookingDate)) {
+      formErrors.bookingDate = "Booking date must be at least one day after today.";
+    }
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      setIsLoading(false);
+      return;
+    }
+
+    // Submit form if no validation errors
     try {
       const response = await fetch(
         `http://localhost:3001/booking/addbooking/${id}`,
@@ -43,17 +92,14 @@ const BookingForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // Ensure credentials (cookies) are included in the request
-          body: JSON.stringify({ ...formData}),
+          credentials: "include",
+          body: JSON.stringify({ ...formData }),
         }
       );
-      console.log("1");
-      alert("Booking done!");
-      // Navigate("/user-landingpage")
 
-      console.log(response);
       if (response.ok) {
         console.log("Booking submitted successfully");
+        alert("Booking done!");
         setFormData({
           name: "",
           email: "",
@@ -66,15 +112,8 @@ const BookingForm = () => {
         });
       } else {
         const errorData = await response.text();
-        try {
-          const errorJson = JSON.parse(errorData);
-          console.error("Failed to submit booking", errorJson);
-        } catch (jsonError) {
-          console.error(
-            "Failed to submit booking. Non-JSON response:",
-            errorData
-          );
-        }
+        const errorJson = JSON.parse(errorData);
+        console.error("Failed to submit booking", errorJson);
       }
     } catch (error) {
       console.error("Error submitting booking:", error);
@@ -135,13 +174,13 @@ const BookingForm = () => {
               Booking Details
             </motion.h2>
 
-            {[
-              { label: "Name", name: "name", type: "text" },
-              { label: "Email", name: "email", type: "email" },
+            {[ 
+              { label: "Name", name: "name", type: "text", error: errors.name },
+              { label: "Email", name: "email", type: "email", error: errors.email },
               { label: "Date of Birth", name: "dateOfBirth", type: "date" },
-              { label: "Mobile Number", name: "mobileNumber", type: "tel" },
+              { label: "Mobile Number", name: "mobileNumber", type: "tel", error: errors.mobileNumber },
               { label: "Number of Guests", name: "guestCount", type: "number" },
-              { label: "Booking Date", name: "bookingDate", type: "date" },
+              { label: "Booking Date", name: "bookingDate", type: "date", error: errors.bookingDate },
               { label: "Booking Time", name: "bookingTime", type: "time" },
             ].map((field) => (
               <motion.div
@@ -157,23 +196,14 @@ const BookingForm = () => {
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleChange}
-                  onFocus={() => setFocused(true)}
-                  onBlur={() => setFocused(false)} // Set focus to false when input is blurred
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300
-                            focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                            transition-all duration-200 ease-in-out
-                            hover:border-violet-400"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all duration-200 ease-in-out hover:border-violet-400"
                   required
                 />
+                {field.error && <p className="text-red-500 text-sm">{field.error}</p>}
               </motion.div>
             ))}
 
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-              }}
-            >
+            <motion.div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Notes
               </label>
@@ -182,10 +212,7 @@ const BookingForm = () => {
                 value={formData.customerNotes}
                 onChange={handleChange}
                 rows="3"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300
-                           focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                           transition-all duration-200 ease-in-out
-                           hover:border-violet-400"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all duration-200 ease-in-out hover:border-violet-400"
               ></textarea>
             </motion.div>
 
@@ -193,42 +220,14 @@ const BookingForm = () => {
               type="submit"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`w-full py-3 rounded-lg text-white font-medium
-                         transition-all duration-200 ease-in-out
-                         ${
-                           isLoading
-                             ? "bg-violet-400 cursor-not-allowed"
-                             : "bg-violet-600 hover:bg-violet-700"
-                         }
-                         shadow-lg hover:shadow-violet-500/50`}
+              className={`w-full py-3 rounded-lg text-white font-medium transition-all duration-200 ease-in-out ${
+                isLoading
+                  ? "bg-violet-400 cursor-not-allowed"
+                  : "bg-violet-600 hover:bg-violet-700"
+              } shadow-lg hover:shadow-xl`}
               disabled={isLoading}
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin h-5 w-5 mr-3"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Processing...
-                </div>
-              ) : (
-                "Book Now"
-              )}
+              {isLoading ? "Booking..." : "Confirm Booking"}
             </motion.button>
           </motion.form>
         </div>

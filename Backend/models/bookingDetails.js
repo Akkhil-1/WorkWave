@@ -32,19 +32,20 @@ const bookingschema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: ["Pending" , "Confirmed" , "Cancel"],
+      enum: ["Pending", "Confirmed", "Cancel"],
+      default: "Pending",
     },
     customerNotes: {
       type: String,
       default: "",
     },
-    business: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Business' 
+    business: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
     },
-    service: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Services' 
+    service: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Services",
     },
   },
   { timestamps: true }

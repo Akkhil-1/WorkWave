@@ -29,10 +29,12 @@ const RegisterForm = () => {
 
   // Advanced email validation regex
   const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@([a-zA-Z0-9.-]+\.)*((edu\.in))$/;
+    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
     return emailPattern.test(email);
   };
-
+  
+  
+  
   // Password validation regex
   const validatePassword = (password) => {
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -65,7 +67,7 @@ const RegisterForm = () => {
     if (!formData.email) {
       formErrors.email = "Email is required.";
     } else if (!validateEmail(formData.email)) {
-      formErrors.email = "Invalid email format. Use .edu.in domain and don't start with a number.";
+      formErrors.email = "Invalid email format";
     }
 
     if (!formData.mobile_number) {
