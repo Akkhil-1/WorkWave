@@ -21,6 +21,7 @@ import sliders04 from "./sliders-04.svg";
 import loading from "./loading.png";
 import background from "./background.jpg";
 import dashboard from "./dashboard.svg";
+import dashh from './dashh.png'
 
 import curve from "./hero/curve.png";
 import robot from "./hero/robot.jpg";
@@ -73,6 +74,7 @@ import telegram from "./socials/telegram.svg";
 import twitter from "./socials/twitter.svg";
 
 export {
+  dashh,
   dashboard,
   workwave,
   check,

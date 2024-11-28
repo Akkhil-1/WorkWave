@@ -29,9 +29,10 @@ const RegisterForm = () => {
 
   // Advanced email validation regex
   const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
+    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
     return emailPattern.test(email);
   };
+  
   
   
   
@@ -89,7 +90,11 @@ const RegisterForm = () => {
     }
 
     if (!formData.gender) formErrors.gender = "Gender is required.";
-    if (!formData.address) formErrors.address = "Address is required.";
+    if (!formData.address) {
+      formErrors.address = "Address is required.";
+    } else if (formData.address.length < 5) {
+      formErrors.address = "Address must be at least 5 characters long.";
+    }
 
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -107,7 +112,7 @@ const RegisterForm = () => {
         navigate("/admin-login");
       }, 1000);
     } catch (e) {
-      toast.error("Admin already exists.");
+      toast.error("Error registering.");
     }
   };
 

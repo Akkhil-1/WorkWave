@@ -1,4 +1,4 @@
-import { curve, heroBackground, dashboard } from "../assets";
+import { curve, heroBackground, dashboard , dashh} from "../assets";
 import Section from "./Section";
 import { BackgroundCircles, BottomLine, Gradient } from "./design/Hero";
 import { heroIcons } from "./constants";
@@ -10,6 +10,7 @@ import CompanyLogos from "./CompanyLogos";
 import { FaRegUser } from "react-icons/fa";
 import { FaChalkboardUser } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
+// import {dashh} from '../assets/dashh.png'
 
 const Hero = () => {
   const parallaxRef = useRef(null);
@@ -79,7 +80,7 @@ const Hero = () => {
 
               <div className="aspect-[33/40] rounded-b-[0.9rem] overflow-hidden md:aspect-[688/490] lg:aspect-[1024/490]">
                 <img
-                  src={dashboard}
+                  src={dashh}
                   className="w-full scale-[1.7] translate-y-[8%] md:scale-[1] md:-translate-y-[10%] lg:-translate-y-[23%]"
                   width={1024}
                   height={490}

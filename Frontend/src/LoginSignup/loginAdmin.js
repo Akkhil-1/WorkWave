@@ -16,20 +16,12 @@ const LoginForm = () => {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // Validate email format using regex
-  // const validateEmail = (email) => {
-  //   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  //   return emailPattern.test(email);
-  // };
   const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
+    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
     return emailPattern.test(email);
   };
 
-  // Validate password length
-  // const validatePassword = (password) => {
-  //   return password.length >= 6;
-  // };
+  
   const validatePassword = (password) => {
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordPattern.test(password);
@@ -47,15 +39,15 @@ const LoginForm = () => {
       formErrors.email = "Email is required.";
     } else if (!validateEmail(formData.email)) {
       formErrors.email = "Invalid email format.";
-      toast.error("Invalid email format")
+      // toast.error("Invalid email format")
     }
 
     // Password validation
     if (!formData.password) {
       formErrors.password = "Password is required.";
     } else if (!validatePassword(formData.password)) {
-      formErrors.password = "Password must be at least 6 characters.";
-      toast.error("Password must be at least 6 characters")
+      formErrors.password = "Password must be at least 8 characters.";
+      // toast.error("Password must be at least 6 characters")
     }
 
     // If there are errors, do not submit the form

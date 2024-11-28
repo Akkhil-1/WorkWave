@@ -149,7 +149,7 @@ const Header = () => {
                 >
                   Add Business
                 </NavLink>
-                <NavLink to="/AboutUs">About Us</NavLink>
+                <NavLink to="/AboutUs" className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">About Us</NavLink>
                 <NavLink
                   to="/update-form"
                   onClick={toggleMenu}

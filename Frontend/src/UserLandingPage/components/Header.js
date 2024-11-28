@@ -153,7 +153,7 @@ const Header = () => {
                 >
                   Services
                 </NavLink>
-                <NavLink to="/AboutUs/User">About Us</NavLink>
+                <NavLink to="/AboutUs/User" className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">About Us</NavLink>
                 <a href="#customer" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
                   Testimonials
                 </a>

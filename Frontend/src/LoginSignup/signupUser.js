@@ -327,7 +327,7 @@ const RegisterFormUser = () => {
 
   // Validate email (specific domains allowed)
   const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
+    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
     return emailPattern.test(email);
   };
 
