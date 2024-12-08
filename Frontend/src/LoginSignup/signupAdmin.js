@@ -2,10 +2,43 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
+import { z } from "zod"; // Import Zod
 import HeroSection from "./HeroSection";
 import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
 import toast from "react-hot-toast";
 import homeIcon from "./icons8-home-24.png";
+
+// Zod Schema for Validation
+const registerSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required.")
+    .trim()
+    .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces."),
+  email: z
+    .string()
+    .min(1, "Email is required.")
+    .email("Invalid email address.")
+    .regex(/^[^0-9][A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-zA-Z]{2,}$/, "Email cannot start with a number and must follow a valid format."),
+  mobile_number: z
+    .string()
+    .min(10, "Mobile number must be exactly 10 digits.")
+    .max(10, "Mobile number must be exactly 10 digits.")
+    .regex(/^[0-9]{10}$/, "Mobile number must be numeric."),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+    ),
+  gender: z.string().min(1, "Gender is required."),
+  address: z
+    .string()
+    .min(5, "Address must be at least 5 characters long.")
+    .max(155, "Address is too long.")
+    .regex(/^\S.*$/, "Address cannot start with spaces.")
+});
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -17,94 +50,60 @@ const RegisterForm = () => {
     gender: "",
     address: "",
   });
-
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState({
     password: false,
     confirm_password: false,
   });
-  const [isSubmit, setIsSubmit] = useState(false); // Track whether submit was clicked
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const navigate = useNavigate();
-
-  // Advanced email validation regex
-  const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
-    return emailPattern.test(email);
-  };
-  
-  
-  
-  
-  // Password validation regex
-  const validatePassword = (password) => {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordPattern.test(password);
-  };
-
-  const validateName = (name) => {
-    const namePattern = /^[A-Za-z\s]+$/; 
-    return namePattern.test(name);
-  };
-
-  const validatePhoneNumber = (phone) => {
-    const phonePattern = /^[0-9]{10}$/;
-    return phonePattern.test(phone);
-  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true); // Set to true when the user clicks submit
 
+    // Trim all form fields before validation and submission
+    const trimmedFormData = {
+      ...formData,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      mobile_number: formData.mobile_number.trim(),
+      password: formData.password.trim(),
+      confirm_password: formData.confirm_password.trim(),
+      gender: formData.gender.trim(),
+      address: formData.address.trim(),
+    };
+
     const formErrors = {};
 
-    if (!formData.name) {
-      formErrors.name = "Name is required.";
-    } else if (!validateName(formData.name)) {
-      formErrors.name = "Name cannot contain numbers and special characters.";
+    // Manual check for password and confirm password match
+    if (trimmedFormData.password !== trimmedFormData.confirm_password) {
+      formErrors.confirm_password = "Passwords do not match";
     }
 
-    if (!formData.email) {
-      formErrors.email = "Email is required.";
-    } else if (!validateEmail(formData.email)) {
-      formErrors.email = "Invalid email format";
+    // Run Zod validation
+    const result = registerSchema.safeParse(trimmedFormData);
+
+    // Collect all errors, including required and custom ones
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        formErrors[err.path[0]] = err.message;
+      });
     }
 
-    if (!formData.mobile_number) {
-      formErrors.mobile_number = "Mobile number is required.";
-    } else if (!validatePhoneNumber(formData.mobile_number)) {
-      formErrors.mobile_number = "Mobile number must be 10 digits.";
-    }
-
-    if (!formData.password) {
-      formErrors.password = "Password is required.";
-    } else if (!validatePassword(formData.password)) {
-      formErrors.password = "Password must be at least 8 characters with uppercase, lowercase, number, and special character.";
-    }
-
-    if (!formData.confirm_password) {
-      formErrors.confirm_password = "Please confirm your password.";
-    } else if (formData.password !== formData.confirm_password) {
-      formErrors.confirm_password = "Passwords do not match.";
-    }
-
-    if (!formData.gender) formErrors.gender = "Gender is required.";
-    if (!formData.address) {
-      formErrors.address = "Address is required.";
-    } else if (formData.address.length < 5) {
-      formErrors.address = "Address must be at least 5 characters long.";
-    }
-
+    // If there are any errors, update the state and prevent submission
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
 
+    // If validation is successful, send the data to the backend
     try {
       const respo = await axios.post(
         "http://localhost:3001/admin/signup",
-        formData,
+        trimmedFormData,
         { withCredentials: true, credentials: "include" }
       );
       toast.success("Registered Successfully");
@@ -112,10 +111,15 @@ const RegisterForm = () => {
         navigate("/admin-login");
       }, 1000);
     } catch (e) {
-      toast.error("Error registering.");
+      const errorMessage =
+        e.response && e.response.data && e.response.data.msg
+          ? e.response.data.msg
+          : "Error registering.";
+      toast.error(errorMessage);
     }
   };
 
+  // Handle change of form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -123,12 +127,14 @@ const RegisterForm = () => {
       [name]: value,
     }));
 
+    // Reset individual error messages on user input
     if (errors[name]) {
       const newErrors = { ...errors };
       delete newErrors[name];
       setErrors(newErrors);
     }
 
+    // Reset confirm_password error when password or confirm_password changes
     if (name === "password" || name === "confirm_password") {
       const newErrors = { ...errors };
       delete newErrors.confirm_password;
@@ -136,6 +142,7 @@ const RegisterForm = () => {
     }
   };
 
+  // Toggle password visibility
   const togglePasswordVisibility = (field) => {
     setShowPassword((prev) => ({
       ...prev,

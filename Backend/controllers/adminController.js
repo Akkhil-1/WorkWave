@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const Business = require("../models/business")
 const { sendGreetMail2 } = require("../helper/mairServices2");
 const mongoose = require("mongoose");
+const User = require("../models/users")
 const register = async (req, res) => {
   try {
     const { name, email, mobile_number, password, gender, address } = req.body;
@@ -17,6 +18,16 @@ const register = async (req, res) => {
         msg: "Admin already exists with this email or mobile number",
       });
     }
+
+    const existingUser = await User.findOne({
+      email: email 
+   });
+   if (existingUser) {
+     console.log("Email already exists as an User");
+     return res.status(401).json({
+       msg: "Email already exists as an User",
+     });
+   }
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);

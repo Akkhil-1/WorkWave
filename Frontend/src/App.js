@@ -28,6 +28,7 @@ import FinalBusinessDetails from "./Services/BookingDetailsFinal";
 import AboutUs from "./AboutUs/AboutUs";
 import AboutUsUser from "./AboutUs/AboutUsUser";
 
+
 const ProtectedRoute = ({ allowedRoles }) => {
   const userRole = Cookies.get("role");
   if (!userRole || !allowedRoles.includes(userRole)) {
@@ -69,6 +70,7 @@ function App() {
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/AboutUs/user" element={<AboutUsUser />} />
           <Route path="/user-forgot-password" element={<ForgotPassword />} />
+          
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (

@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sendGreetMail } = require("../helper/mailServices");
 const bookingDetails = require("../models/bookingDetails");
+const Admin  = require("../models/admin")
 
 const register = async (req, res) => {
   try {
@@ -16,6 +17,17 @@ const register = async (req, res) => {
         msg: "User already exists with this email or mobile number",
       });
     }
+
+    const existingAdmin = await Admin.findOne({
+      email: email 
+   });
+   if (existingAdmin) {
+     console.log("Email already exists as an admin");
+     return res.status(400).json({
+       msg: "Email already exists as an admin",
+     });
+   }
+   
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const user = await User.create({

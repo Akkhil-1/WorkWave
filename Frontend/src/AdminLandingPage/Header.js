@@ -94,20 +94,22 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-20 ${
-        scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"
-      } transition-colors text-white`}
+      className={`sticky top-0 z-20 ${scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"
+        } transition-colors text-white`}
     >
       <div className="py-5 flex justify-center items-center bg-black text-white text-sm gap-3 ">
         <div className="container">
           <div className="flex items-center justify-between">
             <div className="flex justify-center items-center">
-              <img src={Logo} alt="saaslogo" height={40} width={40} />
-              <h1 className="font-bold text-[1.4rem] ml-1">WorkWave</h1>
+              {/* Wrap the logo and text inside NavLink to navigate to '/' */}
+              <NavLink to="/" className="flex items-center">
+                <img src={Logo} alt="saaslogo" height={40} width={40} />
+                <h1 className="font-bold text-[1.4rem] ml-1">WorkWave</h1>
+              </NavLink>
             </div>
 
-            {/* Hamburger Icon for mobile */}
-            <div className="md:hidden flex items-center">
+            {/* Hamburger Icon for mobile (visible for screens smaller than 640px) */}
+            <div className="flex sm:hidden items-center"> {/* Visible only on screens < 640px */}
               <button onClick={toggleMenu} className="text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +128,7 @@ const Header = () => {
               </button>
             </div>
 
-            {/* Mobile Dropdown Menu */}
+            {/* Mobile Dropdown Menu (appears when the hamburger is clicked) */}
             {isMenuOpen && (
               <div className="mobile-menu fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex flex-col justify-start items-center text-white text-xl z-10">
                 <button
@@ -150,20 +152,6 @@ const Header = () => {
                   Add Business
                 </NavLink>
                 <NavLink to="/AboutUs" className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">About Us</NavLink>
-                <NavLink
-                  to="/update-form"
-                  onClick={toggleMenu}
-                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
-                >
-                  Form
-                </NavLink>
-                <a
-                  href="/help"
-                  onClick={toggleMenu}
-                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
-                >
-                  Help
-                </a>
 
                 {!isLoggedIn ? (
                   <NavLink to="/admin-login" onClick={toggleMenu}>
@@ -206,15 +194,11 @@ const Header = () => {
 
             {/* Desktop menu */}
             <nav
-              className={`md:flex gap-10 text-white/60 items-center ${
-                isMenuOpen ? "hidden" : "block"
-              } md:block sm:hidden`}
+              className={`hidden sm:flex gap-10 text-white/60 items-center`} // Hidden on screens smaller than 640px
             >
-              <NavLink to="/">Home</NavLink>
+              <a href="#features" className="cursor-pointer">Features</a>
               <NavLink to="/business-add-business">Add Business</NavLink>
               <NavLink to="/AboutUs">About Us</NavLink>
-              <NavLink to="/update-form">Form</NavLink>
-              <a href="/help">Help</a>
 
               {!isLoggedIn ? (
                 <NavLink to="/admin-login">
@@ -251,6 +235,7 @@ const Header = () => {
         </div>
       </div>
     </header>
+
   );
 };
 
