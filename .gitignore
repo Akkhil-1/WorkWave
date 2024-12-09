@@ -5,9 +5,9 @@ yarn-debug.log
 yarn-error.log
 
 # Build output
-/dist/
-/build/
-/out/
+dist/
+build/
+out/
 
 # Dependency directories
 /bower_components/
