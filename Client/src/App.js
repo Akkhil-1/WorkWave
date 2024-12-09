@@ -12,7 +12,7 @@ import BookingForm from "./Services/BookingForm";
 import { ToastContainerWrapper } from "./LoginSignup/Helper/ToastNotify";
 import { Toaster } from "react-hot-toast";
 import ForgotPassword from "./ForgotPassword/ForgotPassword";
-import AdminForgotPassword from './ForgotPassword/AdminForgotPassword';
+import ForgotAdmin from './ForgotPassword/ForgotAdmin';
 import {
   BrowserRouter,
   Routes,
@@ -71,7 +71,7 @@ function App() {
           <Route path="/AboutUs" element={<AboutUs />} />
           <Route path="/AboutUs/user" element={<AboutUsUser />} />
           <Route path="/user-forgot-password" element={<ForgotPassword />} />
-          <Route path="/admin-forgot-password" element={<AdminForgotPassword />} />
+          <Route path="/admin-forgot-password" element={<ForgotAdmin/>} />
 
           <Route element={<AdminProtectedRoute />}>
             {AdmindashRoutes.map((route) => (

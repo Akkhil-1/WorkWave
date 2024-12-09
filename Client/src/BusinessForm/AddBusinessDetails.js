@@ -26,15 +26,26 @@ const AddBusinessDetails = () => {
   });
 
   const handleRemoveImage = (index) => {
+    // Creating a new array of images by filtering out the one to remove
     const updatedImages = formData.businessImages.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, businessImages: updatedImages }));
+
+    // Setting the updated image list back to the state
+    setFormData((prev) => ({
+      ...prev,
+      businessImages: updatedImages,
+    }));
   };
 
   const handleChange = (e) => {
     const { name, type, files, value, checked } = e.target;
 
     // Restrict alphabetic input for fields like businessName, state, city, address, businessType
-    if (name === "businessName" || name === "state" || name === "city"  || name === "businessType") {
+    if (
+      name === "businessName" ||
+      name === "state" ||
+      name === "city" ||
+      name === "businessType"
+    ) {
       if (/[^a-zA-Z\s]/.test(value)) {
         return; // Disallow non-alphabetic input
       }
@@ -76,10 +87,14 @@ const AddBusinessDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     let isValid = true;
-    const allowedEmails = [/@gmail\.com$/, /@yahoo\.com$/, /@chitkara\.edu\.in$/];
-    
+    const allowedEmails = [
+      /@gmail\.com$/,
+      /@yahoo\.com$/,
+      /@chitkara\.edu\.in$/,
+    ];
+
     // Trim and clean up the form data to remove leading/trailing spaces
     const trimmedFormData = {
       ...formData,
@@ -95,12 +110,15 @@ const AddBusinessDetails = () => {
       closingTime: formData.closingTime.trim(),
       landmark: formData.landmark.trim(),
     };
-  
+
     // Validation checks
     if (/\d/.test(trimmedFormData.businessName)) {
       toast.error("Business name should not contain numbers.");
       isValid = false;
-    } else if (trimmedFormData.businessName.length < 3 || trimmedFormData.businessName.length > 20) {
+    } else if (
+      trimmedFormData.businessName.length < 3 ||
+      trimmedFormData.businessName.length > 20
+    ) {
       toast.error("Business name should be between 3 and 20 characters.");
       isValid = false;
     }
@@ -125,69 +143,79 @@ const AddBusinessDetails = () => {
     }
 
     // Opening and Closing Time Validation
-    const openingTime = trimmedFormData.openingTime ? new Date(`1970-01-01T${trimmedFormData.openingTime}Z`) : null;
-    const closingTime = trimmedFormData.closingTime ? new Date(`1970-01-01T${trimmedFormData.closingTime}Z`) : null;
-  
+    const openingTime = trimmedFormData.openingTime
+      ? new Date(`1970-01-01T${trimmedFormData.openingTime}Z`)
+      : null;
+    const closingTime = trimmedFormData.closingTime
+      ? new Date(`1970-01-01T${trimmedFormData.closingTime}Z`)
+      : null;
+
     if (!openingTime || !closingTime || closingTime <= openingTime) {
       toast.error("Closing time must be after opening time.");
       isValid = false;
     }
-  
+
     const businessHours = (closingTime - openingTime) / (1000 * 60 * 60);
     if (businessHours < 5) {
       toast.error("Business must be open for at least 5 hours.");
       isValid = false;
     }
-  
+
     // Validate Off Days (Checkboxes)
     if (trimmedFormData.offDays.length === 0) {
       toast.error("Please select at least one off day.");
       isValid = false;
     }
-  
+
     // Ensure not all days are selected
     if (trimmedFormData.offDays.length === 7) {
       toast.error("You cannot select all off days. Please choose fewer days.");
       isValid = false;
     }
-  
+
     // Validate Pincode (should be numeric and exactly 6 digits)
     if (!/^\d{6}$/.test(trimmedFormData.pincode)) {
       toast.error("Pincode must be exactly 6 digits.");
       isValid = false;
     }
-  
+
     // Validate Contact Email
     if (/^\d/.test(trimmedFormData.contactEmail)) {
       toast.error("Email must not start with a number.");
       isValid = false;
-    } else if (!/^[a-zA-Z][\w.-]*@[a-zA-Z]+\.[a-zA-Z]{2,6}$/.test(trimmedFormData.contactEmail)) {
+    } else if (
+      !/^[a-zA-Z][\w.-]*@[a-zA-Z]+\.[a-zA-Z]{2,6}$/.test(
+        trimmedFormData.contactEmail
+      )
+    ) {
       toast.error("Email format is invalid.");
       isValid = false;
-    } else if (!allowedEmails.some(regex => regex.test(trimmedFormData.contactEmail))) {
+    } else if (
+      !allowedEmails.some((regex) => regex.test(trimmedFormData.contactEmail))
+    ) {
       toast.error("Email domain is not allowed.");
       isValid = false;
     }
-  
+
     // Validate Contact Phone (should be numeric and exactly 10 digits)
     if (!/^\d{10}$/.test(trimmedFormData.contactPhone)) {
       toast.error("Phone number must be 10 digits.");
       isValid = false;
     }
-  
+
     // Validate Business Logo and Images
     if (!trimmedFormData.businessLogo) {
       toast.error("Please upload a business logo.");
       isValid = false;
     }
-  
+
     if (trimmedFormData.businessImages.length === 0) {
       toast.error("Please upload at least one business image.");
       isValid = false;
     }
-  
+
     if (!isValid) return;
-  
+
     // Create FormData for file upload
     const formDataToSubmit = new FormData();
     Object.keys(trimmedFormData).forEach((key) => {
@@ -195,17 +223,17 @@ const AddBusinessDetails = () => {
         formDataToSubmit.append(key, trimmedFormData[key]);
       }
     });
-  
+
     if (trimmedFormData.businessLogo) {
       formDataToSubmit.append("businessLogo", trimmedFormData.businessLogo);
     }
-  
+
     if (trimmedFormData.businessImages.length > 0) {
       trimmedFormData.businessImages.forEach((file) => {
         formDataToSubmit.append("businessImages", file);
       });
     }
-  
+
     try {
       const response = await axios.post(
         "http://localhost:3001/business/addbusiness",
@@ -227,7 +255,6 @@ const AddBusinessDetails = () => {
       );
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gray-100 flex text-black">
@@ -261,10 +288,7 @@ const AddBusinessDetails = () => {
               Business Details
             </motion.h2>
 
-            <motion.form
-              onSubmit={handleSubmit}
-              className="space-y-6"
-            >
+            <motion.form onSubmit={handleSubmit} className="space-y-6">
               {/* Business Name */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-black">
@@ -437,7 +461,15 @@ const AddBusinessDetails = () => {
                   Off Days <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-4">
-                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                  {[
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday",
+                  ].map((day) => (
                     <label key={day} className="inline-flex items-center">
                       <input
                         type="checkbox"
@@ -478,19 +510,36 @@ const AddBusinessDetails = () => {
               </div>
 
               {/* Business Images */}
+              {/* Business Images */}
+              {/* Business Images */}
               <div>
                 <label className="block text-sm font-medium text-black">
                   Business Images <span className="text-red-500">*</span>
                 </label>
+
+                {/* Hidden file input */}
                 <input
                   type="file"
                   name="businessImages"
                   multiple
                   accept="image/*"
                   onChange={handleChange}
-                  className="w-full file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-none file:text-sm file:font-semibold file:bg-purple-700 file:text-white"
+                  className="hidden" // Hide the input field itself
+                  id="businessImagesInput"
                   required
                 />
+
+                {/* Button to open file dialog */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    document.getElementById("businessImagesInput").click()
+                  } // Programmatically open file input dialog
+                  className="w-full py-2 px-4 rounded-lg border-none text-sm font-semibold bg-purple-700 text-white cursor-pointer"
+                >
+                  Choose Business Images
+                </button>
+
                 {formData.businessImages.length > 0 && (
                   <div className="mt-4 flex gap-4">
                     {formData.businessImages.map((image, index) => (
