@@ -6,6 +6,7 @@ import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
 import toast from "react-hot-toast";
 import homeIcon from "./icons8-home-24.png";
 import Cookies from "js-cookie";
+import { Eye, EyeOff } from "lucide-react"; // Import icons for show/hide password
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -13,50 +14,33 @@ const LoginForm = () => {
     password: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const navigate = useNavigate();
 
-  const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
-    return emailPattern.test(email);
-  };
+  const otpPage = async () => {
+    const { email } = formData;
 
-  
-  const validatePassword = (password) => {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordPattern.test(password);
-  };
+    if (!email) {
+      toast.error("Please enter your email first.");
+      return;
+    }
 
+    try {
+      const response = await axios.post("http://localhost:3001/otp/sendOtp", { email });
+      toast.success("OTP sent successfully!");
+      navigate("/admin-forgot-password", { state: { email } });
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        toast.error("Admin not found.");
+      } else {
+        toast.error("Failed to send OTP.");
+      }
+    }
+  };
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate the form fields
-    const formErrors = {};
-
-    // Email validation
-    if (!formData.email) {
-      formErrors.email = "Email is required.";
-    } else if (!validateEmail(formData.email)) {
-      formErrors.email = "Invalid email format.";
-      // toast.error("Invalid email format")
-    }
-
-    // Password validation
-    if (!formData.password) {
-      formErrors.password = "Password is required.";
-    } else if (!validatePassword(formData.password)) {
-      formErrors.password = "Password must be at least 8 characters.";
-      // toast.error("Password must be at least 6 characters")
-    }
-
-    // If there are errors, do not submit the form
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
-
-    // Proceed with login if no validation errors
     try {
       const respo = await axios.post(
         "http://localhost:3001/admin/login",
@@ -87,35 +71,11 @@ const LoginForm = () => {
       ...prevState,
       [name]: value,
     }));
-
-    // Clear errors when the user starts typing
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "", // Clear specific field error
-    }));
   };
 
-  // Handle onBlur for real-time validation
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    const formErrors = { ...errors };
-
-    switch (name) {
-      case "email":
-        if (!value) formErrors.email = "Email is required.";
-        else if (!validateEmail(value)) formErrors.email = "Invalid email format.";
-        else delete formErrors.email;
-        break;
-      case "password":
-        if (!value) formErrors.password = "Password is required.";
-        else if (!validatePassword(value)) formErrors.password = "Password must be at least 6 characters.";
-        else delete formErrors.password;
-        break;
-      default:
-        break;
-    }
-
-    setErrors(formErrors);
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
   };
 
   return (
@@ -137,9 +97,7 @@ const LoginForm = () => {
               />
             </div>
           </NavLink>
-          <h2 className="text-3xl font-semibold mb-4">
-            Welcome Back, Business Owner!
-          </h2>
+          <h2 className="text-3xl font-semibold mb-4">Welcome Back, Business Owner!</h2>
           <p className="text-gray-600 mb-8">
             Enter your credentials to access and manage your services
           </p>
@@ -157,19 +115,15 @@ const LoginForm = () => {
                 name="email"
                 type="email"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
                 value={formData.email}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Email"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
             </div>
 
             {/* Password Field */}
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label
                 className="block text-sm font-medium text-gray-700"
                 htmlFor="password"
@@ -179,22 +133,28 @@ const LoginForm = () => {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
                 value={formData.password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Password"
               />
-              {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password}</p>
-              )}
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute top-1/2 right-3 transform translate-y text-gray-500"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
 
             {/* Forgot Password Link */}
             <div className="flex items-center justify-between mb-6">
-              <div className="text-sm text-indigo-600 hover:text-indigo-500">
+              <div
+                className="text-sm text-indigo-600 hover:text-indigo-500 cursor-pointer"
+                onClick={otpPage}
+              >
                 Forgot Password?
               </div>
             </div>

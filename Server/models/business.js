@@ -38,7 +38,7 @@ const businessSchema = new mongoose.Schema(
       required: true,
     },
     offDays: {
-      type: String,
+      type: [String],
       required: true,
     },
     contactEmail: {

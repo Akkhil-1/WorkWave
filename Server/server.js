@@ -1,11 +1,12 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT;
-const dbConnect = require("../Backend/middlewares/db");
+const dbConnect = require("./middlewares/db")
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
 const businessRouter = require("./routes/businessRouter");
 const bookingRouter = require("./routes/bookingRouter");
+const reviewRouter = require("./routes/reviewsRouter");
 const serviceRouter = require("./routes/serviceRouter");
 const otpRoute = require("./routes/otpRoute");
 const userDashboard  = require('./routes/userDashboard')
@@ -20,10 +21,12 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 dbConnect();
+
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/business", businessRouter);
 app.use("/booking", bookingRouter);
+app.use("/reviews",reviewRouter)
 app.use("/services",serviceRouter);
 app.use("/otp", otpRoute);
 app.use('/usdashboard', userDashboard);

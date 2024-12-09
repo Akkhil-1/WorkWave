@@ -9,6 +9,8 @@ router.post(
   authMiddleware, // Uncomment this line if you want to secure the route
   servicesController.addService
 );
-
+router.post("/delete/:id" , servicesController.deleteService)
+router.post("/update/:id" , servicesController.updateService)
+router.get("/adminDashboard" , servicesController.getServicesAdminDashboard)
 router.get("/:id", servicesController.getService);
 module.exports = router;
