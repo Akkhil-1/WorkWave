@@ -73,7 +73,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cross-env BUILD_PATH=dist react-scripts build",
+    "build": "react-scripts build",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
