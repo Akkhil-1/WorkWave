@@ -35,3 +35,7 @@ app.use('/usdashboard', userDashboard);
 app.listen(PORT, () => {
   console.log(`Running on port ${PORT}`);
 });
+
+app.get("/", (req,res) => {
+  res.send("Hello from workwave backend!")
+})
