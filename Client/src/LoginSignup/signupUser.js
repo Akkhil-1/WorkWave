@@ -1,10 +1,43 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import Eye Icons
+import { z } from "zod"; // Import Zod for validation
 import HeroSection from "./HeroSectionUser";
 import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify"; // Import Toast and ToastContainerWrapper
 import toast from "react-hot-toast";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import Eye Icons
+
+// Zod Schema for Validation
+const registerSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required.")
+    .trim()
+    .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces."),
+  email: z
+    .string()
+    .min(1, "Email is required.")
+    .email("Invalid email address.")
+    .regex(/^[^0-9][A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-zA-Z]{2,}$/, "Email cannot start with a number and must follow a valid format."),
+  mobile_number: z
+    .string()
+    .min(10, "Mobile number must be exactly 10 digits.")
+    .max(10, "Mobile number must be exactly 10 digits.")
+    .regex(/^[0-9]{10}$/, "Mobile number must be numeric."),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+    ),
+  gender: z.string().min(1, "Gender is required."),
+  address: z
+    .string()
+    .min(5, "Address must be at least 5 characters long.")
+    .max(155, "Address is too long.")
+    .regex(/^\S.*$/, "Address cannot start with spaces.")
+});
 
 const RegisterFormUser = () => {
   const [formData, setFormData] = useState({
@@ -16,93 +49,66 @@ const RegisterFormUser = () => {
     gender: "",
     address: "",
   });
-
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false); // Track if the form has been submitted
 
   const navigate = useNavigate();
 
-  // Validate name (no numbers or special characters)
-  const validateName = (name) => {
-    const namePattern = /^[a-zA-Z\s]+$/;
-    return namePattern.test(name);
-  };
-
-  // Validate email (specific domains allowed)
-  const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|[a-zA-Z0-9.-]+\.edu\.in)$/;
-    return emailPattern.test(email);
-  };
-
-  // Validate phone number (10 digits)
-  const validatePhoneNumber = (phone) => {
-    const phonePattern = /^[0-9]{10}$/;
-    return phonePattern.test(phone);
-  };
-
-  // Validate password complexity (minimum 8 characters with uppercase, lowercase, number, and special character)
-  const validatePassword = (password) => {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordPattern.test(password);
+  // Custom password matching function
+  const validatePasswordMatch = () => {
+    if (formData.password !== formData.confirm_password) {
+      return "Passwords do not match.";
+    }
+    return null;
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmit(true); // Set to true when the user clicks submit
 
-    // Validate form data
-    const formErrors = {};
+    // Trim all form fields before validation and submission
+    const trimmedFormData = {
+      ...formData,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      mobile_number: formData.mobile_number.trim(),
+      password: formData.password.trim(),
+      confirm_password: formData.confirm_password.trim(),
+      gender: formData.gender.trim(),
+      address: formData.address.trim(),
+    };
 
-    if (!formData.name) {
-      formErrors.name = "Name is required.";
-    } else if (!validateName(formData.name)) {
-      formErrors.name = "Name cannot contain numbers or special characters.";
-    }
+    // Run Zod validation
+    const result = registerSchema.safeParse(trimmedFormData);
 
-    if (!formData.email) {
-      formErrors.email = "Email is required.";
-    } else if (!validateEmail(formData.email)) {
-      formErrors.email = "Invalid email format.";
-    }
-
-    if (!formData.mobile_number) {
-      formErrors.mobile_number = "Mobile number is required.";
-    } else if (!validatePhoneNumber(formData.mobile_number)) {
-      formErrors.mobile_number = "Mobile number must be 10 digits.";
-    }
-
-    if (!formData.password) {
-      formErrors.password = "Password is required.";
-    } else if (!validatePassword(formData.password)) {
-      formErrors.password =
-        "Password must be at least 8 characters long, with an uppercase letter, lowercase letter, number, and special character.";
-    }
-
-    if (!formData.confirm_password) {
-      formErrors.confirm_password = "Please confirm your password.";
-    } else if (formData.password !== formData.confirm_password) {
-      formErrors.confirm_password = "Passwords do not match.";
-    }
-
-    if (!formData.gender) {
-      formErrors.gender = "Gender is required.";
-    }
-
-    if (!formData.address) {
-      formErrors.address = "Address is required.";
-    }
-
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors); // Set errors if validation fails
+    // If there are any errors, update the state and prevent submission
+    if (!result.success) {
+      const formErrors = {};
+      result.error.errors.forEach((err) => {
+        formErrors[err.path[0]] = err.message;
+      });
+      setErrors(formErrors);
       return;
     }
 
-    // If validation passes, proceed with API call
+    // Validate password match
+    const passwordError = validatePasswordMatch();
+    if (passwordError) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        confirm_password: passwordError
+      }));
+      return;
+    }
+
+    // If validation is successful, send the data to the backend
     try {
       const response = await axios.post(
         "http://localhost:3001/user/signup",
-        formData,
+        trimmedFormData,
         { withCredentials: true, credentials: "include" }
       );
       toast.success("Registered successfully!");
@@ -110,16 +116,15 @@ const RegisterFormUser = () => {
         navigate("/user-login");
       }, 1000);
     } catch (error) {
-      // Check if the error contains a response and a message
       const errorMessage =
         error.response && error.response.data && error.response.data.msg
           ? error.response.data.msg
           : "Error registering user.";
-      toast.error(errorMessage); // Display the specific message from the backend
+      toast.error(errorMessage);
     }
   };
 
-  // Handle change for form fields
+  // Handle change of form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -127,18 +132,33 @@ const RegisterFormUser = () => {
       [name]: value,
     }));
 
-    // Clear specific field errors on change
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "", // Clear individual field errors
-    }));
+    // Reset individual error messages on user input
+    if (errors[name]) {
+      const newErrors = { ...errors };
+      delete newErrors[name];
+      setErrors(newErrors);
+    }
   };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
   return (
     <div className="flex min-h-screen">
       <HeroSection />
       <div className="w-1/2 flex items-center bg-white justify-center">
         <div className="w-full max-w-md p-8">
+          {/* Back to Home Link */}
+          <div className="mb-[20px]  mr-[220px] text-center">
+            <NavLink
+              to="/user-landingpage"
+              className="text-blue-500 hover:text-blue-700 text-lg font-semibold "
+            >
+              &lt; Back to Home
+            </NavLink>
+          </div>
+
           <h2 className="text-3xl font-semibold text-black mb-4">Start Your Journey</h2>
           <p className="text-gray-600 mb-8">New to our platform? Register and connect with top local businesses.</p>
           <form onSubmit={handleSubmit}>
@@ -151,9 +171,8 @@ const RegisterFormUser = () => {
                 value={formData.name}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Name"
-                required
               />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              {isSubmit && errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
             </div>
 
             {/* Email Field */}
@@ -165,9 +184,8 @@ const RegisterFormUser = () => {
                 value={formData.email}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Email"
-                required
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {isSubmit && errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
 
             {/* Mobile Number Field */}
@@ -179,9 +197,8 @@ const RegisterFormUser = () => {
                 value={formData.mobile_number}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Mobile Number"
-                required
               />
-              {errors.mobile_number && <p className="text-red-500 text-sm">{errors.mobile_number}</p>}
+              {isSubmit && errors.mobile_number && <p className="text-red-500 text-sm">{errors.mobile_number}</p>}
             </div>
 
             {/* Password Field */}
@@ -193,15 +210,15 @@ const RegisterFormUser = () => {
                 value={formData.password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Password"
-                required
               />
-              <span
-                className="absolute right-3 top-2 cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
-              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+              </button>
+              {isSubmit && errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
 
             {/* Confirm Password Field */}
@@ -213,15 +230,15 @@ const RegisterFormUser = () => {
                 value={formData.confirm_password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Confirm Password"
-                required
               />
-              <span
-                className="absolute right-3 top-2 cursor-pointer"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              <button
+                type="button"
+                onClick={toggleConfirmPasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
               >
-                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
-              {errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password}</p>}
+                {showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+              </button>
+              {isSubmit && errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password}</p>}
             </div>
 
             {/* Gender Field */}
@@ -231,46 +248,46 @@ const RegisterFormUser = () => {
                 onChange={handleChange}
                 value={formData.gender}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
               >
                 <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
               </select>
-              {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
+              {isSubmit && errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
             </div>
 
             {/* Address Field */}
             <div className="mb-4">
-              <textarea
+              <input
+                type="text"
                 name="address"
                 onChange={handleChange}
                 value={formData.address}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Address"
-                rows="3"
-                required
-              ></textarea>
-              {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              />
+              {isSubmit && errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
             </div>
 
-            <button
-              type="submit"
-              className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-            >
-              Register
-            </button>
-          </form>
+            <div className="mb-4 flex justify-center">
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+              >
+                Register
+              </button>
+            </div>
 
-          <p className="mt-4 text-center text-gray-600">
-            Already have an account?{" "}
-            <NavLink to="/user-login" className="text-blue-500">
-              Login
-            </NavLink>
-          </p>
+            <div className="flex justify-center mt-4">
+              <p className="text-sm text-gray-500">
+                Already have an account?{" "}
+                <NavLink to="/user-login" className="text-blue-500">Login here</NavLink>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
+
       <ToastContainerWrapper />
     </div>
   );

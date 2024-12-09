@@ -26,7 +26,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/otp/sendOtpAdmin", { email });
+      const response = await axios.post("http://localhost:3001/otp/sendOtp", { email });
       toast.success("OTP sent successfully!");
       navigate("/admin-forgot-password", { state: { email } });
     } catch (error) {
@@ -83,20 +83,15 @@ const LoginForm = () => {
       <HeroSection />
       <div className="w-1/2 bg-center flex items-center justify-center">
         <div className="w-full max-w-md p-8">
-          <NavLink to="/" className="text-gray-600 mb-8">
-            <div
-              style={{
-                display: "flex",
-                height: "auto",
-              }}
+        <div className="mb-[20px] text-center mr-[230px]">
+            <NavLink
+              to="/"
+              className="text-blue-500 hover:text-blue-700 text-lg font-semibold"
             >
-              <img
-                src={homeIcon}
-                alt="Home Icon"
-                style={{ width: "auto", height: "auto" }}
-              />
-            </div>
-          </NavLink>
+              &lt; Back to Home
+            </NavLink>
+          </div>
+
           <h2 className="text-3xl font-semibold mb-4">Welcome Back, Business Owner!</h2>
           <p className="text-gray-600 mb-8">
             Enter your credentials to access and manage your services

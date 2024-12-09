@@ -6,25 +6,17 @@ import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
 import toast from "react-hot-toast";
 import Cookies from 'js-cookie';
 
+// Import Eye and EyeOff icons from lucide-react
+import { Eye, EyeOff } from "lucide-react";
+
 const LoginFormUser = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false); // To toggle password visibility
   const navigate = useNavigate();
-
-  // Email validation (regex)
-  const validateEmail = (email) => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(email);
-  };
-
-  // Password length validation
-  const validatePassword = (password) => {
-    return password.length >= 6;
-  };
 
   // Handle OTP page navigation
   const otpPage = async () => {
@@ -51,27 +43,6 @@ const LoginFormUser = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate form fields
-    const formErrors = {};
-
-    if (!formData.email) {
-      formErrors.email = "Email is required.";
-    } else if (!validateEmail(formData.email)) {
-      formErrors.email = "Invalid email format.";
-    }
-
-    if (!formData.password) {
-      formErrors.password = "Password is required.";
-    } else if (!validatePassword(formData.password)) {
-      formErrors.password = "Password must be at least 6 characters.";
-    }
-
-    // If there are validation errors, set errors and return
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
 
     try {
       const respo = await axios.post(
@@ -105,35 +76,6 @@ const LoginFormUser = () => {
       ...prevState,
       [name]: value,
     }));
-
-    // Clear errors on field change
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "", // Clear specific field error
-    }));
-  };
-
-  // Handle onBlur for field validation
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    const formErrors = { ...errors };
-
-    switch (name) {
-      case "email":
-        if (!value) formErrors.email = "Email is required.";
-        else if (!validateEmail(value)) formErrors.email = "Invalid email format.";
-        else delete formErrors.email;
-        break;
-      case "password":
-        if (!value) formErrors.password = "Password is required.";
-        else if (!validatePassword(value)) formErrors.password = "Password must be at least 6 characters.";
-        else delete formErrors.password;
-        break;
-      default:
-        break;
-    }
-
-    setErrors(formErrors);
   };
 
   return (
@@ -141,16 +83,16 @@ const LoginFormUser = () => {
       <HeroSection />
       <div className="w-1/2 bg-center flex items-center justify-center bg-white">
         <div className="w-full max-w-md p-8 bg-white">
-          <NavLink to="/" className="text-gray-600 mb-8">
-            <div
-              style={{
-                display: "flex",
-                height: "auto",
-              }}
+          {/* Back to Home Button */}
+          <div className="mb-[20px] text-center mr-[230px]">
+            <NavLink
+              to="/user-landingpage"
+              className="text-blue-500 hover:text-blue-700 text-lg font-semibold"
             >
-              {/* Optional Home Icon */}
-            </div>
-          </NavLink>
+              &lt; Back to Home
+            </NavLink>
+          </div>
+
           <h2 className="text-3xl font-semibold mb-4 text-black">
             Ready to Dive Back In?
           </h2>
@@ -171,19 +113,15 @@ const LoginFormUser = () => {
                 name="email"
                 type="email"
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
                 value={formData.email}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Email"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
-              )}
             </div>
 
             {/* Password Field */}
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label
                 className="block text-sm font-bold text-gray-900"
                 htmlFor="password"
@@ -193,17 +131,25 @@ const LoginFormUser = () => {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}  // Toggle password visibility
                 onChange={handleChange}
-                onBlur={handleBlur}  // Trigger validation on blur
                 value={formData.password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 required
                 placeholder="Password"
               />
-              {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password}</p>
-              )}
+              {/* Eye icon button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-[-2px] text-gray-500"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
             </div>
 
             {/* Forgot Password Link */}

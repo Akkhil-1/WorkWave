@@ -155,9 +155,20 @@ const RegisterForm = () => {
       <HeroSection />
       <div className="w-1/2 flex items-center justify-center">
         <div className="w-full max-w-md p-8">
+          {/* Back to Home Button */}
+          <div className="mb-4 text-center mr-[220px]">
+            <NavLink
+              to="/"
+              className="text-blue-500 hover:text-blue-700 text-lg font-semibold"
+            >
+              &lt; Back to Home
+            </NavLink>
+          </div>
+
           <NavLink to={"/admin-login"} className="text-gray-600 mb-8">
             <img src={homeIcon} alt="Home Icon" style={{ width: "auto", height: "auto" }} />
           </NavLink>
+
           <h2 className="text-3xl font-semibold mb-4">Get Started with Us!</h2>
           <p className="text-gray-600 mb-8">New to our platform? Register today to connect with local clients.</p>
           <form onSubmit={handleSubmit}>
