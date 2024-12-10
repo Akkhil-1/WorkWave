@@ -5,10 +5,53 @@ const Business = require("../models/business");
 const Services = require("../models/services");
 const { sendBookingMail } = require("../helper/bookingMail");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+
+const updateBookingStatus = async (req, res) => {
+  const { bookingId, status } = req.body;
+
+  // Validate the status input
+  const validStatuses = ['pending', 'confirmed', 'Cancel'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
+
+  try {
+    // Find the booking by ID and update the status
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { status },
+      { new: true }
+    );
+
+    // If booking not found
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.status(200).json({ message: "Booking status updated", booking });
+  } catch (err) {
+    console.error("Error updating status:", err);
+    res.status(500).json({ message: "Failed to update status", error: err.message });
+  }
+};
+
+
+
+
+
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "amber1251.be22@chitkara.edu.in", // Replace with your email
+    pass: "dhamaamber@5678", // Replace with your email password
+  },
+});
 
 const addBooking = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
     const {
       name,
       email,
@@ -21,29 +64,34 @@ const addBooking = async (req, res) => {
       serviceId,
     } = req.body;
 
-    const userId = req.user._id;
+    const userId = req.user._id; // Assuming you're using some authentication middleware
     const businessId = req.params.businessId;
 
-    console.log("User ID:", userId);
-    console.log("Business ID:", businessId);
-    console.log("Service ID:", serviceId);
-
+    // Validate user existence
     const userDetails = await User.findById(userId);
     if (!userDetails) {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    const businessDetails = await Business.findById(businessId);
+    // Validate business existence
+    const businessDetails = await Business.findById(businessId).populate(
+      "ownerDetails",
+      "email"
+    );
     if (!businessDetails) {
       return res.status(404).json({ msg: "Business not found" });
     }
+
+    // Validate service existence (if provided)
+    let serviceDetails;
     if (serviceId) {
-      const serviceDetails = await Services.findById(serviceId);
-      console.log(serviceDetails);
+      serviceDetails = await Services.findById(serviceId);
       if (!serviceDetails) {
         return res.status(404).json({ msg: "Service not found" });
       }
     }
+
+    // Create the booking
     const booking = await Booking.create({
       name,
       email,
@@ -57,24 +105,74 @@ const addBooking = async (req, res) => {
       service: serviceId || null,
     });
 
+    // Update references in User and Business
     await User.findByIdAndUpdate(
       userId,
-      {
-        $push: { bookingDetails: booking._id },
-      },
+      { $push: { bookingDetails: booking._id } },
       { new: true }
     );
+
     await Business.findByIdAndUpdate(
       businessId,
-      {
-        $push: { bookings: booking._id },
-      },
+      { $push: { bookings: booking._id } },
       { new: true }
     );
-    console.log("Created Booking:", booking);
 
+    // Send email to the business owner about the new booking
+    const ownerEmail = businessDetails.ownerDetails.email;
+    const mailOptions = {
+      from: "amber1251.be22@chitkara.edu.in",
+      to: ownerEmail,
+      subject: "New Booking Received!",
+      html: `
+<div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <div style="background-color: #007bff; color: white; padding: 15px; text-align: center;">
+    <h2 style="margin: 0; font-size: 24px;">New Booking Alert!</h2>
+  </div>
+  <div style="padding: 20px; background-color: #f9f9f9;">
+    <p style="font-size: 16px; line-height: 1.5;">Hello,</p>
+    <p style="font-size: 16px; line-height: 1.5;">
+      You have received a new booking for your business: <strong>${
+        businessDetails.businessName
+      }</strong>.
+    </p>
+    <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+      <h3 style="margin-top: 0; font-size: 20px; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Booking Details</h3>
+      <ul style="list-style: none; padding: 0; margin: 0; font-size: 16px; line-height: 1.8;">
+        <li><strong>Name:</strong> ${name}</li>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Mobile Number:</strong> ${mobileNumber}</li>
+        <li><strong>Guest Count:</strong> ${guestCount}</li>
+        <li><strong>Booking Date:</strong> ${bookingDate}</li>
+        <li><strong>Booking Time:</strong> ${bookingTime}</li>
+        ${
+          serviceDetails
+            ? `<li><strong>Service:</strong> ${serviceDetails.name}</li>`
+            : ""
+        }
+        <li><strong>Notes:</strong> ${customerNotes}</li>
+      </ul>
+    </div>
+    <p style="font-size: 16px; line-height: 1.5;">
+      Please visit your dashboard for more details about this booking.
+    </p>
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="https://your-business-dashboard-link.com" 
+         style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Go to Dashboard</a>
+    </div>
+  </div>
+  <div style="background-color: #007bff; color: white; padding: 10px; text-align: center; font-size: 14px;">
+    <p style="margin: 0;">Thank you for using our services!</p>
+  </div>
+</div>
+`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Response to the user
     res.status(201).json({
-      msg: "Booking done successfully",
+      msg: "Booking created successfully!",
       data: booking,
     });
   } catch (err) {
@@ -85,6 +183,7 @@ const addBooking = async (req, res) => {
     });
   }
 };
+
 const getBusinesses = async (req, res) => {
   try {
     const businesses = await Business.find().populate("bookings"); // Populate bookings
@@ -215,5 +314,6 @@ module.exports = {
   getBooking,
   updateBookingDetails,
   deleteBooking,
+  updateBookingStatus
 
 };

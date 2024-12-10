@@ -20,7 +20,8 @@ router.post(
   extractBusinessId,
   bookingController.addBooking
 )
-module.exports = router;
+router.post("/updateStatus" , bookingController.updateBookingStatus);
+
 
 router.get("/getBooking", bookingController.getBusinesses);
 router.post("/update-booking/:id", bookingController.updateBookingDetails);
