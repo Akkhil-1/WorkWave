@@ -1,6 +1,6 @@
 const AdminModel = require("../models/admin");
 const bcrypt = require("bcrypt");
-const { otp } = require("./sendOtp");
+const { otp } = require("./sendotpAdmin");
 
 const verifyOtpA = async (req, res) => {
   const { getotp, email, newPassword, confirmPassword } = req.body;

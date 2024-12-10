@@ -26,7 +26,7 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/otp/sendOtp", { email });
+      const response = await axios.post("http://localhost:3001/otp/sendOtpAdmin", { email });
       toast.success("OTP sent successfully!");
       navigate("/admin-forgot-password", { state: { email } });
     } catch (error) {
