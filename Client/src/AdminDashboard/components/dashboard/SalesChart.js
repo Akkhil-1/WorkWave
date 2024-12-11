@@ -1,7 +1,9 @@
+
 import { Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 import Chart from "react-apexcharts";
+import React from "react";
 
-const SalesChart = () => {
+const SalesChart = React.memo(() => {
   const chartOptions = {
     series: [
       {data: [0, 31, 40, 28, 51, 42, 109, 100] },
@@ -39,6 +41,6 @@ const SalesChart = () => {
       </CardBody>
     </Card>
   );
-};
+});
 
 export default SalesChart;

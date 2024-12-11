@@ -106,16 +106,8 @@ const ProjectTables = ({ businessId }) => {
                 <td className="py-4 px-4 text-sm text-black">{booking.guestCount}</td>
                 <td className="py-4 px-4 text-sm text-black">{booking.bookingTime}</td>
                 <td className="py-4 px-4 text-sm text-black">{booking.bookingDate}</td>
-                <td className="py-4 px-4 text-center">
-                  <select
-                    value={booking.status}
-                    onChange={(event) => handleStatusChange(index, event)}
-                    className={`px-3 py-1 rounded-full border text-md ${getStatusClass(booking.status)}`}
-                  >
-                    <option value="pending" className="text-black">Pending</option>
-                    <option value="Cancel" className="text-black">Cancel</option>
-                    <option value="confirmed" className="text-black">Confirmed</option>
-                  </select>
+                <td className="py-4 px-4 text-center text-black">
+                  {booking.status}
                 </td>
               </tr>
             ))}

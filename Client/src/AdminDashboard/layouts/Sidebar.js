@@ -8,21 +8,21 @@ const navigation = [
     href: "/dashboard/starter",
     icon: "bi bi-speedometer2",
   },
-  {
-    title: "Alert",
-    href: "/dashboard/alerts",
-    icon: "bi bi-bell",
-  },
+  // {
+  //   title: "Alert",
+  //   href: "/dashboard/alerts",
+  //   icon: "bi bi-bell",
+  // },
   {
     title: "Bookings",
     href: "/dashboard/table",
     icon: "bi bi-patch-check",
   },
-  {
-    title: "Chat",
-    href: "/dashboard/buttons",
-    icon: "bi bi-hdd-stack",
-  },
+  // {
+  //   title: "Chat",
+  //   href: "/dashboard/buttons",
+  //   icon: "bi bi-hdd-stack",
+  // },
   {
     title: "Add Services",
     href: "/dashboard/cards",

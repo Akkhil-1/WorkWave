@@ -23,7 +23,7 @@ const Filters = ({ onFilterChange }) => {
           name="location"
           value={filters.location}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded bg-white"
         />
       </div>
       <div className="mb-4">
@@ -33,19 +33,19 @@ const Filters = ({ onFilterChange }) => {
           name="businessType"
           value={filters.businessType}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded bg-white"
         />
       </div>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block text-sm font-medium">Price Range</label>
         <input
           type="number"
           name="priceRange"
           value={filters.priceRange}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded bg-white"
         />
-      </div>
+      </div> */}
     </div>
   );
 };

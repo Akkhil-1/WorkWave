@@ -98,7 +98,7 @@ const TestimonialsColumn = ({ className, testimonials, duration }) => (
 
 const Testimonials = () => {
   return (
-    <section className="bg-white">
+    <section className="bg-white" id='testimonials'>
       <div className="container mx-auto">
         {/* Section heading */}
         <div className="max-w-[540px] mx-auto">

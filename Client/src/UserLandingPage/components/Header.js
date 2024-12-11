@@ -106,8 +106,10 @@ const Header = () => {
         <div className="container">
           <div className="flex items-center justify-between">
             <div className="flex justify-center items-center">
-              <img src={Logo} alt="saaslogo" className="h-10 w-10" />
-              <h1 className="font-semibold text-[1.5rem] ml-1 mt-1">WorkWave</h1>
+            <NavLink to="/user-landingpage" className="flex items-center">
+                <img src={Logo} alt="saaslogo" height={40} width={40} />
+                <h1 className="font-bold text-[1.4rem] ml-1">WorkWave</h1>
+              </NavLink>
             </div>
 
             {/* Hamburger Icon for mobile */}
@@ -154,12 +156,12 @@ const Header = () => {
                   Services
                 </NavLink>
                 <NavLink to="/AboutUs/User" className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">About Us</NavLink>
-                <a href="#customer" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
+                <a href="#testimonials" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
                   Testimonials
                 </a>
-                <a href="#help" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
+                {/* <a href="#help" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
                   Help
-                </a>
+                </a> */}
 
                 {!isLoggedIn ? (
                   <NavLink to="/user-login" onClick={toggleMenu}>
@@ -195,11 +197,11 @@ const Header = () => {
 
             {/* Desktop menu */}
             <nav className="hidden md:flex gap-10 text-black/75 items-center font-bold">
-              <NavLink to="/user-landingpage">Home</NavLink>
+              {/* <NavLink to="/user-landingpage">Home</NavLink> */}
               <NavLink to="/businesses/allbusinesses">Services</NavLink>
               <NavLink to="/AboutUs/User">About Us</NavLink>
-              <a href="#customer">Testimonials</a>
-              <a href="#help">Help</a>
+              <a href="#testimonials">Testimonials</a>
+              {/* <a href="#help">Help</a> */}
 
               {!isLoggedIn ? (
                 <NavLink to="/user-login">

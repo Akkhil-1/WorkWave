@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios
 import logo from "../assets/logosaas.png";
-
+import { FaHome } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 import {
   User,
   Calendar,
@@ -79,9 +80,9 @@ const Dashboard = () => {
               </div>
               <h1 className="text-2xl font-bold text-white">User Dashboard</h1>
             </div>
-            {/* <button className="flex items-center gap-2 px-4 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-900">
-              <LogOut className="h-4 w-4" /> Log out
-            </button> */}
+            <button className="flex items-center gap-2 px-4 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-900">
+              <NavLink to="/user-landingpage"> <FaHome  className="h-4 w-4"/> </NavLink> 
+            </button>
           </div>
         </div>
 
