@@ -9,6 +9,9 @@ import { useCookies } from 'react-cookie';
 const AddBusinessDetails = () => {
   const navigate = useNavigate();
 
+  // Use the useCookies hook at the top of the component
+  const [cookies] = useCookies(["token"]);
+
   const [formData, setFormData] = useState({
     businessName: "",
     address: "",
@@ -197,8 +200,7 @@ const AddBusinessDetails = () => {
       });
     }
 
-    const [cookies] = useCookies(["token"]);
-
+    // Correctly use cookies.token
     try {
       const response = await axios.post(
         "https://workwave-aage.onrender.com/business/addbusiness",
@@ -207,7 +209,7 @@ const AddBusinessDetails = () => {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${cookies.token}`,
+            Authorization: `Bearer ${cookies.token}`, // Correctly access the token from cookies
           },
         }
       );
