@@ -105,7 +105,12 @@ const login = async (req, res) => {
     });
 
     console.log("Login successful, returning token");
-    res.cookie(token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+      sameSite: "None",
+      secure: true, // Only use secure cookie in production
+    });
     return res.status(200).json({
       token,
       role: admin.role,
