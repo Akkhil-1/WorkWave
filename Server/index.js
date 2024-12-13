@@ -32,8 +32,8 @@ app.use("/otp", otpRoute);
 app.use('/usdashboard', userDashboard);
 
 
-app.listen(PORT, () => {
-  console.log(`Running on port ${PORT}`);
+app.listen(3001, () => {
+  console.log(`Running on port 3001`);
 });
 
 app.get("/", (req,res) => {
