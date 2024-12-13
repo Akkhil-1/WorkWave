@@ -49,6 +49,7 @@ const LoginForm = () => {
         formData,
         { withCredentials: true, credentials: "include" }
       );
+      console.log(respo.headers);
 
       if (respo.data.token && respo.data.role) {
         // Store the token and role in cookies
