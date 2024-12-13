@@ -167,12 +167,21 @@ const LoginFormUser = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium text-sm"
+                className="w-full bg-indigo-600 text-white py-2 rounded-md"
               >
-                Log In
+                Log in
               </button>
             </div>
           </form>
+          <p className="mt-6 text-center text-gray-600 text-sm">
+            Don't have an account?{" "}
+            <NavLink
+              to="/admin-signup"
+              className="text-indigo-600 hover:text-indigo-500"
+            >
+              Sign up for free
+            </NavLink>
+          </p>
           <ToastContainerWrapper />
         </div>
       </div>
