@@ -29,7 +29,7 @@ const Header = () => {
 
       // Make the API call to fetch user information based on the token
       const response = await axios.get(
-        "http://localhost:3001/admin/admin-profile",
+        "https://workwave-aage.onrender.com/admin/admin-profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -94,8 +94,9 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-20 ${scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"
-        } transition-colors text-white`}
+      className={`sticky top-0 z-20 ${
+        scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"
+      } transition-colors text-white`}
     >
       <div className="py-5 flex justify-center items-center bg-black text-white text-sm gap-3 ">
         <div className="container">
@@ -109,7 +110,9 @@ const Header = () => {
             </div>
 
             {/* Hamburger Icon for mobile (visible for screens smaller than 640px) */}
-            <div className="flex sm:hidden items-center"> {/* Visible only on screens < 640px */}
+            <div className="flex sm:hidden items-center">
+              {" "}
+              {/* Visible only on screens < 640px */}
               <button onClick={toggleMenu} className="text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +154,12 @@ const Header = () => {
                 >
                   Add Business
                 </NavLink>
-                <NavLink to="/AboutUs" className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">About Us</NavLink>
+                <NavLink
+                  to="/AboutUs"
+                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
+                >
+                  About Us
+                </NavLink>
 
                 {!isLoggedIn ? (
                   <NavLink to="/admin-login" onClick={toggleMenu}>
@@ -196,7 +204,9 @@ const Header = () => {
             <nav
               className={`hidden sm:flex gap-10 text-white/60 items-center`} // Hidden on screens smaller than 640px
             >
-              <a href="#features" className="cursor-pointer">Features</a>
+              <a href="#features" className="cursor-pointer">
+                Features
+              </a>
               <NavLink to="/business-add-business">Add Business</NavLink>
               <NavLink to="/AboutUs">About Us</NavLink>
 
@@ -235,7 +245,6 @@ const Header = () => {
         </div>
       </div>
     </header>
-
   );
 };
 

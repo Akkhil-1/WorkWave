@@ -25,11 +25,15 @@ const BookingForm = () => {
 
   // Validation functions
   const validateName = (name) =>
-    /^[a-zA-Z\s]+$/.test(name.trim()) && name.trim().length > 0 && name.trim().length <= 20;
+    /^[a-zA-Z\s]+$/.test(name.trim()) &&
+    name.trim().length > 0 &&
+    name.trim().length <= 20;
 
   const validateEmailStartsWithNumber = (email) => /^[0-9]/.test(email);
   const validateEmailFormat = (email) =>
-    /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|chitkara\.edu\.in)$/.test(email);
+    /^[a-zA-Z][a-zA-Z0-9._%+-]*@(gmail\.com|yahoo\.com|chitkara\.edu\.in)$/.test(
+      email
+    );
 
   const validatePhoneNumber = (number) => /^[0-9]{10}$/.test(number);
 
@@ -81,7 +85,8 @@ const BookingForm = () => {
     const formErrors = {};
 
     if (!validateName(formData.name)) {
-      formErrors.name = "Name must contain only letters and be 1-20 characters long.";
+      formErrors.name =
+        "Name must contain only letters and be 1-20 characters long.";
     }
 
     if (!formData.email) {
@@ -120,7 +125,7 @@ const BookingForm = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/booking/addbooking/${id}`,
+        `https://workwave-aage.onrender.com/booking/addbooking/${id}`,
         {
           method: "POST",
           headers: {
@@ -149,7 +154,9 @@ const BookingForm = () => {
       } else {
         const errorData = await response.text();
         const errorJson = JSON.parse(errorData);
-        toast.error(`Failed to submit booking: ${errorJson.message || "Error"}`);
+        toast.error(
+          `Failed to submit booking: ${errorJson.message || "Error"}`
+        );
       }
     } catch (error) {
       toast.error(`Error submitting booking: ${error.message}`);
@@ -174,30 +181,58 @@ const BookingForm = () => {
             className="absolute inset-0 flex items-center justify-center"
           >
             <motion.div className="text-center text-white p-8 rounded-xl max-w-xl bg-black/40">
-              <motion.h1 className="text-5xl font-bold mb-4">Book Your Experience</motion.h1>
-              <motion.p className="text-xl mb-4">Create unforgettable moments with our premium services</motion.p>
+              <motion.h1 className="text-5xl font-bold mb-4">
+                Book Your Experience
+              </motion.h1>
+              <motion.p className="text-xl mb-4">
+                Create unforgettable moments with our premium services
+              </motion.p>
             </motion.div>
           </motion.div>
         </div>
         <div className="w-1/3 bg-white/90 p-8 h-screen overflow-y-auto">
-          <motion.form
-            onSubmit={handleSubmit}
-            className="w-full space-y-6"
-          >
+          <motion.form onSubmit={handleSubmit} className="w-full space-y-6">
             <motion.h2 className="text-2xl font-bold text-violet-900 mb-8 border-b-2 border-violet-200 pb-2">
               Booking Details
             </motion.h2>
             {[
               { label: "Name", name: "name", type: "text", error: errors.name },
-              { label: "Email", name: "email", type: "email", error: errors.email },
-              { label: "Date of Birth", name: "dateOfBirth", type: "date", error: errors.dateOfBirth },
-              { label: "Mobile Number", name: "mobileNumber", type: "tel", error: errors.mobileNumber },
-              { label: "Number of Guests", name: "guestCount", type: "number", error: errors.guestCount },
-              { label: "Booking Date", name: "bookingDate", type: "date", error: errors.bookingDate },
+              {
+                label: "Email",
+                name: "email",
+                type: "email",
+                error: errors.email,
+              },
+              {
+                label: "Date of Birth",
+                name: "dateOfBirth",
+                type: "date",
+                error: errors.dateOfBirth,
+              },
+              {
+                label: "Mobile Number",
+                name: "mobileNumber",
+                type: "tel",
+                error: errors.mobileNumber,
+              },
+              {
+                label: "Number of Guests",
+                name: "guestCount",
+                type: "number",
+                error: errors.guestCount,
+              },
+              {
+                label: "Booking Date",
+                name: "bookingDate",
+                type: "date",
+                error: errors.bookingDate,
+              },
               { label: "Booking Time", name: "bookingTime", type: "time" },
             ].map((field) => (
               <motion.div key={field.name}>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {field.label}
+                </label>
                 <input
                   type={field.type}
                   name={field.name}
@@ -206,11 +241,15 @@ const BookingForm = () => {
                   className="w-full px-4 py-2 rounded-lg border border-gray-300"
                   required
                 />
-                {field.error && <p className="text-red-500 text-sm">{field.error}</p>}
+                {field.error && (
+                  <p className="text-red-500 text-sm">{field.error}</p>
+                )}
               </motion.div>
             ))}
             <motion.div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Notes
+              </label>
               <textarea
                 name="customerNotes"
                 value={formData.customerNotes}
@@ -218,12 +257,16 @@ const BookingForm = () => {
                 rows="3"
                 className="w-full px-4 py-2 rounded-lg border border-gray-300"
               ></textarea>
-              {errors.customerNotes && <p className="text-red-500 text-sm">{errors.customerNotes}</p>}
+              {errors.customerNotes && (
+                <p className="text-red-500 text-sm">{errors.customerNotes}</p>
+              )}
             </motion.div>
             <motion.button
               type="submit"
               className={`w-full py-3 rounded-lg text-white font-medium ${
-                isLoading ? "bg-violet-400" : "bg-violet-600 hover:bg-violet-700"
+                isLoading
+                  ? "bg-violet-400"
+                  : "bg-violet-600 hover:bg-violet-700"
               }`}
               disabled={isLoading}
             >

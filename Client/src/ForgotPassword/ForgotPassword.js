@@ -23,12 +23,15 @@ const ForgotPassword = () => {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:3001/otp/verify", {
-        email,
-        newPassword,
-        confirmPassword,
-        getotp: otp,
-      });
+      const response = await axios.post(
+        "https://workwave-aage.onrender.com/otp/verify",
+        {
+          email,
+          newPassword,
+          confirmPassword,
+          getotp: otp,
+        }
+      );
 
       if (response.data.nextPage) {
         toast.success("Password reset successfully!");

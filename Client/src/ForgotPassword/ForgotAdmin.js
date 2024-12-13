@@ -24,7 +24,7 @@ const ForgotPassword = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3001/otp/verifyAdmin",
+        "https://workwave-aage.onrender.com/otp/verifyAdmin",
         {
           email,
           newPassword,

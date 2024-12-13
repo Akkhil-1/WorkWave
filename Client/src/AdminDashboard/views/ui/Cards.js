@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "reactstrap";
@@ -24,7 +23,7 @@ const Cards = () => {
   const fetchServices = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3001/services/adminDashboard",
+        "https://workwave-aage.onrender.com/services/adminDashboard",
         {
           withCredentials: true,
         }
@@ -106,7 +105,7 @@ const Cards = () => {
       let response;
       if (editingService) {
         response = await axios.post(
-          `http://localhost:3001/services/update/${editingService._id}`,
+          `https://workwave-aage.onrender.com/services/update/${editingService._id}`,
           formData,
           {
             withCredentials: true,
@@ -115,7 +114,7 @@ const Cards = () => {
         toast.success("Service updated successfully!");
       } else {
         response = await axios.post(
-          "http://localhost:3001/services/addservice",
+          "https://workwave-aage.onrender.com/services/addservice",
           formData,
           {
             withCredentials: true,
@@ -123,10 +122,10 @@ const Cards = () => {
         );
         toast.success("Service added successfully!");
       }
-      
+
       // Fetch the updated services list
       fetchServices();
-      
+
       // Close the modal
       setIsModalOpen(false);
     } catch (error) {
@@ -139,7 +138,7 @@ const Cards = () => {
   const deleteService = async (id) => {
     try {
       const response = await axios.post(
-        `http://localhost:3001/services/delete/${id}`,
+        `https://workwave-aage.onrender.com/services/delete/${id}`,
         { withCredentials: true }
       );
       toast.success("Service deleted successfully!");

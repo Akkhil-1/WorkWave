@@ -3,7 +3,7 @@ import { useParams, NavLink } from "react-router-dom";
 import { fetchBusinessDetails } from "./fetchBusinessDetails";
 import { fetchServiceDetails } from "./fetchServiceData";
 import axios from "axios";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 
 const FinalBusinessDetails = () => {
   const { id } = useParams();
@@ -35,7 +35,7 @@ const FinalBusinessDetails = () => {
 
         // Fetch reviews
         const reviewsRes = await axios.get(
-          `http://localhost:3001/reviews/get/${id}`
+          `https://workwave-aage.onrender.com/reviews/get/${id}`
         );
         setReviews(reviewsRes.data);
       } catch (err) {
@@ -72,7 +72,7 @@ const FinalBusinessDetails = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3001/reviews/add/${id}`,
+        `https://workwave-aage.onrender.com/reviews/add/${id}`,
         newReview
       );
       setReviews((prev) => [...prev, response.data.review]);
@@ -265,7 +265,9 @@ const FinalBusinessDetails = () => {
                       {r.name[0]?.toUpperCase()}
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold text-black">{r.name}</h4>
+                      <h4 className="text-lg font-semibold text-black">
+                        {r.name}
+                      </h4>
                       <p className="text-sm text-gray-500">{r.email}</p>
                     </div>
                   </div>

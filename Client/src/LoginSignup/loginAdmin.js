@@ -26,7 +26,10 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/otp/sendOtpAdmin", { email });
+      const response = await axios.post(
+        "https://workwave-aage.onrender.com/otp/sendOtpAdmin",
+        { email }
+      );
       toast.success("OTP sent successfully!");
       navigate("/admin-forgot-password", { state: { email } });
     } catch (error) {
@@ -43,7 +46,7 @@ const LoginForm = () => {
 
     try {
       const respo = await axios.post(
-        "http://localhost:3001/admin/login",
+        "https://workwave-aage.onrender.com/admin/login",
         formData,
         { withCredentials: true, credentials: "include" }
       );
@@ -83,7 +86,7 @@ const LoginForm = () => {
       <HeroSection />
       <div className="w-1/2 bg-center flex items-center justify-center">
         <div className="w-full max-w-md p-8">
-        <div className="mb-[20px] text-center mr-[230px]">
+          <div className="mb-[20px] text-center mr-[230px]">
             <NavLink
               to="/"
               className="text-blue-500 hover:text-blue-700 text-lg font-semibold"
@@ -92,7 +95,9 @@ const LoginForm = () => {
             </NavLink>
           </div>
 
-          <h2 className="text-3xl font-semibold mb-4">Welcome Back, Business Owner!</h2>
+          <h2 className="text-3xl font-semibold mb-4">
+            Welcome Back, Business Owner!
+          </h2>
           <p className="text-gray-600 mb-8">
             Enter your credentials to access and manage your services
           </p>
@@ -140,7 +145,11 @@ const LoginForm = () => {
                 onClick={togglePasswordVisibility}
                 className="absolute top-1/2 right-3 transform translate-y text-gray-500"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
 

@@ -18,7 +18,10 @@ const registerSchema = z.object({
     .string()
     .min(1, "Email is required.")
     .email("Invalid email address.")
-    .regex(/^[^0-9][A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-zA-Z]{2,}$/, "Email cannot start with a number and must follow a valid format."),
+    .regex(
+      /^[^0-9][A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Email cannot start with a number and must follow a valid format."
+    ),
   mobile_number: z
     .string()
     .min(10, "Mobile number must be exactly 10 digits.")
@@ -36,7 +39,7 @@ const registerSchema = z.object({
     .string()
     .min(5, "Address must be at least 5 characters long.")
     .max(155, "Address is too long.")
-    .regex(/^\S.*$/, "Address cannot start with spaces.")
+    .regex(/^\S.*$/, "Address cannot start with spaces."),
 });
 
 const RegisterFormUser = () => {
@@ -99,7 +102,7 @@ const RegisterFormUser = () => {
     if (passwordError) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        confirm_password: passwordError
+        confirm_password: passwordError,
       }));
       return;
     }
@@ -107,7 +110,7 @@ const RegisterFormUser = () => {
     // If validation is successful, send the data to the backend
     try {
       const response = await axios.post(
-        "http://localhost:3001/user/signup",
+        "https://workwave-aage.onrender.com/user/signup",
         trimmedFormData,
         { withCredentials: true, credentials: "include" }
       );
@@ -142,7 +145,8 @@ const RegisterFormUser = () => {
 
   // Toggle password visibility
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword(!showConfirmPassword);
 
   return (
     <div className="flex min-h-screen">
@@ -159,8 +163,12 @@ const RegisterFormUser = () => {
             </NavLink>
           </div>
 
-          <h2 className="text-3xl font-semibold text-black mb-4">Start Your Journey</h2>
-          <p className="text-gray-600 mb-8">New to our platform? Register and connect with top local businesses.</p>
+          <h2 className="text-3xl font-semibold text-black mb-4">
+            Start Your Journey
+          </h2>
+          <p className="text-gray-600 mb-8">
+            New to our platform? Register and connect with top local businesses.
+          </p>
           <form onSubmit={handleSubmit}>
             {/* Name Field */}
             <div className="mb-4">
@@ -172,7 +180,9 @@ const RegisterFormUser = () => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Name"
               />
-              {isSubmit && errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              {isSubmit && errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
+              )}
             </div>
 
             {/* Email Field */}
@@ -185,7 +195,9 @@ const RegisterFormUser = () => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Email"
               />
-              {isSubmit && errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+              {isSubmit && errors.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
             </div>
 
             {/* Mobile Number Field */}
@@ -198,7 +210,9 @@ const RegisterFormUser = () => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Mobile Number"
               />
-              {isSubmit && errors.mobile_number && <p className="text-red-500 text-sm">{errors.mobile_number}</p>}
+              {isSubmit && errors.mobile_number && (
+                <p className="text-red-500 text-sm">{errors.mobile_number}</p>
+              )}
             </div>
 
             {/* Password Field */}
@@ -218,7 +232,9 @@ const RegisterFormUser = () => {
               >
                 {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
               </button>
-              {isSubmit && errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+              {isSubmit && errors.password && (
+                <p className="text-red-500 text-sm">{errors.password}</p>
+              )}
             </div>
 
             {/* Confirm Password Field */}
@@ -236,9 +252,17 @@ const RegisterFormUser = () => {
                 onClick={toggleConfirmPasswordVisibility}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
               >
-                {showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                {showConfirmPassword ? (
+                  <FaEyeSlash size={20} />
+                ) : (
+                  <FaEye size={20} />
+                )}
               </button>
-              {isSubmit && errors.confirm_password && <p className="text-red-500 text-sm">{errors.confirm_password}</p>}
+              {isSubmit && errors.confirm_password && (
+                <p className="text-red-500 text-sm">
+                  {errors.confirm_password}
+                </p>
+              )}
             </div>
 
             {/* Gender Field */}
@@ -253,7 +277,9 @@ const RegisterFormUser = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              {isSubmit && errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
+              {isSubmit && errors.gender && (
+                <p className="text-red-500 text-sm">{errors.gender}</p>
+              )}
             </div>
 
             {/* Address Field */}
@@ -266,7 +292,9 @@ const RegisterFormUser = () => {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Address"
               />
-              {isSubmit && errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+              {isSubmit && errors.address && (
+                <p className="text-red-500 text-sm">{errors.address}</p>
+              )}
             </div>
 
             <div className="mb-4 flex justify-center">
@@ -281,7 +309,9 @@ const RegisterFormUser = () => {
             <div className="flex justify-center mt-4">
               <p className="text-sm text-gray-500">
                 Already have an account?{" "}
-                <NavLink to="/user-login" className="text-blue-500">Login here</NavLink>
+                <NavLink to="/user-login" className="text-blue-500">
+                  Login here
+                </NavLink>
               </p>
             </div>
           </form>

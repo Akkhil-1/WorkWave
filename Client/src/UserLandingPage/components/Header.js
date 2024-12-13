@@ -28,7 +28,7 @@ const Header = () => {
 
       // Make the API call to fetch user information based on the token
       const response = await axios.get(
-        "http://localhost:3001/user/user-profile",
+        "https://workwave-aage.onrender.com/user/user-profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -106,7 +106,7 @@ const Header = () => {
         <div className="container">
           <div className="flex items-center justify-between">
             <div className="flex justify-center items-center">
-            <NavLink to="/user-landingpage" className="flex items-center">
+              <NavLink to="/user-landingpage" className="flex items-center">
                 <img src={Logo} alt="saaslogo" height={40} width={40} />
                 <h1 className="font-bold text-[1.4rem] ml-1">WorkWave</h1>
               </NavLink>
@@ -155,8 +155,17 @@ const Header = () => {
                 >
                   Services
                 </NavLink>
-                <NavLink to="/AboutUs/User" className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">About Us</NavLink>
-                <a href="#testimonials" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
+                <NavLink
+                  to="/AboutUs/User"
+                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
+                >
+                  About Us
+                </NavLink>
+                <a
+                  href="#testimonials"
+                  onClick={toggleMenu}
+                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
+                >
                   Testimonials
                 </a>
                 {/* <a href="#help" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
@@ -171,15 +180,24 @@ const Header = () => {
                   </NavLink>
                 ) : (
                   <div className="relative py-2 px-4 w-full text-center">
-                    <button onClick={toggleDropdown} className="bg-transparent text-white font-medium">
+                    <button
+                      onClick={toggleDropdown}
+                      className="bg-transparent text-white font-medium"
+                    >
                       <span>{userName || "Account"}</span>
                     </button>
                     {dropdownVisible && (
                       <div className="absolute top-0 left-0 w-full bg-white text-black p-4 shadow-lg">
-                        <NavLink to="/user-dashboard" className="block py-2 text-center">
+                        <NavLink
+                          to="/user-dashboard"
+                          className="block py-2 text-center"
+                        >
                           Dashboard
                         </NavLink>
-                        <NavLink to="/user-update-form" className="block py-2 text-center">
+                        <NavLink
+                          to="/user-update-form"
+                          className="block py-2 text-center"
+                        >
                           Update Profile
                         </NavLink>
                         <button
@@ -222,7 +240,10 @@ const Header = () => {
                       <NavLink to="/user-dashboard" className="block px-4 py-2">
                         Dashboard
                       </NavLink>
-                      <NavLink to="/user-update-form" className="block px-4 py-2">
+                      <NavLink
+                        to="/user-update-form"
+                        className="block px-4 py-2"
+                      >
                         Update Profile
                       </NavLink>
                       <button

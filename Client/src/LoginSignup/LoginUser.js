@@ -4,7 +4,7 @@ import axios from "axios";
 import HeroSection from "./HeroSectionUser";
 import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
 import toast from "react-hot-toast";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 // Import Eye and EyeOff icons from lucide-react
 import { Eye, EyeOff } from "lucide-react";
@@ -28,7 +28,10 @@ const LoginFormUser = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/otp/sendOtp", { email });
+      const response = await axios.post(
+        "https://workwave-aage.onrender.com/otp/sendOtp",
+        { email }
+      );
       toast.success("OTP sent successfully!");
       navigate("/user-forgot-password", { state: { email } });
     } catch (error) {
@@ -46,17 +49,17 @@ const LoginFormUser = () => {
 
     try {
       const respo = await axios.post(
-        "http://localhost:3001/user/login",
+        "https://workwave-aage.onrender.com/user/login",
         formData,
         { withCredentials: true, credentials: "include" }
       );
 
       // Check if login was successful and role was returned
       if (respo.data.role) {
-        Cookies.set('role', respo.data.role, { expires: 1 });
+        Cookies.set("role", respo.data.role, { expires: 1 });
         toast.success("User logged in successfully!");
-        
-        if (respo.data.role === 'user') {
+
+        if (respo.data.role === "user") {
           navigate("/user-landingpage");
         } else {
           navigate("/");
@@ -131,7 +134,7 @@ const LoginFormUser = () => {
               <input
                 id="password"
                 name="password"
-                type={showPassword ? "text" : "password"}  // Toggle password visibility
+                type={showPassword ? "text" : "password"} // Toggle password visibility
                 onChange={handleChange}
                 value={formData.password}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

@@ -23,7 +23,7 @@ const ProjectTables = ({ businessId }) => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3001/business/getBookings`,
+          `https://workwave-aage.onrender.com/business/getBookings`,
           { withCredentials: true }
         );
         console.log(response.data);
@@ -72,20 +72,36 @@ const ProjectTables = ({ businessId }) => {
         <table className="min-w-full table-auto text-center">
           <thead className="bg-gray-100">
             <tr>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Client Name</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Email</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Mobile Number</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Guest</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Booking Time</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Date of Booking</th>
-              <th className="py-2 px-4 text-sm font-medium text-gray-600">Status</th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Client Name
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Email
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Mobile Number
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Guest
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Booking Time
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Date of Booking
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>
             {bookings.map((booking, index) => (
               <tr
                 key={index}
-                className={`border-t ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                className={`border-t ${
+                  index % 2 === 0 ? "bg-gray-50" : "bg-white"
+                }`}
               >
                 <td className="py-4 px-4 text-center">
                   <div className="flex items-center justify-start">
@@ -101,11 +117,21 @@ const ProjectTables = ({ businessId }) => {
                     </div>
                   </div>
                 </td>
-                <td className="py-4 px-4 text-sm text-black">{booking.email}</td>
-                <td className="py-4 px-4 text-sm text-black">{booking.mobileNumber}</td>
-                <td className="py-4 px-4 text-sm text-black">{booking.guestCount}</td>
-                <td className="py-4 px-4 text-sm text-black">{booking.bookingTime}</td>
-                <td className="py-4 px-4 text-sm text-black">{booking.bookingDate}</td>
+                <td className="py-4 px-4 text-sm text-black">
+                  {booking.email}
+                </td>
+                <td className="py-4 px-4 text-sm text-black">
+                  {booking.mobileNumber}
+                </td>
+                <td className="py-4 px-4 text-sm text-black">
+                  {booking.guestCount}
+                </td>
+                <td className="py-4 px-4 text-sm text-black">
+                  {booking.bookingTime}
+                </td>
+                <td className="py-4 px-4 text-sm text-black">
+                  {booking.bookingDate}
+                </td>
                 <td className="py-4 px-4 text-center text-black">
                   {booking.status}
                 </td>

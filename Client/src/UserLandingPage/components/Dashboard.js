@@ -29,19 +29,18 @@ const Dashboard = () => {
         // Replace these URLs with your actual API endpoints
         console.log("Fetching user data...");
         const userResponse = await axios.get(
-          "http://localhost:3001/usdashboard/user",
+          "https://workwave-aage.onrender.com/usdashboard/user",
           {
             withCredentials: true,
           }
         );
         console.log("User data:", userResponse.data);
         const bookingsResponse = await axios.get(
-          "http://localhost:3001/usdashboard/bookings",
+          "https://workwave-aage.onrender.com/usdashboard/bookings",
           {
             withCredentials: true,
           }
         );
-
 
         // const transactionsResponse = await axios.get('http://localhost:5000/transactions');
         // const completedResponse = await axios.get('http://localhost:5000/completed');
@@ -81,7 +80,10 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-white">User Dashboard</h1>
             </div>
             <button className="flex items-center gap-2 px-4 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-900">
-              <NavLink to="/user-landingpage"> <FaHome  className="h-4 w-4"/> </NavLink> 
+              <NavLink to="/user-landingpage">
+                {" "}
+                <FaHome className="h-4 w-4" />{" "}
+              </NavLink>
             </button>
           </div>
         </div>
