@@ -101,10 +101,11 @@ const login = async (req, res) => {
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
       sameSite: "None",
-      secure: true  // Only use secure cookie in production
+      secure: true, // Only use secure cookie in production
     });
-  
+
     console.log("Login successful, returning token");
+    res.cookie(token);
     return res.status(200).json({
       token,
       role: admin.role,
