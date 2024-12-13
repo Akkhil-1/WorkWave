@@ -100,9 +100,11 @@ const login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
+      sameSite: "None",  // For cross-site requests
+      secure: true,      // Ensure it's sent over HTTPS
+      partitioned: true  // Isolate the cookie per site
     });
+    
 
     console.log("Login successful, returning token");
     return res.status(200).json({

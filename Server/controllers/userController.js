@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sendGreetMail } = require("../helper/mailServices");
 const bookingDetails = require("../models/bookingDetails");
-const Admin  = require("../models/admin")
+const Admin = require("../models/admin");
 
 const register = async (req, res) => {
   try {
@@ -19,15 +19,15 @@ const register = async (req, res) => {
     }
 
     const existingAdmin = await Admin.findOne({
-      email: email 
-   });
-   if (existingAdmin) {
-     console.log("Email already exists as an admin");
-     return res.status(400).json({
-       msg: "Email already exists as an admin",
-     });
-   }
-   
+      email: email,
+    });
+    if (existingAdmin) {
+      console.log("Email already exists as an admin");
+      return res.status(400).json({
+        msg: "Email already exists as an admin",
+      });
+    }
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const user = await User.create({
@@ -92,9 +92,11 @@ const login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
+      sameSite: "None", // For cross-site requests
+      secure: true, // Ensure it's sent over HTTPS
+      partitioned: true, // Isolate the cookie per site
     });
+
     console.log("Login successful, returning token");
     return res.status(200).json({
       token,
@@ -193,11 +195,9 @@ const getUserBookings = async (req, res) => {
         (booking) => !booking.business || !booking.service
       )
     ) {
-      return res
-        .status(500)
-        .json({
-          msg: "Some bookings are missing business or service information",
-        });
+      return res.status(500).json({
+        msg: "Some bookings are missing business or service information",
+      });
     }
 
     // Return the booking details with populated business and service names
