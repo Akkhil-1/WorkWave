@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from 'react-cookie';
 
 const AddBusinessDetails = () => {
   const navigate = useNavigate();
@@ -233,7 +234,7 @@ const AddBusinessDetails = () => {
         formDataToSubmit.append("businessImages", file);
       });
     }
-
+    const [cookies] = useCookies(['token']);
     try {
       const response = await axios.post(
         "https://workwave-aage.onrender.com/business/addbusiness",
@@ -243,6 +244,7 @@ const AddBusinessDetails = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          Authorization: `Bearer ${token}`
         }
       );
       console.log(response);
