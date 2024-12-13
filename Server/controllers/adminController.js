@@ -98,12 +98,12 @@ const login = async (req, res) => {
     );
     console.log(token);
     res.cookie("__vercel_live_token", token, {
-      httpOnly: true, // Make the cookie accessible only via HTTP(S), not JavaScript
-      maxAge: 60 * 60 * 1000, // Set the cookie expiration time (1 hour)
-      sameSite: "None", // Allow the cookie to be sent in cross-site requests
-      secure: true, // Ensure the cookie is only sent over HTTPS
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+      sameSite: "None",
+      secure: true  // Only use secure cookie in production
     });
-
+  
     console.log("Login successful, returning token");
     return res.status(200).json({
       token,

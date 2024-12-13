@@ -17,7 +17,8 @@ require("dotenv").config();
 app.use(express.json());
 const corsOptions = {
   origin: "https://work-wave-five.vercel.app",
-  credentials: true,               
+  credentials: true,      
+  allowedHeaders: ['Content-Type', 'Authorization'],         
 };
 app.use(cors(corsOptions));
 dbConnect();

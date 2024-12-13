@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 import Logo from "../assets/logosaas.png";
 import Button from "./Button";
-import axios from "axios";
 
 const Header = () => {
   const [scroll, setScroll] = useState(false);
@@ -13,10 +14,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
+    return Cookies.get(name); // Use js-cookie to get cookies
   };
 
   const fetchInfo = async () => {
@@ -34,7 +32,7 @@ const Header = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true,
+          withCredentials: true, // Ensure cookies are sent
         }
       );
 
@@ -76,8 +74,8 @@ const Header = () => {
 
   const handleLogout = () => {
     // Clear the 'token' and 'role' cookies by setting their expiration date to the past
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-    document.cookie = "role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+    Cookies.remove("token");
+    Cookies.remove("role");
 
     setIsLoggedIn(false); // Set logged out state
     navigate("/"); // Redirect to the homepage
@@ -94,9 +92,7 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-20 ${
-        scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"
-      } transition-colors text-white`}
+      className={`sticky top-0 z-20 ${scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"} transition-colors text-white`}
     >
       <div className="py-5 flex justify-center items-center bg-black text-white text-sm gap-3 ">
         <div className="container">
@@ -111,8 +107,6 @@ const Header = () => {
 
             {/* Hamburger Icon for mobile (visible for screens smaller than 640px) */}
             <div className="flex sm:hidden items-center">
-              {" "}
-              {/* Visible only on screens < 640px */}
               <button onClick={toggleMenu} className="text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -202,7 +196,7 @@ const Header = () => {
 
             {/* Desktop menu */}
             <nav
-              className={`hidden sm:flex gap-10 text-white/60 items-center`} // Hidden on screens smaller than 640px
+              className="hidden sm:flex gap-10 text-white/60 items-center" // Hidden on screens smaller than 640px
             >
               <a href="#features" className="cursor-pointer">
                 Features
