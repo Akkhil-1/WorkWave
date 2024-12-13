@@ -1,10 +1,10 @@
 const Admin = require("../models/admin");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Business = require("../models/business")
+const Business = require("../models/business");
 const { sendGreetMail2 } = require("../helper/mairServices2");
 const mongoose = require("mongoose");
-const User = require("../models/users")
+const User = require("../models/users");
 const register = async (req, res) => {
   try {
     const { name, email, mobile_number, password, gender, address } = req.body;
@@ -20,14 +20,14 @@ const register = async (req, res) => {
     }
 
     const existingUser = await User.findOne({
-      email: email 
-   });
-   if (existingUser) {
-     console.log("Email already exists as an User");
-     return res.status(401).json({
-       msg: "Email already exists as an User",
-     });
-   }
+      email: email,
+    });
+    if (existingUser) {
+      console.log("Email already exists as an User");
+      return res.status(401).json({
+        msg: "Email already exists as an User",
+      });
+    }
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -96,14 +96,14 @@ const login = async (req, res) => {
         expiresIn: "1h",
       }
     );
-
+    console.log(token);
     res.cookie("__vercel_live_token", token, {
-      httpOnly: true,   // Make the cookie accessible only via HTTP(S), not JavaScript
+      httpOnly: true, // Make the cookie accessible only via HTTP(S), not JavaScript
       maxAge: 60 * 60 * 1000, // Set the cookie expiration time (1 hour)
       sameSite: "None", // Allow the cookie to be sent in cross-site requests
-      secure: true,     // Ensure the cookie is only sent over HTTPS
+      secure: true, // Ensure the cookie is only sent over HTTPS
     });
-    
+
     console.log("Login successful, returning token");
     return res.status(200).json({
       token,
@@ -175,7 +175,9 @@ const getProfile = async (req, res) => {
       return res.status(401).json({ msg: "Unauthorized - Admin ID not found" });
     }
 
-    const admin = await Admin.findById(adminId).select("name email mobile_number gender address _id");
+    const admin = await Admin.findById(adminId).select(
+      "name email mobile_number gender address _id"
+    );
 
     if (!admin) {
       return res.status(404).json({ msg: "Admin not found" });
@@ -184,10 +186,10 @@ const getProfile = async (req, res) => {
     res.json({
       name: admin.name,
       email: admin.email,
-      mobile_number  : admin.mobile_number,
-      gender : admin.gender,
-      address : admin.address,
-      _id : admin._id
+      mobile_number: admin.mobile_number,
+      gender: admin.gender,
+      address: admin.address,
+      _id: admin._id,
     });
   } catch (error) {
     res.status(500).json({ msg: "Error fetching admin details" });
@@ -198,5 +200,5 @@ module.exports = {
   login,
   updateAdmin,
   deleteAdmin,
-  getProfile
+  getProfile,
 };
