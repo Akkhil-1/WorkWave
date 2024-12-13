@@ -54,18 +54,22 @@ const LoginFormUser = () => {
         { withCredentials: true, credentials: "include" }
       );
 
-      // Check if login was successful and role was returned
-      if (respo.data.role) {
-        Cookies.set("role", respo.data.role, { expires: 1 });
+      // Check if login was successful and token was returned
+      if (respo.data.token) {
+        // Set cookies for token and role
+        Cookies.set("token", respo.data.token, { expires: 1 }); // Expire in 1 day
+        Cookies.set("role", respo.data.role, { expires: 1 }); // Expire in 1 day
+
         toast.success("User logged in successfully!");
 
+        // Navigate based on user role
         if (respo.data.role === "user") {
           navigate("/user-landingpage");
         } else {
           navigate("/");
         }
       } else {
-        toast.error("Role not found in response!");
+        toast.error("Login failed, no token received.");
       }
     } catch (e) {
       toast.error("Error logging in");

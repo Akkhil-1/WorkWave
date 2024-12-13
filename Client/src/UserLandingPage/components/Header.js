@@ -7,6 +7,7 @@ const Header = () => {
   const [scroll, setScroll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState("");  // Track user role (user/admin)
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const navigate = useNavigate();
@@ -21,8 +22,9 @@ const Header = () => {
   const fetchInfo = async () => {
     try {
       const token = getCookie("token");
-      if (!token) {
-        setIsLoggedIn(false); // If no token, set logged out state
+      const role = getCookie("role");
+      if (!token || !role) {
+        setIsLoggedIn(false); // If no token or role, set logged out state
         return;
       }
 
@@ -37,9 +39,10 @@ const Header = () => {
         }
       );
 
-      // If response data is available, set the user name and logged-in state
+      // If response data is available, set the user name, role, and logged-in state
       if (response.data && response.data.name) {
         setUserName(response.data.name);
+        setUserRole(role);  // Set user role from cookie
         setIsLoggedIn(true); // Update login state after successful data fetch
       }
     } catch (error) {
@@ -49,15 +52,16 @@ const Header = () => {
   };
 
   useEffect(() => {
-    // Check if there's a token on mount
+    // Check if there's a token and role on mount
     const token = getCookie("token");
+    const role = getCookie("role");
 
-    // If token exists, set login state and fetch user info
-    if (token) {
+    // If token and role exists, set login state and fetch user info
+    if (token && role) {
       setIsLoggedIn(true);
       fetchInfo(); // Call fetchInfo to retrieve the user details
     } else {
-      setIsLoggedIn(false); // If no token, set logged out state
+      setIsLoggedIn(false); // If no token or role, set logged out state
     }
 
     // Handle scroll behavior
@@ -74,10 +78,11 @@ const Header = () => {
   }, []); // Empty dependency array ensures this effect runs once on mount
 
   const handleLogout = () => {
-    // Clear the token cookie and set logged out state
+    // Clear the token and role cookies and set logged out state
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
     document.cookie = "role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
     setIsLoggedIn(false);
+    setUserRole(""); // Clear user role
     navigate("/user-landingpage");
   };
 
@@ -168,10 +173,8 @@ const Header = () => {
                 >
                   Testimonials
                 </a>
-                {/* <a href="#help" onClick={toggleMenu} className="py-4 px-6 w-full text-center mt-[30px] text-[40px]">
-                  Help
-                </a> */}
 
+                {/* Show Login or Account based on login state */}
                 {!isLoggedIn ? (
                   <NavLink to="/user-login" onClick={toggleMenu}>
                     <button className="bg-white text-black px-4 py-2 rounded-lg font-medium mt-[70px] text-[20px]">
@@ -189,7 +192,7 @@ const Header = () => {
                     {dropdownVisible && (
                       <div className="absolute top-0 left-0 w-full bg-white text-black p-4 shadow-lg">
                         <NavLink
-                          to="/user-dashboard"
+                          to={userRole === "admin" ? "/admin-dashboard" : "/user-dashboard"}
                           className="block py-2 text-center"
                         >
                           Dashboard
@@ -215,12 +218,11 @@ const Header = () => {
 
             {/* Desktop menu */}
             <nav className="hidden md:flex gap-10 text-black/75 items-center font-bold">
-              {/* <NavLink to="/user-landingpage">Home</NavLink> */}
               <NavLink to="/businesses/allbusinesses">Services</NavLink>
               <NavLink to="/AboutUs/User">About Us</NavLink>
               <a href="#testimonials">Testimonials</a>
-              {/* <a href="#help">Help</a> */}
 
+              {/* Show Login or Account based on login state */}
               {!isLoggedIn ? (
                 <NavLink to="/user-login">
                   <button className="bg-black text-white px-4 py-2 rounded-lg font-medium inline-flex items-center justify-center tracking-tight">
@@ -237,7 +239,7 @@ const Header = () => {
                   </button>
                   {dropdownVisible && (
                     <div className="absolute right-0 mt-2 bg-white text-black shadow-lg rounded-lg p-2 w-40">
-                      <NavLink to="/user-dashboard" className="block px-4 py-2">
+                      <NavLink to={userRole === "admin" ? "/admin-dashboard" : "/user-dashboard"} className="block px-4 py-2">
                         Dashboard
                       </NavLink>
                       <NavLink

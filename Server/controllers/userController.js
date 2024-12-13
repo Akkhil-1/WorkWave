@@ -95,8 +95,7 @@ const login = async (req, res) => {
       sameSite: "None", // Allow the cookie to be sent in cross-site requests
       secure: true,     // Ensure the cookie is only sent over HTTPS
     });
-    
-
+  
     console.log("Login successful, returning token");
     return res.status(200).json({
       token,
