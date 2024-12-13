@@ -27,10 +27,7 @@ const AddBusinessDetails = () => {
   });
 
   const handleRemoveImage = (index) => {
-    // Creating a new array of images by filtering out the one to remove
     const updatedImages = formData.businessImages.filter((_, i) => i !== index);
-
-    // Setting the updated image list back to the state
     setFormData((prev) => ({
       ...prev,
       businessImages: updatedImages,
@@ -40,23 +37,12 @@ const AddBusinessDetails = () => {
   const handleChange = (e) => {
     const { name, type, files, value, checked } = e.target;
 
-    // Restrict alphabetic input for fields like businessName, state, city, address, businessType
-    if (
-      name === "businessName" ||
-      name === "state" ||
-      name === "city" ||
-      name === "businessType"
-    ) {
-      if (/[^a-zA-Z\s]/.test(value)) {
-        return; // Disallow non-alphabetic input
-      }
+    if (name === "businessName" || name === "state" || name === "city" || name === "businessType") {
+      if (/[^a-zA-Z\s]/.test(value)) return; // Restrict alphabetic input
     }
 
-    // Restrict numeric input for fields like pincode and contactPhone
     if (name === "pincode" || name === "contactPhone") {
-      if (/[^0-9]/.test(value)) {
-        return; // Disallow non-numeric input
-      }
+      if (/[^0-9]/.test(value)) return; // Restrict numeric input
     }
 
     if (type === "file") {
@@ -73,9 +59,7 @@ const AddBusinessDetails = () => {
       }
     } else if (type === "checkbox") {
       setFormData((prev) => {
-        const newOffDays = checked
-          ? [...prev.offDays, value]
-          : prev.offDays.filter((day) => day !== value);
+        const newOffDays = checked ? [...prev.offDays, value] : prev.offDays.filter((day) => day !== value);
         return { ...prev, offDays: newOffDays };
       });
     } else {
@@ -96,7 +80,6 @@ const AddBusinessDetails = () => {
       /@chitkara\.edu\.in$/,
     ];
 
-    // Trim and clean up the form data to remove leading/trailing spaces
     const trimmedFormData = {
       ...formData,
       businessName: formData.businessName.trim(),
@@ -112,19 +95,16 @@ const AddBusinessDetails = () => {
       landmark: formData.landmark.trim(),
     };
 
-    // Validation checks
+    // Validation checks (business name, pincode, etc.)
+
     if (/\d/.test(trimmedFormData.businessName)) {
       toast.error("Business name should not contain numbers.");
       isValid = false;
-    } else if (
-      trimmedFormData.businessName.length < 3 ||
-      trimmedFormData.businessName.length > 20
-    ) {
+    } else if (trimmedFormData.businessName.length < 3 || trimmedFormData.businessName.length > 20) {
       toast.error("Business name should be between 3 and 20 characters.");
       isValid = false;
     }
 
-    // Ensure that business name, state, city, address, and business type only contain alphabets
     const alphabeticRegex = /^[a-zA-Z\s]+$/;
     if (!alphabeticRegex.test(trimmedFormData.businessName)) {
       toast.error("Business name should only contain alphabets.");
@@ -143,13 +123,8 @@ const AddBusinessDetails = () => {
       isValid = false;
     }
 
-    // Opening and Closing Time Validation
-    const openingTime = trimmedFormData.openingTime
-      ? new Date(`1970-01-01T${trimmedFormData.openingTime}Z`)
-      : null;
-    const closingTime = trimmedFormData.closingTime
-      ? new Date(`1970-01-01T${trimmedFormData.closingTime}Z`)
-      : null;
+    const openingTime = trimmedFormData.openingTime ? new Date(`1970-01-01T${trimmedFormData.openingTime}Z`) : null;
+    const closingTime = trimmedFormData.closingTime ? new Date(`1970-01-01T${trimmedFormData.closingTime}Z`) : null;
 
     if (!openingTime || !closingTime || closingTime <= openingTime) {
       toast.error("Closing time must be after opening time.");
@@ -162,49 +137,37 @@ const AddBusinessDetails = () => {
       isValid = false;
     }
 
-    // Validate Off Days (Checkboxes)
     if (trimmedFormData.offDays.length === 0) {
       toast.error("Please select at least one off day.");
       isValid = false;
     }
 
-    // Ensure not all days are selected
     if (trimmedFormData.offDays.length === 7) {
       toast.error("You cannot select all off days. Please choose fewer days.");
       isValid = false;
     }
 
-    // Validate Pincode (should be numeric and exactly 6 digits)
     if (!/^\d{6}$/.test(trimmedFormData.pincode)) {
       toast.error("Pincode must be exactly 6 digits.");
       isValid = false;
     }
 
-    // Validate Contact Email
     if (/^\d/.test(trimmedFormData.contactEmail)) {
       toast.error("Email must not start with a number.");
       isValid = false;
-    } else if (
-      !/^[a-zA-Z][\w.-]*@[a-zA-Z]+\.[a-zA-Z]{2,6}$/.test(
-        trimmedFormData.contactEmail
-      )
-    ) {
+    } else if (!/^[a-zA-Z][\w.-]*@[a-zA-Z]+\.[a-zA-Z]{2,6}$/.test(trimmedFormData.contactEmail)) {
       toast.error("Email format is invalid.");
       isValid = false;
-    } else if (
-      !allowedEmails.some((regex) => regex.test(trimmedFormData.contactEmail))
-    ) {
+    } else if (!allowedEmails.some((regex) => regex.test(trimmedFormData.contactEmail))) {
       toast.error("Email domain is not allowed.");
       isValid = false;
     }
 
-    // Validate Contact Phone (should be numeric and exactly 10 digits)
     if (!/^\d{10}$/.test(trimmedFormData.contactPhone)) {
       toast.error("Phone number must be 10 digits.");
       isValid = false;
     }
 
-    // Validate Business Logo and Images
     if (!trimmedFormData.businessLogo) {
       toast.error("Please upload a business logo.");
       isValid = false;
@@ -217,7 +180,6 @@ const AddBusinessDetails = () => {
 
     if (!isValid) return;
 
-    // Create FormData for file upload
     const formDataToSubmit = new FormData();
     Object.keys(trimmedFormData).forEach((key) => {
       if (key !== "businessLogo" && key !== "businessImages") {
@@ -234,7 +196,9 @@ const AddBusinessDetails = () => {
         formDataToSubmit.append("businessImages", file);
       });
     }
-    const [cookies] = useCookies(['token']);
+
+    const [cookies] = useCookies(["token"]);
+
     try {
       const response = await axios.post(
         "https://workwave-aage.onrender.com/business/addbusiness",
@@ -243,8 +207,8 @@ const AddBusinessDetails = () => {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${cookies.token}`,
           },
-          Authorization: `Bearer ${cookies.token}`
         }
       );
       console.log(response);
@@ -252,9 +216,7 @@ const AddBusinessDetails = () => {
       navigate("/");
     } catch (error) {
       console.error("Error submitting business details:", error);
-      toast.error(
-        error.response?.data?.message || "Please Check the Details Carefully"
-      );
+      toast.error(error.response?.data?.message || "Please Check the Details Carefully");
     }
   };
 
@@ -323,38 +285,6 @@ const AddBusinessDetails = () => {
                 />
               </div>
 
-              {/* Email */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-black">
-                  Contact Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="contactEmail"
-                  value={formData.contactEmail}
-                  onChange={handleChange}
-                  className="w-full p-3 text-sm bg-white rounded-lg border"
-                  placeholder="Enter contact email"
-                  required
-                />
-              </div>
-
-              {/* Phone Number */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-black">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="contactPhone"
-                  value={formData.contactPhone}
-                  onChange={handleChange}
-                  className="w-full p-3 text-sm bg-white rounded-lg border"
-                  placeholder="Enter phone number"
-                  required
-                />
-              </div>
-
               {/* Address */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-black">
@@ -365,15 +295,15 @@ const AddBusinessDetails = () => {
                   value={formData.address}
                   onChange={handleChange}
                   className="w-full p-3 text-sm bg-white rounded-lg border"
-                  placeholder="Enter full address"
-                  rows="3"
+                  placeholder="Enter address"
+                  rows="4"
                   required
                 />
               </div>
 
-              {/* State and City */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+              {/* City and State */}
+              <div className="flex gap-4">
+                <div className="w-1/2 space-y-2">
                   <label className="block text-sm font-medium text-black">
                     State <span className="text-red-500">*</span>
                   </label>
@@ -388,7 +318,7 @@ const AddBusinessDetails = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="w-1/2 space-y-2">
                   <label className="block text-sm font-medium text-black">
                     City <span className="text-red-500">*</span>
                   </label>
@@ -420,155 +350,42 @@ const AddBusinessDetails = () => {
                 />
               </div>
 
-              {/* Opening and Closing Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-black">
-                    Opening Time <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-3.5 h-4 w-4 text-black" />
-                    <input
-                      type="time"
-                      name="openingTime"
-                      value={formData.openingTime}
-                      onChange={handleChange}
-                      className="w-full pl-10 p-3 text-sm bg-white rounded-lg border"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-black">
-                    Closing Time <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <Clock className="absolute left-3 top-3.5 h-4 w-4 text-black" />
-                    <input
-                      type="time"
-                      name="closingTime"
-                      value={formData.closingTime}
-                      onChange={handleChange}
-                      className="w-full pl-10 p-3 text-sm bg-white rounded-lg border"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Off Days */}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-black">
-                  Off Days <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  {[
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
-                  ].map((day) => (
-                    <label key={day} className="inline-flex items-center">
-                      <input
-                        type="checkbox"
-                        name="offDays"
-                        value={day}
-                        checked={formData.offDays.includes(day)}
-                        onChange={handleChange}
-                        className="h-4 w-4"
-                      />
-                      <span className="ml-2 text-sm">{day}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
               {/* Business Logo */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-black">
-                  Business Logo <span className="text-red-500">*</span>
+                  Upload Business Logo <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="file"
                   name="businessLogo"
-                  accept="image/*"
                   onChange={handleChange}
-                  className="w-full file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-none file:text-sm file:font-semibold file:bg-purple-700 file:text-white"
+                  accept="image/*"
+                  className="w-full p-3 text-sm bg-white rounded-lg border"
                   required
                 />
-                {formData.businessLogo && (
-                  <div className="mt-2">
-                    <img
-                      src={URL.createObjectURL(formData.businessLogo)}
-                      alt="Business Logo Preview"
-                      className="h-16 w-16 object-cover rounded-lg"
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Business Images */}
-              {/* Business Images */}
-              {/* Business Images */}
-              <div>
+              <div className="space-y-2">
                 <label className="block text-sm font-medium text-black">
-                  Business Images <span className="text-red-500">*</span>
+                  Upload Business Images <span className="text-red-500">*</span>
                 </label>
-
-                {/* Hidden file input */}
                 <input
                   type="file"
                   name="businessImages"
-                  multiple
-                  accept="image/*"
                   onChange={handleChange}
-                  className="hidden" // Hide the input field itself
-                  id="businessImagesInput"
+                  accept="image/*"
+                  multiple
+                  className="w-full p-3 text-sm bg-white rounded-lg border"
                   required
                 />
-
-                {/* Button to open file dialog */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    document.getElementById("businessImagesInput").click()
-                  } // Programmatically open file input dialog
-                  className="w-full py-2 px-4 rounded-lg border-none text-sm font-semibold bg-purple-700 text-white cursor-pointer"
-                >
-                  Choose Business Images
-                </button>
-
-                {formData.businessImages.length > 0 && (
-                  <div className="mt-4 flex gap-4">
-                    {formData.businessImages.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={URL.createObjectURL(image)}
-                          alt={`business-image-${index}`}
-                          className="h-16 w-16 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(index)}
-                          className="absolute top-0 right-0 text-red-500 bg-white rounded-full p-1"
-                        >
-                          &times;
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               {/* Submit Button */}
-              <div className="flex justify-center">
+              <div className="flex justify-center mt-8">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                  className="bg-purple-600 text-white py-2 px-6 rounded-full"
                 >
                   Submit
                 </button>
