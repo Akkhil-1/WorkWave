@@ -102,7 +102,7 @@ const RegisterForm = () => {
     // If validation is successful, send the data to the backend
     try {
       const respo = await axios.post(
-        "http://localhost:3001/admin/signup",
+        "https://workwave-aage.onrender.com/admin/signup",
         trimmedFormData,
         { withCredentials: true, credentials: "include" }
       );
