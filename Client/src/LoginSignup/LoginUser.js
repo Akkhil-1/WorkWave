@@ -128,69 +128,54 @@ const LoginFormUser = () => {
             </div>
 
             {/* Password Field */}
-            <div className="mb-4 relative">
+            <div className="mb-4">
               <label
-                className="block text-sm font-bold text-gray-900"
+                className="block text-sm font-bold text-gray-700"
                 htmlFor="password"
               >
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"} // Toggle password visibility
-                onChange={handleChange}
-                value={formData.password}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-                placeholder="Password"
-              />
-              {/* Eye icon button */}
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-[-2px] text-gray-500"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-
-            {/* Forgot Password Link */}
-            <div className="flex items-center justify-between mb-6">
-              <div
-                className="text-sm text-indigo-600 hover:text-indigo-500 cursor-pointer"
-                onClick={otpPage}
-              >
-                Forgot Password?
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  onChange={handleChange}
+                  value={formData.password}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                  placeholder="Password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  {showPassword ? <EyeOff /> : <Eye />}
+                </button>
               </div>
             </div>
 
-            {/* Login Button */}
-            <button
-              type="submit"
-              className="w-full bg-black text-white py-2 rounded-md"
-            >
-              Log in
-            </button>
+            <div className="flex justify-between">
+              {/* Forgot Password link */}
+              <NavLink
+                onClick={otpPage}
+                className="text-sm text-blue-500 hover:text-blue-700"
+              >
+                Forgot your password?
+              </NavLink>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium text-sm"
+              >
+                Log In
+              </button>
+            </div>
           </form>
-
-          {/* Sign-up Redirect */}
-          <p className="mt-6 text-center text-gray-600 text-sm">
-            Don't have an account?
-            <NavLink
-              to="/user-signup"
-              className="text-indigo-600 hover:text-indigo-500"
-            >
-              Sign up for free
-            </NavLink>
-          </p>
+          <ToastContainerWrapper />
         </div>
       </div>
-      <ToastContainerWrapper />
     </div>
   );
 };

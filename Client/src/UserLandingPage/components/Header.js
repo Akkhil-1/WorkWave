@@ -2,27 +2,26 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Logo from "../assets/logosaas.png";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const Header = () => {
   const [scroll, setScroll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
-  const [userRole, setUserRole] = useState("");  // Track user role (user/admin)
+  const [userRole, setUserRole] = useState(""); // Track user role (user/admin)
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const navigate = useNavigate();
 
   const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
+    return Cookies.get(name); // Using js-cookie to get cookies
   };
 
   const fetchInfo = async () => {
     try {
       const token = getCookie("token");
       const role = getCookie("role");
+
       if (!token || !role) {
         setIsLoggedIn(false); // If no token or role, set logged out state
         return;
@@ -52,14 +51,13 @@ const Header = () => {
   };
 
   useEffect(() => {
-    // Check if there's a token and role on mount
+    // On mount, check if there's a token and role on cookies
     const token = getCookie("token");
     const role = getCookie("role");
 
-    // If token and role exists, set login state and fetch user info
     if (token && role) {
       setIsLoggedIn(true);
-      fetchInfo(); // Call fetchInfo to retrieve the user details
+      fetchInfo(); // Fetch user info only if token exists
     } else {
       setIsLoggedIn(false); // If no token or role, set logged out state
     }
@@ -78,9 +76,9 @@ const Header = () => {
   }, []); // Empty dependency array ensures this effect runs once on mount
 
   const handleLogout = () => {
-    // Clear the token and role cookies and set logged out state
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-    document.cookie = "role=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+    // Clear cookies and set logged-out state
+    Cookies.remove("token");
+    Cookies.remove("role");
     setIsLoggedIn(false);
     setUserRole(""); // Clear user role
     navigate("/user-landingpage");
