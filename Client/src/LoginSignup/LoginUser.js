@@ -155,19 +155,19 @@ const LoginFormUser = () => {
                 </button>
               </div>
             </div>
-
-            <div className="flex justify-between">
-              {/* Forgot Password link */}
+            <div className="flex flex-col items-start">
+              {/* Forgot Password link aligned to the right */}
               <NavLink
                 onClick={otpPage}
-                className="text-sm text-blue-500 hover:text-blue-700"
+                className="text-sm text-blue-500 hover:text-blue-700 ml-auto"
               >
                 Forgot your password?
               </NavLink>
-              {/* Submit Button */}
+
+              {/* Submit Button taking full width on the next line */}
               <button
                 type="submit"
-                className="w-full bg-indigo-600 text-white py-2 rounded-md"
+                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md mt-4"
               >
                 Log in
               </button>
