@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import HeroSection from "./HeroSection";
-import Toast, { ToastContainerWrapper } from "./Helper/ToastNotify";
 import toast from "react-hot-toast";
-import homeIcon from "./icons8-home-24.png";
 import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react"; // Import icons for show/hide password
 
@@ -40,6 +38,7 @@ const LoginForm = () => {
       }
     }
   };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,16 +50,20 @@ const LoginForm = () => {
         { withCredentials: true, credentials: "include" }
       );
 
-      if (respo.data.role) {
+      if (respo.data.token && respo.data.role) {
+        // Store the token and role in cookies
+        Cookies.set("token", respo.data.token, { expires: 7 });
         Cookies.set("role", respo.data.role, { expires: 7 });
         toast.success("Logged in successfully!");
+
+        // Navigate based on the role
         if (respo.data.role === "admin") {
           navigate("/");
         } else {
           navigate("/userLandingPage");
         }
       } else {
-        toast.error("Role not found in response!");
+        toast.error("Role or token not found in response!");
       }
     } catch (e) {
       toast.error("Invalid email or password.");
@@ -184,7 +187,6 @@ const LoginForm = () => {
           </p>
         </div>
       </div>
-      <ToastContainerWrapper />
     </div>
   );
 };

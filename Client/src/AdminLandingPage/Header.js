@@ -17,46 +17,40 @@ const Header = () => {
     return Cookies.get(name); // Use js-cookie to get cookies
   };
 
-  const fetchInfo = async () => {
-    try {
-      const token = getCookie("token");
-      if (!token) {
-        setIsLoggedIn(false); // If no token, set logged out state
-        return;
-      }
+  const fetchUserInfo = async () => {
+    const token = getCookie("token");
+    if (!token) {
+      setIsLoggedIn(false);
+      return;
+    }
 
-      // Make the API call to fetch user information based on the token
+    try {
       const response = await axios.get(
         "https://workwave-aage.onrender.com/admin/admin-profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // Ensure cookies are sent
+          withCredentials: true,
         }
       );
 
-      // If response data is available, set the user name and logged-in state
       if (response.data && response.data.name) {
         setUserName(response.data.name);
-        setIsLoggedIn(true); // Update login state after successful data fetch
+        setIsLoggedIn(true);
       }
     } catch (error) {
       console.error("Error fetching user info:", error);
-      setIsLoggedIn(false); // On error, set logged out state
+      setIsLoggedIn(false);
     }
   };
 
   useEffect(() => {
-    // Check if there's a token on mount
+    // On mount, check if token exists and fetch user info
     const token = getCookie("token");
-
-    // If token exists, set login state and fetch user info
     if (token) {
       setIsLoggedIn(true);
-      fetchInfo(); // Call fetchInfo to retrieve the user details
-    } else {
-      setIsLoggedIn(false); // If no token, set logged out state
+      fetchUserInfo();
     }
 
     // Handle scroll behavior
@@ -65,20 +59,16 @@ const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []); // Empty dependency array ensures this effect runs once on mount
+  }, []);
 
   const handleLogout = () => {
-    // Clear the 'token' and 'role' cookies by setting their expiration date to the past
     Cookies.remove("token");
     Cookies.remove("role");
-
-    setIsLoggedIn(false); // Set logged out state
-    navigate("/"); // Redirect to the homepage
+    setIsLoggedIn(false);
+    navigate("/");
   };
 
   const toggleDropdown = () => {
@@ -86,27 +76,22 @@ const Header = () => {
   };
 
   const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev); // Correctly toggle mobile menu state
-    document.body.style.overflow = !isMenuOpen ? "hidden" : "auto"; // Disable scroll when menu is open
+    setIsMenuOpen((prev) => !prev);
+    document.body.style.overflow = isMenuOpen ? "auto" : "hidden"; // Disable scroll when menu is open
   };
 
   return (
-    <header
-      className={`sticky top-0 z-20 ${scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"} transition-colors text-white`}
-    >
-      <div className="py-5 flex justify-center items-center bg-black text-white text-sm gap-3 ">
+    <header className={`sticky top-0 z-20 ${scroll ? "bg-[#0E0C17]" : "bg-[#0E0C17]"} transition-colors text-white`}>
+      <div className="py-5 flex justify-center items-center bg-black text-white text-sm gap-3">
         <div className="container">
           <div className="flex items-center justify-between">
-            <div className="flex justify-center items-center">
-              {/* Wrap the logo and text inside NavLink to navigate to '/' */}
-              <NavLink to="/" className="flex items-center">
-                <img src={Logo} alt="saaslogo" height={40} width={40} />
-                <h1 className="font-bold text-[1.4rem] ml-1">WorkWave</h1>
-              </NavLink>
-            </div>
+            <NavLink to="/" className="flex items-center">
+              <img src={Logo} alt="Logo" height={40} width={40} />
+              <h1 className="font-bold text-[1.4rem] ml-1">WorkWave</h1>
+            </NavLink>
 
-            {/* Hamburger Icon for mobile (visible for screens smaller than 640px) */}
-            <div className="flex sm:hidden items-center">
+            {/* Hamburger Icon for mobile */}
+            <div className="sm:hidden flex items-center">
               <button onClick={toggleMenu} className="text-white">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -115,78 +100,33 @@ const Header = () => {
                   stroke="currentColor"
                   className="w-6 h-6"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
             </div>
 
-            {/* Mobile Dropdown Menu (appears when the hamburger is clicked) */}
+            {/* Mobile Menu */}
             {isMenuOpen && (
-              <div className="mobile-menu fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex flex-col justify-start items-center text-white text-xl z-10">
-                <button
-                  onClick={toggleMenu}
-                  className="absolute top-5 right-5 text-white text-3xl"
-                >
-                  &times;
-                </button>
-                <NavLink
-                  to="/"
-                  onClick={toggleMenu}
-                  className="py-4 px-6 w-full text-center mt-[100px] text-[40px]"
-                >
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/business-add-business"
-                  onClick={toggleMenu}
-                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
-                >
-                  Add Business
-                </NavLink>
-                <NavLink
-                  to="/AboutUs"
-                  className="py-4 px-6 w-full text-center mt-[30px] text-[40px]"
-                >
-                  About Us
-                </NavLink>
+              <div className="mobile-menu fixed top-0 left-0 w-full h-full bg-black bg-opacity-90 flex flex-col justify-start items-center text-white z-10">
+                <button onClick={toggleMenu} className="absolute top-5 right-5 text-white text-3xl">&times;</button>
+                <NavLink to="/" onClick={toggleMenu} className="py-4 w-full text-center text-3xl">Home</NavLink>
+                <NavLink to="/business-add-business" onClick={toggleMenu} className="py-4 w-full text-center text-3xl">Add Business</NavLink>
+                <NavLink to="/AboutUs" onClick={toggleMenu} className="py-4 w-full text-center text-3xl">About Us</NavLink>
 
                 {!isLoggedIn ? (
                   <NavLink to="/admin-login" onClick={toggleMenu}>
-                    <Button className="mt-[70px] text-[20px]">Login</Button>
+                    <Button className="mt-10 text-2xl">Login</Button>
                   </NavLink>
                 ) : (
                   <div className="relative py-2 px-4 w-full text-center">
-                    <button
-                      onClick={toggleDropdown}
-                      className="bg-transparent text-white font-medium text-[15px]"
-                    >
-                      <span>{userName || "Account"}</span>
+                    <button onClick={toggleDropdown} className="bg-transparent text-white font-medium text-[15px]">
+                      {userName || "Account"}
                     </button>
                     {dropdownVisible && (
                       <div className="absolute top-0 left-0 w-full bg-white text-black p-4 shadow-lg">
-                        <NavLink
-                          to="/dashboard"
-                          className="block py-2 text-center"
-                        >
-                          Dashboard
-                        </NavLink>
-                        <NavLink
-                          to="/update-form"
-                          className="block py-2 text-center"
-                        >
-                          Update Profile
-                        </NavLink>
-                        <button
-                          onClick={handleLogout}
-                          className="block py-2 w-full text-left text-red-500"
-                        >
-                          Logout
-                        </button>
+                        <NavLink to="/dashboard" className="block py-2 text-center">Dashboard</NavLink>
+                        <NavLink to="/update-form" className="block py-2 text-center">Update Profile</NavLink>
+                        <button onClick={handleLogout} className="block py-2 w-full text-left text-red-500">Logout</button>
                       </div>
                     )}
                   </div>
@@ -194,13 +134,9 @@ const Header = () => {
               </div>
             )}
 
-            {/* Desktop menu */}
-            <nav
-              className="hidden sm:flex gap-10 text-white/60 items-center" // Hidden on screens smaller than 640px
-            >
-              <a href="#features" className="cursor-pointer">
-                Features
-              </a>
+            {/* Desktop Menu */}
+            <nav className="hidden sm:flex gap-10 items-center">
+              <a href="#features" className="cursor-pointer">Features</a>
               <NavLink to="/business-add-business">Add Business</NavLink>
               <NavLink to="/AboutUs">About Us</NavLink>
 
@@ -210,26 +146,14 @@ const Header = () => {
                 </NavLink>
               ) : (
                 <div className="relative">
-                  <button
-                    onClick={toggleDropdown}
-                    className="bg-transparent text-white font-medium text-[15px]"
-                  >
-                    <span>{userName || "Account"}</span>
+                  <button onClick={toggleDropdown} className="bg-transparent text-white font-medium text-[15px]">
+                    {userName || "Account"}
                   </button>
                   {dropdownVisible && (
                     <div className="absolute right-0 mt-2 bg-white text-black shadow-lg rounded-lg p-2 w-40">
-                      <NavLink to="/dashboard" className="block px-4 py-2">
-                        Dashboard
-                      </NavLink>
-                      <NavLink to="/update-form" className="block px-4 py-2">
-                        Update Profile
-                      </NavLink>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 text-red-500"
-                      >
-                        Logout
-                      </button>
+                      <NavLink to="/dashboard" className="block px-4 py-2">Dashboard</NavLink>
+                      <NavLink to="/update-form" className="block px-4 py-2">Update Profile</NavLink>
+                      <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-red-500">Logout</button>
                     </div>
                   )}
                 </div>
