@@ -1,5 +1,6 @@
 const Service = require("../models/services");
 const Business = require("../models/business");
+const Admin = require("../models/admin")
 const jwt = require("jsonwebtoken");
 const addService = async (req, res) => {
   try {
@@ -60,36 +61,26 @@ const addService = async (req, res) => {
   }
 };
 
-const getServicesAdminDashboard =  async (req, res) => {
+const getServicesAdminDashboard = async (req, res) => {
   try {
     const token = req.cookies.token;
-   
-    
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log("2");
-    const businessId = decoded.businessId;
-
-    if (!businessId) {
-      return res.status(404).json({ message: "Business not found for this admin" });
+    const adminId = decoded._id;
+    const admin = await Admin.findById(adminId).populate('adminBusinesses');
+    if (!admin || !admin.adminBusinesses || admin.adminBusinesses.length === 0) {
+      return res.status(404).json({ message: "No business found for this admin" });
     }
-
-    // Fetch the services associated with the business
+    const businessId = admin.adminBusinesses[0]._id;
     const business = await Business.findById(businessId).populate("services");
-    // console.log("3");
-    if (!business || !business.services) {
-      return res.status(404).json({ message: "No services found for this business" });
-    }
-
     res.status(200).json(business.services);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-}
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 
 
