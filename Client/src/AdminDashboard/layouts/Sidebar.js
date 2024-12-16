@@ -18,21 +18,21 @@ const navigation = [
     href: "/dashboard/table",
     icon: "bi bi-patch-check",
   },
-  // {
-  //   title: "Chat",
-  //   href: "/dashboard/buttons",
-  //   icon: "bi bi-hdd-stack",
-  // },
+  {
+    title: "Chat",
+    href: "/dashboard/buttons",
+    icon: "bi bi-hdd-stack",
+  },
   {
     title: "Add Services",
     href: "/dashboard/cards",
     icon: "bi bi-card-text",
   },
-  {
-    title: "Sales Tracker",
-    href: "/dashboard/grid",
-    icon: "bi bi-columns",
-  },
+  // {
+  //   title: "Sales Tracker",
+  //   href: "/dashboard/grid",
+  //   icon: "bi bi-columns",
+  // },
   {
     title:  "Back to Home",
     href: "/",
