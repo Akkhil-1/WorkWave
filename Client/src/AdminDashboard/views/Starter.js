@@ -65,7 +65,7 @@ const Starter = () => {
             icon="bi bi-basket3"
           />
         </Col>
-        {/* <Col sm="6" lg="3">
+        <Col sm="6" lg="3">
           <TopCards
             bg="bg-blue-100 text-blue-600"
             title="Sales"
@@ -73,7 +73,7 @@ const Starter = () => {
             earning="210"
             icon="bi bi-bag"
           />
-        </Col> */}
+        </Col>
       </Row>
 
       {/* Sales & Feed */}
@@ -81,9 +81,9 @@ const Starter = () => {
         <Col sm="6" lg="6" xl="7" className="w-[650px]">
           <SalesChart />
         </Col>
-        {/* <Col sm="6" lg="6" xl="5">
+        <Col sm="6" lg="6" xl="5">
           <Feeds />
-        </Col> */}
+        </Col>
       </Row>
 
       {/* Project Table */}
