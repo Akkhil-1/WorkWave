@@ -47,7 +47,7 @@ const Starter = () => {
             icon="bi bi-wallet"
           />
         </Col> */}
-        <Col sm="6" lg="3">
+        {/* <Col sm="6" lg="3">
           <TopCards
             bg="bg-red-100 text-red-600"
             title="Refunds"
@@ -55,7 +55,7 @@ const Starter = () => {
             earning="₹1k"
             icon="bi bi-coin"
           />
-        </Col>
+        </Col> */}
         <Col sm="6" lg="3">
           <TopCards
             bg="bg-yellow-100 text-yellow-600"
