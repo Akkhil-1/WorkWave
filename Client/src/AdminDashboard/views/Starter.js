@@ -78,30 +78,30 @@ const Starter = () => {
 
         // Set total bookings to the length of the filtered list
         setTotalBookings(booking.length); // Total bookings = length of all bookings (before deletion filtering)
-
         let earnings = 0;
         const serviceNamesObj = {};
-
+        
         for (let booking of filteredBookings) {
           if (booking.service) {
             console.log("Booking Service ID:", booking.service);
             const serviceData = await fetchServiceDetails(booking.service);
             console.log("Service Data:", serviceData);
-
             if (serviceData && serviceData.data && serviceData.data.price) {
-              earnings += serviceData.data.price;
+              const bookingPrice = serviceData.data.price;       
+              earnings += bookingPrice;
               console.log("Earnings updated:", earnings);
             } else {
               console.log("No price found for service:", booking.service);
             }
-
             serviceNamesObj[booking.service] = serviceData
               ? serviceData.data.name
               : "Service";
           }
         }
+        
         setTotalEarnings(earnings);
         setServiceNames(serviceNamesObj);
+        
       } catch (error) {
         console.error("Error fetching bookings:", error);
         setFetchError(true);
