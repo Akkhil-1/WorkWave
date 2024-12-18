@@ -173,31 +173,34 @@ const ProjectTables = ({ businessId }) => {
                 </td>
                 {/* Update Status Column */}
                 <td className="py-4 px-4 text-center">
-                  <div className="flex justify-center gap-2">
-                    {/* Confirm Button */}
-                    <button
-                      onClick={() => handleStatusChange(index, "confirmed")}
-                      className={`px-4 py-2 rounded-full text-white ${
+                  <div className="relative">
+                    <select
+                      value={booking.status}
+                      onChange={(e) =>
+                        handleStatusChange(index, e.target.value)
+                      }
+                      className={`px-4 py-2 rounded-full text-white bg-white border-2 border-gray-300 ${
                         booking.status === "confirmed"
-                          ? "bg-green-600"
-                          : "bg-green-400 hover:bg-green-500"
+                          ? "bg-green-200 text-green-800"
+                          : booking.status === "Cancel"
+                          ? "bg-red-200 text-red-800"
+                          : "bg-yellow-200 text-yellow-800"
                       }`}
-                      disabled={booking.status === "confirmed"}
-                    >
-                      Confirm
-                    </button>
-                    {/* Cancel Button */}
-                    <button
-                      onClick={() => handleStatusChange(index, "Cancel")}
-                      className={`px-4 py-2 rounded-full text-white ${
+                      disabled={
+                        booking.status === "confirmed" ||
                         booking.status === "Cancel"
-                          ? "bg-red-600"
-                          : "bg-red-400 hover:bg-red-500"
-                      }`}
-                      disabled={booking.status === "Cancel"}
+                      }
                     >
-                      Cancel
-                    </button>
+                      <option value="pending" className="text-yellow-600">
+                        Pending
+                      </option>
+                      <option value="confirmed" className="text-green-600">
+                        Confirm
+                      </option>
+                      <option value="Cancel" className="text-red-600">
+                        Cancel
+                      </option>
+                    </select>
                   </div>
                 </td>
               </tr>
