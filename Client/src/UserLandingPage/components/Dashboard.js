@@ -84,7 +84,9 @@ const Dashboard = () => {
 
   const handleRazorpayScreen = async (amount, bookingId) => {
     try {
-      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+      const res = await loadScript(
+        "https://checkout.razorpay.com/v1/checkout.js"
+      );
 
       if (!res) {
         alert("Error loading Razorpay screen");
@@ -132,13 +134,15 @@ const Dashboard = () => {
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
       const updatedBookings = [...bookings];
-      
+
       // Optimistically update the payment status
-      const bookingIndex = updatedBookings.findIndex((booking) => booking.id === bookingId);
+      const bookingIndex = updatedBookings.findIndex(
+        (booking) => booking.id === bookingId
+      );
       if (bookingIndex !== -1) {
-        updatedBookings[bookingIndex].paymentStatus = "Paid";  // Update payment status optimistically
+        updatedBookings[bookingIndex].paymentStatus = "Paid"; // Update payment status optimistically
       }
-      
+
       setBookings(updatedBookings); // Optimistically update UI
 
       // Make the API call to update the payment status in the backend
@@ -155,20 +159,26 @@ const Dashboard = () => {
       if (response.status === 200) {
         toast.success("Payment status updated successfully!");
       } else {
-        throw new Error("Failed to update payment status");
+        // Log the error and display message
+        console.error("API Error: ", response.data.message);
+        throw new Error(
+          response.data.message || "Failed to update payment status"
+        );
       }
     } catch (error) {
       console.error("Error updating payment status:", error);
-      
+
       // Revert the UI update in case of error (optional)
       const updatedBookings = [...bookings];
-      const bookingIndex = updatedBookings.findIndex((booking) => booking.id === bookingId);
+      const bookingIndex = updatedBookings.findIndex(
+        (booking) => booking.id === bookingId
+      );
       if (bookingIndex !== -1) {
-        updatedBookings[bookingIndex].paymentStatus = "Pending"; // Revert to previous status
+        updatedBookings[bookingIndex].paymentStatus = "Not Paid"; // Revert to previous status
       }
       setBookings(updatedBookings);
 
-      toast.error("Failed to update payment status!");
+      toast.error(error.message || "Failed to update payment status!");
     }
   };
 
