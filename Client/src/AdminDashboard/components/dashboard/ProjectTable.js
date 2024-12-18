@@ -59,7 +59,6 @@ const ProjectTables = ({ businessId }) => {
       toast.error("Failed to update booking status!");
     }
   };
-
   const getStatusClass = (status) => {
     switch (status) {
       case "pending":

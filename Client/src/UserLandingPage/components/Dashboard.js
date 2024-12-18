@@ -83,21 +83,19 @@ const Dashboard = () => {
 
   const handleRazorpayScreen = async (amount, bookingId) => {
     try {
-      const res = await loadScript(
-        "https://checkout.razorpay.com/v1/checkout.js"
-      );
-
+      const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  
       if (!res) {
         alert("Error loading Razorpay screen");
         return;
       }
-
+  
       const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID;
       if (!razorpayKey) {
         alert("Razorpay API key is missing.");
         return;
       }
-
+  
       const options = {
         key: razorpayKey,
         amount: amount * 100, // amount in paise
@@ -105,12 +103,12 @@ const Dashboard = () => {
         name: "WorkWave",
         description: "Payment to WORKWAVE",
         image: logo,
-        handler: function (response) {
+        handler: async function (response) {
           setResponseId(response.razorpay_payment_id);
           alert("Payment successful!");
-
-          // Update URL with payment_id and booking_id in query parameters
-          window.location.href = `${window.location.origin}/user-dashboard?payment_id=${response.razorpay_payment_id}&booking_id=${bookingId}`;
+  
+          // After payment success, send the paymentId and bookingId to the backend
+          await updateBookingStatus(response.razorpay_payment_id, bookingId);
         },
         prefill: {
           name: userData.name || "Guest",
@@ -120,7 +118,7 @@ const Dashboard = () => {
           color: "#166534",
         },
       };
-
+  
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
@@ -128,18 +126,17 @@ const Dashboard = () => {
       alert("Failed to load Razorpay payment screen");
     }
   };
+  
 
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
-      // Send request to backend to update the status
       const response = await axios.put(
-        `https://workwave-aage.onrender.com/usdashboard/bookings/${bookingId}`,
+        `https://workwave-aage.onrender.com/booking/updatePayment`,
         { paymentId, status: "Paid", paymentStatus: "Paid" },
         { withCredentials: true }
       );
 
       if (response.status === 200) {
-        // Successfully updated in backend, now update frontend state
         setBookings((prevBookings) =>
           prevBookings.map((booking) =>
             booking.id === bookingId

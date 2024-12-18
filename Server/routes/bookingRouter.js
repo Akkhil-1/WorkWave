@@ -1,4 +1,3 @@
-// bookingRoutes.js (Router)
 const express = require("express");
 const router = express.Router();
 const bookingController = require("../controllers/bookingController");
@@ -22,12 +21,10 @@ router.post(
   bookingController.addBooking
 )
 router.post("/updateStatus" , bookingController.updateBookingStatus);
-
-
+router.put("/updatePayment" , bookingController.updatePaymentStatus);
 router.get("/getBooking", bookingController.getBusinesses);
 router.post("/update-booking/:id", bookingController.updateBookingDetails);
 router.post("/delete-booking/:id", bookingController.deleteBooking);
-// router.get("/getBookingOfBusiness", bookingController.getBookingsByBusiness);
 
 
 module.exports = router;

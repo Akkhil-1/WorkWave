@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const updateBookingStatus = async (req, res) => {
-  const { bookingId, status } = req.body;
+  const { bookingId , status } = req.body;
 
   // Validate the status input
   const validStatuses = ["pending", "confirmed", "Cancel"];
@@ -372,6 +372,31 @@ const getEarningsForLast10Days = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
+const updatePaymentStatus = async (req, res) => {
+  const { bookingId, paymentStatus } = req.body;
+  const validStatuses = ["paid", "not paid", "Paid", "Not Paid"];
+  
+  if (!validStatuses.includes(paymentStatus)) {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
+
+  try {
+    const booking = await Booking.findByIdAndUpdate(
+      bookingId,
+      { paymentStatus },
+      { new: true }
+    );
+    
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    
+    res.status(200).json({ message: "Payment status updated", booking });
+  } catch (err) {
+    console.error("Error updating status:", err);
+    res.status(500).json({ message: "Failed to update status", error: err.message });
+  }
+};
 
 module.exports = {
   addBooking,
@@ -381,4 +406,5 @@ module.exports = {
   deleteBooking,
   updateBookingStatus,
   getEarningsForLast10Days,
+  updatePaymentStatus
 };

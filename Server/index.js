@@ -58,31 +58,8 @@ app.post("/orders", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-app.put('/usdashboard/bookings/:id', async (req, res) => {
-  const { id } = req.params;
-  const { paymentId, status, paymentStatus } = req.body;
-  try {
-    const booking = await Booking.findById(id);
-
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
-    }
-    booking.paymentStatus = paymentStatus;
-    booking.status = status;
-    booking.paymentId = paymentId;
-
-    await booking.save();
-
-    return res.status(200).json({ message: 'Booking updated successfully', booking });
-  } catch (error) {
-    console.error("Error updating booking:", error);
-    return res.status(500).json({ message: 'Server error' });
-  }
-});
-
-
 app.listen(3001, () => {
-  console.log(`Running on port 3001`);
+  console.log(`Backend is Running`);
 });
 
 app.get("/", (req, res) => {
