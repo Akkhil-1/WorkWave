@@ -143,21 +143,25 @@ const Dashboard = () => {
 
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
-      // Update status in the backend
-      await axios.put(
+      // Send request to backend to update the status
+      const response = await axios.put(
         `https://workwave-aage.onrender.com/usdashboard/bookings/${bookingId}`,
-        { status: "Paid", paymentStatus: "Paid" },
+        { paymentId, status: "Paid", paymentStatus: "Paid" },
         { withCredentials: true }
       );
 
-      // Update frontend state
-      setBookings((prevBookings) =>
-        prevBookings.map((booking) =>
-          booking.id === bookingId
-            ? { ...booking, paymentStatus: "Paid", status: "Completed" }
-            : booking
-        )
-      );
+      if (response.status === 200) {
+        // Successfully updated in backend, now update frontend state
+        setBookings((prevBookings) =>
+          prevBookings.map((booking) =>
+            booking.id === bookingId
+              ? { ...booking, paymentStatus: "Paid", status: "Completed" }
+              : booking
+          )
+        );
+      } else {
+        console.error("Error updating booking status in backend");
+      }
     } catch (error) {
       console.error("Error updating booking status:", error);
     }
