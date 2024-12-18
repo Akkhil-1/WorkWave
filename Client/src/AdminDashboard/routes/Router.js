@@ -14,12 +14,12 @@ const AdmindashRoutes = [
     element: <FullLayout />, // Layout for the dashboard
     children: [
       { path: "", element: <Navigate to="starter" /> },  // Redirect to /dashboard/starter by default (relative path)
-      { path: "starter", element: <Starter /> },  // Starter page (main dashboard page)
+      { path: "dashboard", element: <Starter /> },  // Starter page (main dashboard page)
       { path: "alerts", element: <Alerts /> },
-      { path: "buttons", element: <Buttons /> },
-      { path: "cards", element: <Cards /> },
+      { path: "chats", element: <Buttons /> },
+      { path: "add-service", element: <Cards /> },
       { path: "grid", element: <Grid /> },
-      { path: "table", element: <Tables /> },
+      { path: "bookings", element: <Tables /> },
     ],
   },
 ];
