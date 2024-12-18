@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
 const Business = require("../models/business");
+const Admin = require("../models/admin")
 const Services = require("../models/services");
 const { sendBookingMail } = require("../helper/bookingMail");
 const jwt = require("jsonwebtoken");
