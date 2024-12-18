@@ -27,9 +27,8 @@ const ProjectTables = ({ businessId }) => {
 
   const handleStatusChange = async (index, newStatus) => {
     const updatedBookings = [...bookings];
-    updatedBookings[index].status = newStatus; // Update the status optimistically
-
-    setBookings(updatedBookings); // Optimistically update the UI
+    updatedBookings[index].status = newStatus;
+    setBookings(updatedBookings);
 
     try {
       const bookingId = bookings[index]._id; // Get the booking ID to update
@@ -176,10 +175,10 @@ const ProjectTables = ({ businessId }) => {
                   <div className="relative">
                     <select
                       value={booking.status} // The dropdown reflects the current status
-                      onChange={
-                        (e) => handleStatusChange(index, e.target.value) // Update status when user changes
-                      }
-                      className={`px-4 py-2 rounded-full text-white bg-white border-2 border-gray-300 ${
+                      onChange={(e) =>
+                        handleStatusChange(index, e.target.value)
+                      } // Update status when user changes
+                      className={`px-4 py-2 rounded-full text-white border-2 border-gray-300 ${
                         booking.status === "confirmed"
                           ? "bg-green-200 text-green-800"
                           : booking.status === "Cancel"
@@ -191,10 +190,10 @@ const ProjectTables = ({ businessId }) => {
                         Pending
                       </option>
                       <option value="confirmed" className="text-green-600">
-                        Confirm
+                        Confirmed
                       </option>
                       <option value="Cancel" className="text-red-600">
-                        Cancel
+                        Cancelled
                       </option>
                     </select>
                   </div>
