@@ -150,7 +150,7 @@ useEffect(() => {
           bg="bg-blue-100 text-blue-600"
           title="Total Bookings"
           subtitle="Total Bookings"
-          earning={`${totalBookings}`}
+          earning={`${filteredBookings.length}`}
           icon="bi bi-basket3"
         />
         <TopCards
