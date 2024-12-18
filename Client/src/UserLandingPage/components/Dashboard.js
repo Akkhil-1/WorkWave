@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // Import axios
+import axios from "axios";
 import logo from "../assets/logosaas.png";
 import { FaHome } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
@@ -19,14 +19,14 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
   const [completed, setCompleted] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [generatedInvoiceData, setGeneratedInvoiceData] = useState(null);
+  const [responseId, setResponseId] = useState(null);
 
-  // Fetch data from API using axios
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // Replace these URLs with your actual API endpoints
         console.log("Fetching user data...");
         const userResponse = await axios.get(
           "https://workwave-aage.onrender.com/usdashboard/user",
@@ -41,14 +41,8 @@ const Dashboard = () => {
             withCredentials: true,
           }
         );
-
-        // const transactionsResponse = await axios.get('http://localhost:5000/transactions');
-        // const completedResponse = await axios.get('http://localhost:5000/completed');
-
         setUserData(userResponse.data);
         setBookings(bookingsResponse.data.bookings);
-        // setTransactions(transactionsResponse.data);
-        // setCompleted(completedResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -67,6 +61,112 @@ const Dashboard = () => {
     );
   }
 
+  const loadScript = (src) => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+
+      script.src = src;
+
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleSubmit = async (e, booking) => {
+    e.preventDefault();
+    if (!booking.service || !booking.service.price) {
+      console.error("Invalid service details for booking:", booking);
+      alert("Service details are missing or incorrect. Please try again.");
+      return;
+    }
+
+    try {
+      const invoiceData = {
+        totalAmount: booking.service.price,
+        status: "PAID",
+        service: booking.service.name,
+        user: userData.name || "Guest",
+      };
+      await handleRazorpayScreen(
+        invoiceData.totalAmount,
+        async (paymentResponse) => {
+          setGeneratedInvoiceData(invoiceData);
+          setShowDownloadModal(true);
+        }
+      );
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to create invoice. Please try again.";
+      alert(errorMessage);
+    }
+  };
+
+  const handleRazorpayScreen = async (amount, onPaymentSuccess) => {
+    try {
+      const res = await loadScript(
+        "https://checkout.razorpay.com/v1/checkout.js"
+      );
+
+      if (!res) {
+        alert("Some error occurred while loading the Razorpay screen");
+        return;
+      }
+      const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID;
+      console.log(razorpayKey);
+      if (!razorpayKey) {
+        alert("Razorpay API key is missing.");
+        return;
+      }
+      const options = {
+        key: razorpayKey,
+        amount: amount * 100,
+        currency: "INR", 
+        name: "WorkWave", 
+        description: "Payment to WORKWAVE",
+        image: logo,
+
+        handler: function (response) {
+          setResponseId(response.razorpay_payment_id);
+          alert("Payment successful!");
+
+          if (onPaymentSuccess) {
+            onPaymentSuccess(response);
+          }
+        },
+
+        prefill: {
+          name: userData.name || "Guest",
+          email: userData.email || "guest@example.com",
+        },
+
+        theme: {
+          color: "#166534",
+        },
+
+        modal: {
+          ondismiss: function () {
+            alert("Payment window closed.");
+          },
+        },
+      };
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+
+    } catch (error) {
+      console.error("Error loading Razorpay payment screen:", error);
+      alert("Failed to load Razorpay payment screen");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div>
@@ -81,8 +181,7 @@ const Dashboard = () => {
             </div>
             <button className="flex items-center gap-2 px-4 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-900">
               <NavLink to="/user-landingpage">
-                {" "}
-                <FaHome className="h-4 w-4" />{" "}
+                <FaHome className="h-4 w-4" />
               </NavLink>
             </button>
           </div>
@@ -119,23 +218,17 @@ const Dashboard = () => {
               <div className="flex space-x-4 border-b border-indigo-500">
                 {[
                   { id: "bookings", icon: Calendar, label: "Bookings" },
-                  {
-                    id: "transactions",
-                    icon: CreditCard,
-                    label: "Transactions",
-                  },
-                  // { id: 'completed', icon: CheckCircle, label: 'Completed' },
                   { id: "messages", icon: MessageSquare, label: "Messages" },
                 ].map(({ id, icon: Icon, label }) => (
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
                     className={`flex items-center gap-2 px-4 py-2 transition-all duration-300
-                              ${
-                                activeTab === id
-                                  ? "border-b-2 border-indigo-800 text-indigo-600"
-                                  : "text-gray-600 hover:text-indigo-400"
-                              }`}
+                          ${
+                            activeTab === id
+                              ? "border-b-2 border-indigo-800 text-indigo-600"
+                              : "text-gray-600 hover:text-indigo-400"
+                          }`}
                   >
                     <Icon className="h-4 w-4" />
                     {label}
@@ -150,137 +243,79 @@ const Dashboard = () => {
               {activeTab === "bookings" && (
                 <div className="animate-fadeIn">
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full text-center">
                       <thead>
                         <tr className="border-b border-indigo-300">
-                          <th className="text-left pb-4 text-gray-700">
-                            Business Name
-                          </th>
-                          <th className="text-left pb-4 text-gray-700">
-                            Service
-                          </th>
-                          <th className="text-left pb-4 text-gray-700">Date</th>
-                          <th className="text-left pb-4 text-gray-700">Time</th>
-                          <th className="text-left pb-4 text-gray-700">
-                            Status
-                          </th>
+                          <th className="pb-4 text-gray-700">Business Name</th>
+                          <th className="pb-4 text-gray-700">Service</th>
+                          <th className="pb-4 text-gray-700">Price</th>
+                          <th className="pb-4 text-gray-700">Date</th>
+                          <th className="pb-4 text-gray-700">Time</th>
+                          <th className="pb-4 text-gray-700">Status</th>
+                          <th className="pb-4 text-gray-700">Payment Status</th>
+                          <th className="pb-4 text-gray-700"></th>
                         </tr>
                       </thead>
                       <tbody>
-                        {bookings.map((booking, index) => {
-                          return (
-                            <tr
-                              key={index}
-                              className="border-b border-indigo-300 text-gray-700"
-                            >
-                              <td className="py-4">
-                                {booking.businessName ||
-                                  booking.business?.businessName ||
-                                  booking.business?.name ||
-                                  "Unknown Business"}
-                              </td>
-                              <td className="py-4">
-                                {booking.serviceName ||
-                                  booking.service?.name ||
-                                  booking.service?.serviceName ||
-                                  "Unknown Service"}
-                              </td>
-                              <td className="py-4">{booking.bookingDate}</td>
-                              <td className="py-4">{booking.bookingTime}</td>
-                              <td className="py-4">
-                                <span className="px-3 py-1 bg-indigo-200 text-indigo-800 rounded-full text-sm">
-                                  {booking.status}
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Transactions Tab */}
-              {activeTab === "transactions" && (
-                <div className="animate-fadeIn">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-indigo-300">
-                          <th className="text-left pb-4 text-gray-700">
-                            Transaction ID
-                          </th>
-                          <th className="text-left pb-4 text-gray-700">
-                            Amount
-                          </th>
-                          <th className="text-left pb-4 text-gray-700">Date</th>
-                          <th className="text-left pb-4 text-gray-700">
-                            Status
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {transactions.map((transaction, index) => (
+                        {bookings.map((booking, index) => (
                           <tr
                             key={index}
                             className="border-b border-indigo-300 text-gray-700"
                           >
-                            <td className="py-4">{transaction.id}</td>
-                            <td className="py-4">{transaction.amount}</td>
-                            <td className="py-4">{transaction.date}</td>
                             <td className="py-4">
-                              <span className="px-3 py-1 bg-green-200 text-green-800 rounded-full text-sm">
-                                {transaction.status}
+                              {booking.businessName ||
+                                booking.business?.businessName ||
+                                booking.business?.name ||
+                                "Unknown Business"}
+                            </td>
+                            <td className="py-4">
+                              {booking.serviceName ||
+                                booking.service?.name ||
+                                booking.service?.serviceName ||
+                                "Unknown Service"}
+                            </td>
+                            <td className="py-4">
+                              {booking.service?.price
+                                ? `₹${booking.service.price.toFixed(2)}`
+                                : "N/A"}
+                            </td>
+                            <td className="py-4">{booking.bookingDate}</td>
+                            <td className="py-4">{booking.bookingTime}</td>
+                            <td className="py-4">
+                              <span className="px-3 py-1 bg-indigo-200 text-indigo-800 rounded-full text-sm">
+                                {booking.status}
                               </span>
+                            </td>
+                            <td className="py-4">
+                              <span
+                                className={`px-3 py-1 rounded-full text-sm ${
+                                  booking.paymentStatus === "Paid"
+                                    ? "bg-green-200 text-green-800"
+                                    : "bg-red-200 text-red-800"
+                                }`}
+                              >
+                                {booking.paymentStatus || "Pending"}
+                              </span>
+                            </td>
+                            <td className="py-4">
+                              {booking.paymentStatus === "Paid" ? (
+                                <span className="px-4 py-2 bg-green-600 text-white rounded-lg">
+                                  Payment Received
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={(e) => handleSubmit(e, booking)}
+                                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-800"
+                                >
+                                  Pay: ₹{booking.service.price}
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                </div>
-              )}
-
-              {/* Completed Tab */}
-              {activeTab === "completed" && (
-                <div className="animate-fadeIn">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-indigo-300">
-                          <th className="text-left pb-4 text-gray-700">
-                            Business Name
-                          </th>
-                          <th className="text-left pb-4 text-gray-700">Date</th>
-                          <th className="text-left pb-4 text-gray-700">Time</th>
-                          <th className="text-left pb-4 text-gray-700">
-                            Rating
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {completed.map((item, index) => (
-                          <tr
-                            key={index}
-                            className="border-b border-indigo-300 text-gray-700"
-                          >
-                            <td className="py-4">{item.business}</td>
-                            <td className="py-4">{item.date}</td>
-                            <td className="py-4">{item.time}</td>
-                            <td className="py-4">{item.rating}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Messages Tab */}
-              {activeTab === "messages" && (
-                <div className="animate-fadeIn">
-                  <p className="text-gray-700">No messages to display.</p>
                 </div>
               )}
             </div>

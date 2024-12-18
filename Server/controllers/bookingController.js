@@ -7,12 +7,11 @@ const { sendBookingMail } = require("../helper/bookingMail");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
-
 const updateBookingStatus = async (req, res) => {
   const { bookingId, status } = req.body;
 
   // Validate the status input
-  const validStatuses = ['pending', 'confirmed', 'Cancel'];
+  const validStatuses = ["pending", "confirmed", "Cancel"];
   if (!validStatuses.includes(status)) {
     return res.status(400).json({ message: "Invalid status value" });
   }
@@ -33,15 +32,11 @@ const updateBookingStatus = async (req, res) => {
     res.status(200).json({ message: "Booking status updated", booking });
   } catch (err) {
     console.error("Error updating status:", err);
-    res.status(500).json({ message: "Failed to update status", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to update status", error: err.message });
   }
 };
-
-
-
-
-
-
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -278,7 +273,7 @@ const getBooking = async (req, res) => {
         {
           path: "service",
           model: "Services", // Ensure this matches exactly
-          select: "name",
+          select: "name price",
         },
       ],
     });
@@ -310,8 +305,8 @@ const getBooking = async (req, res) => {
 const getEarningsForLast10Days = async (req, res) => {
   try {
     const token = req.cookies.token;
-    console.log("token: " , token);
-    
+    console.log("token: ", token);
+
     if (!token) return res.status(401).json({ message: "Unauthorized" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -319,9 +314,14 @@ const getEarningsForLast10Days = async (req, res) => {
     console.log("Admin ID from JWT:", adminId);
 
     // Fetch the admin and their single business
-    const admin = await Admin.findById(adminId).populate("adminBusinesses", "_id");
+    const admin = await Admin.findById(adminId).populate(
+      "adminBusinesses",
+      "_id"
+    );
     if (!admin || admin.adminBusinesses.length === 0) {
-      return res.status(404).json({ message: "No businesses found for this admin" });
+      return res
+        .status(404)
+        .json({ message: "No businesses found for this admin" });
     }
 
     const businessId = admin.adminBusinesses[0]._id;
@@ -366,7 +366,9 @@ const getEarningsForLast10Days = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching earnings:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -377,5 +379,5 @@ module.exports = {
   updateBookingDetails,
   deleteBooking,
   updateBookingStatus,
-  getEarningsForLast10Days
+  getEarningsForLast10Days,
 };
