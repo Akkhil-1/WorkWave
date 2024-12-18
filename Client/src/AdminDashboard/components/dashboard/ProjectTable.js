@@ -175,10 +175,10 @@ const ProjectTables = ({ businessId }) => {
                 <td className="py-4 px-4 text-center">
                   <div className="relative">
                     <select
-                      value={booking.status} // Ensure the dropdown reflects the current status
-                      onChange={(e) =>
-                        handleStatusChange(index, e.target.value)
-                      } // Update status when user changes
+                      value={booking.status} // The dropdown reflects the current status
+                      onChange={
+                        (e) => handleStatusChange(index, e.target.value) // Update status when user changes
+                      }
                       className={`px-4 py-2 rounded-full text-white bg-white border-2 border-gray-300 ${
                         booking.status === "confirmed"
                           ? "bg-green-200 text-green-800"
