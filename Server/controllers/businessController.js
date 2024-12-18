@@ -51,7 +51,7 @@ const register = async (req, res) => {
       msg: "An error occurred while adding the business",
     });
   }
-}
+};
 const getBusinesses = async (req, res) => {
   try {
     const getData = await Business.find();
@@ -149,7 +149,6 @@ const getBookingsByBusiness = async (req, res) => {
       console.log("JWT verification error:", err);
       return res.status(401).json({ msg: "Invalid or expired token" });
     }
-
     const businessId = decoded.businessId; // Business ID from the decoded token
     if (!businessId) {
       return res.status(400).json({ msg: "Business ID is required" });
