@@ -67,8 +67,8 @@ const Starter = () => {
         );
         const length = sortedBookings.length
         console.log(length);
-        const deletedBookingIds =
-          JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
+        // const deletedBookingIds =
+        //   JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
 
         const filteredBookings = sortedBookings.filter(
           (booking) => !deletedBookingIds.includes(booking._id)
@@ -112,22 +112,22 @@ const Starter = () => {
   }, []);
 
   // Remove a specific notification
-  const removeNotification = (idToRemove) => {
-    const updatedBookings = bookingsData.filter(
-      (booking) => booking._id !== idToRemove
-    );
-    setBookingsData(updatedBookings);
+  // const removeNotification = (idToRemove) => {
+  //   const updatedBookings = bookingsData.filter(
+  //     (booking) => booking._id !== idToRemove
+  //   );
+  //   setBookingsData(updatedBookings);
 
-    const deletedBookingIds =
-      JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
-    if (!deletedBookingIds.includes(idToRemove)) {
-      deletedBookingIds.push(idToRemove);
-      localStorage.setItem(
-        "deletedBookingIds",
-        JSON.stringify(deletedBookingIds)
-      );
-    }
-  };
+  //   const deletedBookingIds =
+  //     JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
+  //   if (!deletedBookingIds.includes(idToRemove)) {
+  //     deletedBookingIds.push(idToRemove);
+  //     localStorage.setItem(
+  //       "deletedBookingIds",
+  //       JSON.stringify(deletedBookingIds)
+  //     );
+  //   }
+  // };
 
   return (
     <div className="container mx-auto px-4 py-6 bg-gray-50 min-h-screen">
