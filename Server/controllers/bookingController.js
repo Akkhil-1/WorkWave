@@ -307,6 +307,68 @@ const getBooking = async (req, res) => {
     });
   }
 };
+const getEarningsForLast10Days = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    console.log("token: " , token);
+    
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const adminId = decoded._id;
+    console.log("Admin ID from JWT:", adminId);
+
+    // Fetch the admin and their single business
+    const admin = await Admin.findById(adminId).populate("adminBusinesses", "_id");
+    if (!admin || admin.adminBusinesses.length === 0) {
+      return res.status(404).json({ message: "No businesses found for this admin" });
+    }
+
+    const businessId = admin.adminBusinesses[0]._id;
+    console.log("Business ID:", businessId);
+
+    // Calculate last 10 days
+    const last10Days = [];
+    const today = new Date();
+    for (let i = 0; i < 10; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      last10Days.push(date.toISOString().split("T")[0]);
+    }
+
+    // Initialize earnings data
+    const earningsByDate = {};
+    for (const date of last10Days) {
+      earningsByDate[date] = 0;
+    }
+
+    // Fetch bookings for the last 10 days for the single business
+    const bookings = await Booking.find({
+      business: businessId,
+      bookingDate: { $in: last10Days },
+      // paymentStatus: "Paid",
+    }).populate("service", "price");
+
+    // Calculate earnings for each date
+    bookings.forEach((booking) => {
+      const date = booking.bookingDate; // Format: "YYYY-MM-DD"
+      const servicePrice = booking.service?.price || 0;
+      earningsByDate[date] += servicePrice;
+    });
+
+    // Send response
+    res.status(200).json({
+      success: true,
+      data: last10Days.map((date) => ({
+        date,
+        earnings: earningsByDate[date],
+      })),
+    });
+  } catch (error) {
+    console.error("Error fetching earnings:", error.message);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
 
 module.exports = {
   addBooking,
@@ -314,6 +376,6 @@ module.exports = {
   getBooking,
   updateBookingDetails,
   deleteBooking,
-  updateBookingStatus
-
+  updateBookingStatus,
+  getEarningsForLast10Days
 };

@@ -13,4 +13,5 @@ router.post("/delete/:id" , servicesController.deleteService)
 router.post("/update/:id" , servicesController.updateService)
 router.get("/adminDashboard" , servicesController.getServicesAdminDashboard)
 router.get("/:id", servicesController.getService);
+router.get("/name/:serviceId" , servicesController.getServiceName);
 module.exports = router;

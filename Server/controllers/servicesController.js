@@ -140,5 +140,29 @@ const getService = async (req, res) => {
     res.status(500).json({ status: 500, msg: "Internal server error" });
   }
 };
+const getServiceName = async (req, res) => {
+  try {
+    const { serviceId } = req.params;
+    console.log("Requested serviceId:", serviceId); 
 
-module.exports = { addService, getService , getServicesAdminDashboard , updateService , deleteService};
+    // Check if the serviceId is a valid ObjectId
+    if (!serviceId) {
+      return res.status(400).json({ message: "Invalid serviceId format" });
+    }
+
+    // Find the service by ID (convert serviceId to ObjectId)
+    const service = await Service.findById(serviceId);
+
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    // Return the service name
+    return res.status(200).json({ serviceName: service.name });
+  } catch (error) {
+    console.error("Error fetching service name:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { addService, getService , getServicesAdminDashboard , updateService , deleteService , getServiceName};

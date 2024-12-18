@@ -12,6 +12,7 @@ const extractBusinessId = (req, res, next) => {
   
   next();
 };
+router.get("/getBookingLast10Days" , bookingController.getEarningsForLast10Days);
 router.post(
   "/addbooking/:businessId",
   userauthMiddleware,
