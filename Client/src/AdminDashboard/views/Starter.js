@@ -67,39 +67,33 @@ const Starter = () => {
         );
         const length = sortedBookings.length
         console.log(length);
-        // const deletedBookingIds =
-        //   JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
-
-        // const filteredBookings = sortedBookings.filter(
-        //   (booking) => !deletedBookingIds.includes(booking._id)
-        // );
-
         setBookingsData(sortedBookings);
-
-        // Set total bookings to the length of the filtered list
         setTotalBookings(booking.length);
-
         let earnings = 0;
         const serviceNamesObj = {};
-
+        
         for (let booking of sortedBookings) {
           if (booking.service) {
             console.log("Booking Service ID:", booking.service);
             const serviceData = await fetchServiceDetails(booking.service);
             console.log("Service Data:", serviceData);
-
-            if (serviceData && serviceData.data && serviceData.data.price) {
-              earnings += serviceData.data.price;
-              console.log("Earnings updated:", earnings);
+            if (booking.paymentStatus === "Paid") {
+              if (serviceData && serviceData.data && serviceData.data.price) {
+                earnings += serviceData.data.price;
+                console.log("Earnings updated:", earnings);
+              } else {
+                console.log("No price found for service:", booking.service);
+              }
+              serviceNamesObj[booking.service] = serviceData ? serviceData.data.name : "Service";
             } else {
-              console.log("No price found for service:", booking.service);
+              console.log("Booking payment status is not 'Paid', skipping:", booking.service);
             }
-
-            serviceNamesObj[booking.service] = serviceData ? serviceData.data.name : "Service";
           }
         }
+        
         setTotalEarnings(earnings);
         setServiceNames(serviceNamesObj);
+        
       } catch (error) {
         console.error("Error fetching bookings:", error);
         setFetchError(true);
