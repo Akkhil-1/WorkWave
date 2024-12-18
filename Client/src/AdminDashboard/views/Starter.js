@@ -86,30 +86,36 @@ const Starter = () => {
         for (let booking of filteredBookings) {
           if (booking.service) {
             console.log("Booking Service ID:", booking.service);
+
+            // Fetch service details for each booking (e.g., name, price, etc.)
             const serviceData = await fetchServiceDetails(booking.service);
             console.log("Service Data:", serviceData);
 
             if (serviceData && serviceData.data && serviceData.data.price) {
               const servicePrice = serviceData.data.price;
 
-              // Check if the paymentStatus is "paid"
-              if (serviceData.data.paymentStatus === "Paid") {
+              // Check if the booking's paymentStatus is "Paid"
+              if (booking.paymentStatus === "Paid") {
+                // Add to earnings only if the paymentStatus is "Paid"
                 if (serviceEarnings[booking.service]) {
                   serviceEarnings[booking.service] += servicePrice;
                 } else {
                   serviceEarnings[booking.service] = servicePrice;
                 }
+
                 earnings += servicePrice;
                 console.log("Earnings updated:", earnings);
               } else {
                 console.log(
-                  "Service payment status is not 'paid', skipping:",
+                  "Booking payment status is not 'Paid', skipping:",
                   booking.service
                 );
               }
             } else {
               console.log("No price found for service:", booking.service);
             }
+
+            // Store the service name in serviceNamesObj
             serviceNamesObj[booking.service] = serviceData
               ? serviceData.data.name
               : "Service";
