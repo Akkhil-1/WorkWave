@@ -82,7 +82,7 @@ const Starter = () => {
         let earnings = 0;
         const serviceNamesObj = {};
 
-        for (let booking of filteredBookings) {
+        for (let booking of sortedBookings) {
           if (booking.service) {
             console.log("Booking Service ID:", booking.service);
             const serviceData = await fetchServiceDetails(booking.service);
