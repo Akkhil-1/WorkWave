@@ -4,13 +4,31 @@ import logo from "../assets/logosaas.png";
 import { FaHome } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { User, Calendar, MessageSquare } from "lucide-react";
-import { toast } from "react-toastify"; // Make sure you have toast notifications set up
+import { toast } from "react-toastify"; // Ensure you have toast notifications set up
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
   const [userData, setUserData] = useState({});
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Dynamically load Razorpay script
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => {
+      console.log("Razorpay script loaded successfully.");
+    };
+    script.onerror = () => {
+      console.error("Failed to load Razorpay script.");
+    };
+    document.body.appendChild(script);
+
+    // Cleanup script on component unmount
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +59,11 @@ const Dashboard = () => {
 
   const handleRazorpayPayment = async (amount, bookingId) => {
     try {
+      // Ensure Razorpay script is loaded
+      if (typeof window.Razorpay === "undefined") {
+        throw new Error("Razorpay script not loaded");
+      }
+
       // Request to your backend to create a Razorpay order
       const response = await axios.post(
         "https://workwave-aage.onrender.com/orders", // Adjust the URL to your backend endpoint
@@ -67,10 +90,7 @@ const Dashboard = () => {
           alert("Payment successful!");
 
           // Send the paymentId and bookingId to the backend to update the payment status
-          await updateBookingStatus(
-            paymentResponse.razorpay_payment_id,
-            bookingId
-          );
+          await updateBookingStatus(paymentResponse.razorpay_payment_id, bookingId);
         },
         prefill: {
           name: userData.name || "Guest",
@@ -94,11 +114,9 @@ const Dashboard = () => {
     try {
       const updatedBookings = [...bookings];
       // Optimistically update the payment status
-      const bookingIndex = updatedBookings.findIndex(
-        (booking) => booking._id === bookingId
-      );
+      const bookingIndex = updatedBookings.findIndex((booking) => booking._id === bookingId);
       if (bookingIndex !== -1) {
-        updatedBookings[bookingIndex].paymentStatus = "Paid"; // Update payment status optimistically
+        updatedBookings[bookingIndex].paymentStatus = "Paid";  // Update payment status optimistically
         updatedBookings[bookingIndex].status = "Completed"; // Update booking status
       }
       setBookings(updatedBookings); // Optimistically update UI
@@ -124,9 +142,7 @@ const Dashboard = () => {
 
       // Revert the UI update in case of error (optional)
       const updatedBookings = [...bookings];
-      const bookingIndex = updatedBookings.findIndex(
-        (booking) => booking._id === bookingId
-      );
+      const bookingIndex = updatedBookings.findIndex((booking) => booking._id === bookingId);
       if (bookingIndex !== -1) {
         updatedBookings[bookingIndex].paymentStatus = "Pending"; // Revert to previous status
         updatedBookings[bookingIndex].status = "Pending"; // Revert booking status
