@@ -153,7 +153,7 @@ const Starter = () => {
           bg="bg-blue-100 text-blue-600"
           title="Total Bookings"
           subtitle="Total Bookings"
-          earning={`$${bookingsData.length}`}
+          earning={`${bookingsData.length}`}
           icon="bi bi-basket3"
         />
         <TopCards
