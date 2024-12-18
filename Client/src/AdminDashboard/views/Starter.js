@@ -4,8 +4,6 @@ import ProjectTables from "../components/dashboard/ProjectTableDash";
 import TopCards from "../components/dashboard/TopCards";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState, useEffect } from "react";
-
-// Helper function to fetch the service details
 const fetchServiceDetails = async (serviceId) => {
   try {
     const response = await fetch(
@@ -23,14 +21,12 @@ const fetchServiceDetails = async (serviceId) => {
       throw new Error("Failed to fetch service details");
     }
 
-    return await response.json(); // Assuming response contains service details, including price
+    return await response.json();
   } catch (error) {
     console.error("Error fetching service details:", error);
     return null;
   }
 };
-
-// Starter Component
 const Starter = () => {
   const [totalBookings, setTotalBookings] = useState(0);
   const [bookingsData, setBookingsData] = useState([]);
@@ -40,78 +36,77 @@ const Starter = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [serviceNames, setServiceNames] = useState({});
 
-  // Fetch bookings data
-  useEffect(() => {
-    const fetchBookingsData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(
-          `https://workwave-aage.onrender.com/business/getBookings`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch bookings");
+useEffect(() => {
+  const fetchBookingsData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `https://workwave-aage.onrender.com/business/getBookings`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const data = await response.json();
-        console.log("Fetched Bookings:", data.bookings); // Log the bookings
-
-        const booking = data.bookings || [];
-
-        // Sort bookings by date
-        const sortedBookings = booking.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        console.log("Sorted Bookings:", sortedBookings); // Log sorted bookings
-
-        // Filter out deleted bookings
-        const deletedBookingIds =
-          JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
-        console.log("Deleted Bookings:", deletedBookingIds); // Log the deleted bookings list
-
-        const filteredBookings = sortedBookings.filter(
-          (booking) => !deletedBookingIds.includes(booking._id)
-        );
-        console.log("Filtered Bookings:", filteredBookings); // Log filtered bookings
-
-        setBookingsData(filteredBookings);
-        setTotalBookings(filteredBookings.length);
-
-        // Calculate total earnings
-        let earnings = 0;
-        const serviceNamesObj = {};
-
-        // Iterate through each booking to sum up the service price
-        for (let booking of filteredBookings) {
-          if (booking.service) {
-            const serviceData = booking.service; // Service data is embedded in the booking object
-            if (serviceData && serviceData.price) {
-              earnings += serviceData.price;
-            }
-            serviceNamesObj[booking.service._id] =
-              serviceData.name || "Service";
-          }
-        }
-
-        setTotalEarnings(earnings);
-        setServiceNames(serviceNamesObj);
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-        setFetchError(true);
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch bookings");
       }
-    };
 
-    fetchBookingsData();
-  }, []);
+      const data = await response.json();
+      console.log("Fetched Bookings:", data.bookings); // Log the bookings
+
+      const booking = data.bookings || [];
+
+      const sortedBookings = booking.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      console.log("Sorted Bookings:", sortedBookings); // Log sorted bookings
+
+      // Filter out deleted bookings
+      const deletedBookingIds =
+        JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
+      console.log("Deleted Bookings:", deletedBookingIds); // Log the deleted bookings list
+
+      const filteredBookings = sortedBookings.filter(
+        (booking) => !deletedBookingIds.includes(booking._id)
+      );
+      console.log("Filtered Bookings:", filteredBookings);
+
+      setBookingsData(filteredBookings);
+      setTotalBookings(filteredBookings.length);
+      let earnings = 0;
+      const serviceNamesObj = {};
+      for (let booking of filteredBookings) {
+        if (booking.service) {
+          console.log("Booking Service ID:", booking.service);
+          const serviceData = await fetchServiceDetails(booking.service);
+          console.log("Service Data:", serviceData)
+          if (serviceData && serviceData.data && serviceData.data.price) {
+            earnings += serviceData.data.price;
+            console.log("Earnings updated:", earnings); 
+          } else {
+            console.log("No price found for service:", booking.service);
+          }
+
+          serviceNamesObj[booking.service] = serviceData ? serviceData.data.name : "Service";
+        }
+      }
+      setTotalEarnings(earnings);
+      setServiceNames(serviceNamesObj);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      setFetchError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchBookingsData();
+}, []);
+
 
   // Remove a specific notification
   const removeNotification = (idToRemove) => {
