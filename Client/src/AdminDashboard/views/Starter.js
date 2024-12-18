@@ -65,8 +65,8 @@ const Starter = () => {
         const sortedBookings = booking.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-
-        // Filter out deleted bookings
+        const length = sortedBookings.length
+        console.log(length);
         const deletedBookingIds =
           JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
 
@@ -74,34 +74,32 @@ const Starter = () => {
           (booking) => !deletedBookingIds.includes(booking._id)
         );
 
-        setBookingsData(sortedBookings);
+        setBookingsData(filteredBookings);
 
         // Set total bookings to the length of the filtered list
-        setTotalBookings(booking.length); // Total bookings = length of all bookings (before deletion filtering)
+        setTotalBookings(booking.length);
+
         let earnings = 0;
         const serviceNamesObj = {};
-        
+
         for (let booking of filteredBookings) {
           if (booking.service) {
             console.log("Booking Service ID:", booking.service);
             const serviceData = await fetchServiceDetails(booking.service);
             console.log("Service Data:", serviceData);
+
             if (serviceData && serviceData.data && serviceData.data.price) {
-              const bookingPrice = serviceData.data.price;       
-              earnings += bookingPrice;
+              earnings += serviceData.data.price;
               console.log("Earnings updated:", earnings);
             } else {
               console.log("No price found for service:", booking.service);
             }
-            serviceNamesObj[booking.service] = serviceData
-              ? serviceData.data.name
-              : "Service";
+
+            serviceNamesObj[booking.service] = serviceData ? serviceData.data.name : "Service";
           }
         }
-        
         setTotalEarnings(earnings);
         setServiceNames(serviceNamesObj);
-        
       } catch (error) {
         console.error("Error fetching bookings:", error);
         setFetchError(true);
@@ -155,17 +153,17 @@ const Starter = () => {
           bg="bg-blue-100 text-blue-600"
           title="Total Bookings"
           subtitle="Total Bookings"
-          earning={`${bookingsData.length}`}
+          earning = {bookingsData.length}
           icon="bi bi-basket3"
         />
         <TopCards
           bg="bg-yellow-100 text-yellow-600"
           title="Pending Bookings"
           subtitle="Pending Bookings"
-          earning={`${
-            bookingsData.filter((booking) => booking.status === "pending")
+          earning={
+            bookingsData.filter((booking) => booking.status === "Pending")
               .length
-          }`}
+          }
           icon="bi bi-basket3"
         />
       </div>
