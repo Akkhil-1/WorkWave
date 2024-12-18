@@ -4,14 +4,13 @@ import logo from "../assets/logosaas.png";
 import { FaHome } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { User, Calendar, MessageSquare } from "lucide-react";
-import { toast } from "react-toastify"; // Make sure you have toast installed
+import { toast } from "react-toastify"; // Make sure you have toast notifications set up
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
   const [userData, setUserData] = useState({});
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [responseId, setResponseId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,16 +29,6 @@ const Dashboard = () => {
 
         setUserData(userResponse.data);
         setBookings(bookingsResponse.data.bookings);
-
-        // Check if there's a payment ID and booking ID in the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const paymentId = urlParams.get("payment_id");
-        const bookingId = urlParams.get("booking_id");
-
-        if (paymentId && bookingId) {
-          // Payment was successful, update status
-          await updateBookingStatus(paymentId, bookingId);
-        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -50,68 +39,38 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  const loadScript = (src) => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const handleSubmit = async (e, booking) => {
-    e.preventDefault();
-    if (!booking.service || !booking.service.price) {
-      alert("Service details are missing or incorrect. Please try again.");
-      return;
-    }
-
+  const handleRazorpayPayment = async (amount, bookingId) => {
     try {
-      const invoiceData = {
-        totalAmount: booking.service.price,
-        status: "PAID",
-        service: booking.service.name,
-        user: userData.name || "Guest",
-      };
-
-      await handleRazorpayScreen(invoiceData.totalAmount, booking.id);
-    } catch (error) {
-      console.error("Error creating invoice:", error);
-      alert("Failed to create invoice. Please try again.");
-    }
-  };
-
-  const handleRazorpayScreen = async (amount, bookingId) => {
-    try {
-      const res = await loadScript(
-        "https://checkout.razorpay.com/v1/checkout.js"
+      // Request to your backend to create a Razorpay order
+      const response = await axios.post(
+        "https://workwave-aage.onrender.com/orders", // Adjust the URL to your backend endpoint
+        {
+          amount: amount * 100, // Convert the amount to paise (Razorpay works in paise)
+          currency: "INR", // Currency for the payment
+        },
+        { withCredentials: true } // Pass cookies if needed for authentication
       );
 
-      if (!res) {
-        alert("Error loading Razorpay screen");
-        return;
-      }
+      const { order_id, currency, amount: orderAmount } = response.data;
 
-      const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID;
-      if (!razorpayKey) {
-        alert("Razorpay API key is missing.");
-        return;
-      }
-
+      // Initialize Razorpay payment options
       const options = {
-        key: razorpayKey,
-        amount: amount * 100, // amount in paise
-        currency: "INR",
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Replace with your Razorpay key
+        amount: orderAmount, // Amount received from backend (in paise)
+        currency: currency,
         name: "WorkWave",
-        description: "Payment to WORKWAVE",
+        description: "Payment for booking",
         image: logo,
-        handler: async function (response) {
-          setResponseId(response.razorpay_payment_id);
+        order_id: order_id, // Use the orderId from the backend
+        handler: async function (paymentResponse) {
+          // Payment was successful
           alert("Payment successful!");
 
-          // After payment success, send the paymentId and bookingId to the backend
-          await updateBookingStatus(response.razorpay_payment_id, bookingId);
+          // Send the paymentId and bookingId to the backend to update the payment status
+          await updateBookingStatus(
+            paymentResponse.razorpay_payment_id,
+            bookingId
+          );
         },
         prefill: {
           name: userData.name || "Guest",
@@ -122,36 +81,35 @@ const Dashboard = () => {
         },
       };
 
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
+      // Open Razorpay's payment window
+      const razorpayObject = new window.Razorpay(options);
+      razorpayObject.open();
     } catch (error) {
-      console.error("Error loading Razorpay payment screen:", error);
-      alert("Failed to load Razorpay payment screen");
+      console.error("Error initiating Razorpay payment:", error);
+      alert("Failed to initiate payment.");
     }
   };
 
-  // Function to update payment status after successful payment
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
       const updatedBookings = [...bookings];
-
       // Optimistically update the payment status
       const bookingIndex = updatedBookings.findIndex(
-        (booking) => booking.id === bookingId
+        (booking) => booking._id === bookingId
       );
       if (bookingIndex !== -1) {
         updatedBookings[bookingIndex].paymentStatus = "Paid"; // Update payment status optimistically
+        updatedBookings[bookingIndex].status = "Completed"; // Update booking status
       }
-
       setBookings(updatedBookings); // Optimistically update UI
 
       // Make the API call to update the payment status in the backend
       const response = await axios.put(
-        `https://workwave-aage.onrender.com/booking/updatePayment`, // Ensure correct endpoint
+        "https://workwave-aage.onrender.com/booking/updatePayment", // Correct endpoint for updating payment
         {
-          paymentId, // Send payment ID from Razorpay
-          bookingId, // Send the booking ID
-          paymentStatus: "Paid", // Send the payment status as "Paid"
+          paymentId, // Send paymentId
+          bookingId, // Send bookingId
+          paymentStatus: "Paid", // Send paymentStatus
         },
         { withCredentials: true }
       );
@@ -159,11 +117,7 @@ const Dashboard = () => {
       if (response.status === 200) {
         toast.success("Payment status updated successfully!");
       } else {
-        // Log the error and display message
-        console.error("API Error: ", response.data.message);
-        throw new Error(
-          response.data.message || "Failed to update payment status"
-        );
+        throw new Error("Failed to update payment status");
       }
     } catch (error) {
       console.error("Error updating payment status:", error);
@@ -171,14 +125,15 @@ const Dashboard = () => {
       // Revert the UI update in case of error (optional)
       const updatedBookings = [...bookings];
       const bookingIndex = updatedBookings.findIndex(
-        (booking) => booking.id === bookingId
+        (booking) => booking._id === bookingId
       );
       if (bookingIndex !== -1) {
-        updatedBookings[bookingIndex].paymentStatus = "Not Paid"; // Revert to previous status
+        updatedBookings[bookingIndex].paymentStatus = "Pending"; // Revert to previous status
+        updatedBookings[bookingIndex].status = "Pending"; // Revert booking status
       }
       setBookings(updatedBookings);
 
-      toast.error(error.message || "Failed to update payment status!");
+      toast.error("Failed to update payment status!");
     }
   };
 
