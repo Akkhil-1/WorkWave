@@ -90,7 +90,10 @@ const Dashboard = () => {
           alert("Payment successful!");
 
           // Send the paymentId and bookingId to the backend to update the payment status
-          await updateBookingStatus(paymentResponse.razorpay_payment_id, bookingId);
+          await updateBookingStatus(
+            paymentResponse.razorpay_payment_id,
+            bookingId
+          );
         },
         prefill: {
           name: userData.name || "Guest",
@@ -114,10 +117,11 @@ const Dashboard = () => {
     try {
       const updatedBookings = [...bookings];
       // Optimistically update the payment status
-      const bookingIndex = updatedBookings.findIndex((booking) => booking._id === bookingId);
+      const bookingIndex = updatedBookings.findIndex(
+        (booking) => booking._id === bookingId
+      );
       if (bookingIndex !== -1) {
-        updatedBookings[bookingIndex].paymentStatus = "Paid";  // Update payment status optimistically
-        // updatedBookings[bookingIndex].status = "Completed"; // Update booking status
+        updatedBookings[bookingIndex].paymentStatus = "Paid";
       }
       setBookings(updatedBookings); // Optimistically update UI
 
@@ -142,7 +146,9 @@ const Dashboard = () => {
 
       // Revert the UI update in case of error (optional)
       const updatedBookings = [...bookings];
-      const bookingIndex = updatedBookings.findIndex((booking) => booking._id === bookingId);
+      const bookingIndex = updatedBookings.findIndex(
+        (booking) => booking._id === bookingId
+      );
       if (bookingIndex !== -1) {
         updatedBookings[bookingIndex].paymentStatus = "Pending"; // Revert to previous status
         updatedBookings[bookingIndex].status = "Pending"; // Revert booking status
@@ -193,6 +199,12 @@ const Dashboard = () => {
               </h2>
               <p className="text-indigo-200">
                 {userData.email || "john@gmail.com"}
+              </p>
+              <p className="text-indigo-200">
+                {userData.address || "New York"}
+              </p>
+              <p className="text-indigo-200">
+                {userData.mobile_number || "+1 789 885 929"}
               </p>
             </div>
           </div>
