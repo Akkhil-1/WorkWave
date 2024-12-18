@@ -91,25 +91,31 @@ const Starter = () => {
 
             if (serviceData && serviceData.data && serviceData.data.price) {
               const servicePrice = serviceData.data.price;
-              if (serviceEarnings[booking.service]) {
-                serviceEarnings[booking.service] += servicePrice;
-              } else {
-                serviceEarnings[booking.service] = servicePrice;
-              }
 
-              // Update the total earnings
-              earnings += servicePrice;
-              console.log("Earnings updated:", earnings);
+              // Check if the paymentStatus is "paid"
+              if (serviceData.data.paymentStatus === "Paid") {
+                if (serviceEarnings[booking.service]) {
+                  serviceEarnings[booking.service] += servicePrice;
+                } else {
+                  serviceEarnings[booking.service] = servicePrice;
+                }
+                earnings += servicePrice;
+                console.log("Earnings updated:", earnings);
+              } else {
+                console.log(
+                  "Service payment status is not 'paid', skipping:",
+                  booking.service
+                );
+              }
             } else {
               console.log("No price found for service:", booking.service);
             }
-
-            // Store the service name in serviceNamesObj
             serviceNamesObj[booking.service] = serviceData
               ? serviceData.data.name
               : "Service";
           }
         }
+
         setTotalEarnings(earnings);
         setServiceNames(serviceNamesObj);
       } catch (error) {
