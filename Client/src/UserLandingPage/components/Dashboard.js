@@ -117,7 +117,7 @@ const Dashboard = () => {
       const bookingIndex = updatedBookings.findIndex((booking) => booking._id === bookingId);
       if (bookingIndex !== -1) {
         updatedBookings[bookingIndex].paymentStatus = "Paid";  // Update payment status optimistically
-        updatedBookings[bookingIndex].status = "Completed"; // Update booking status
+        // updatedBookings[bookingIndex].status = "Completed"; // Update booking status
       }
       setBookings(updatedBookings); // Optimistically update UI
 
