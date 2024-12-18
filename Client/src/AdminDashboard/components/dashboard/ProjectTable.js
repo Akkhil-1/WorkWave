@@ -186,13 +186,13 @@ const ProjectTables = ({ businessId }) => {
                           : "bg-yellow-200 text-yellow-800"
                       }`}
                     >
-                      <option value="pending" className="text-yellow-600">
+                      <option value="pending" className="text-yellow-700">
                         Pending
                       </option>
-                      <option value="confirmed" className="text-green-600">
+                      <option value="confirmed" className="text-green-700">
                         Confirmed
                       </option>
-                      <option value="Cancel" className="text-red-600">
+                      <option value="Cancel" className="text-red-700">
                         Cancelled
                       </option>
                     </select>
