@@ -74,7 +74,7 @@ const Starter = () => {
           (booking) => !deletedBookingIds.includes(booking._id)
         );
 
-        setBookingsData(filteredBookings);
+        setBookingsData(sortedBookings);
 
         // Set total bookings to the length of the filtered list
         setTotalBookings(booking.length); // Total bookings = length of all bookings (before deletion filtering)
@@ -153,7 +153,7 @@ const Starter = () => {
           bg="bg-blue-100 text-blue-600"
           title="Total Bookings"
           subtitle="Total Bookings"
-          earning={`${bookingsData.length}`}
+          earning={`$${bookingsData.length}`}
           icon="bi bi-basket3"
         />
         <TopCards
