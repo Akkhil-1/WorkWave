@@ -107,6 +107,9 @@ const ProjectTables = ({ businessId }) => {
                 Date of Booking
               </th>
               <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Payment Status
+              </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
                 Current Status
               </th>
               <th className="py-2 px-4 text-sm font-medium text-gray-600">
@@ -145,6 +148,17 @@ const ProjectTables = ({ businessId }) => {
                 </td>
                 <td className="py-4 px-4 text-sm text-black">
                   {booking.bookingDate}
+                </td>
+                <td className="py-4 px-4 text-center">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      booking.paymentStatus === "Paid"
+                        ? "bg-green-200 text-green-800"
+                        : "bg-yellow-200 text-yellow-800"
+                    }`}
+                  >
+                    {booking.paymentStatus}
+                  </span>
                 </td>
                 {/* Current Status Column */}
                 <td className="py-4 px-4 text-center">

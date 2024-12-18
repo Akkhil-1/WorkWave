@@ -93,6 +93,9 @@ const ProjectTables = ({ businessId }) => {
               <th className="py-2 px-4 text-sm font-medium text-gray-600">
                 Status
               </th>
+              <th className="py-2 px-4 text-sm font-medium text-gray-600">
+                Payment Status
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -134,6 +137,17 @@ const ProjectTables = ({ businessId }) => {
                 </td>
                 <td className="py-4 px-4 text-center text-black">
                   {booking.status}
+                </td>
+                <td className="py-4 px-4 text-center">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm ${
+                      booking.paymentStatus === "Paid"
+                        ? "bg-green-200 text-green-800"
+                        : "bg-yellow-200 text-yellow-800"
+                    }`}
+                  >
+                    {booking.paymentStatus}
+                  </span>
                 </td>
               </tr>
             ))}
