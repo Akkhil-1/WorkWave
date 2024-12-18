@@ -77,7 +77,7 @@ const Starter = () => {
         setBookingsData(filteredBookings);
 
         // Set total bookings to the length of the filtered list
-        setTotalBookings(booking.length);
+        setTotalBookings(booking.length); // Total bookings = length of all bookings (before deletion filtering)
 
         let earnings = 0;
         const serviceNamesObj = {};
@@ -153,17 +153,17 @@ const Starter = () => {
           bg="bg-blue-100 text-blue-600"
           title="Total Bookings"
           subtitle="Total Bookings"
-          earning={bookingsData.length}
+          earning={`${bookingsData.length}`}
           icon="bi bi-basket3"
         />
         <TopCards
           bg="bg-yellow-100 text-yellow-600"
           title="Pending Bookings"
           subtitle="Pending Bookings"
-          earning={
+          earning={`${
             bookingsData.filter((booking) => booking.status === "Pending")
               .length
-          }
+          }`}
           icon="bi bi-basket3"
         />
       </div>
