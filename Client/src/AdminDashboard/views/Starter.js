@@ -61,30 +61,37 @@ const Starter = () => {
         }
 
         const data = await response.json();
-        const booking = data;
+        console.log("Fetched Bookings:", data.bookings); // Log the bookings
+
+        const booking = data.bookings || [];
 
         // Sort bookings by date
-        const sortedBookings = booking.bookings.sort(
+        const sortedBookings = booking.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
+        console.log("Sorted Bookings:", sortedBookings); // Log sorted bookings
 
         // Filter out deleted bookings
         const deletedBookingIds =
           JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
+        console.log("Deleted Bookings:", deletedBookingIds); // Log the deleted bookings list
+
         const filteredBookings = sortedBookings.filter(
           (booking) => !deletedBookingIds.includes(booking._id)
         );
+        console.log("Filtered Bookings:", filteredBookings); // Log filtered bookings
 
-        setBookingsData(filteredBookings.slice(0, 5));
-        setTotalBookings(sortedBookings.length);
-        setFetchError(false);
+        setBookingsData(filteredBookings);
+        setTotalBookings(filteredBookings.length);
 
         // Calculate total earnings
         let earnings = 0;
         const serviceNamesObj = {};
+
+        // Iterate through each booking to sum up the service price
         for (let booking of filteredBookings) {
           if (booking.service) {
-            const serviceData = booking.service;
+            const serviceData = booking.service; // Service data is embedded in the booking object
             if (serviceData && serviceData.price) {
               earnings += serviceData.price;
             }
@@ -92,6 +99,7 @@ const Starter = () => {
               serviceData.name || "Service";
           }
         }
+
         setTotalEarnings(earnings);
         setServiceNames(serviceNamesObj);
       } catch (error) {
