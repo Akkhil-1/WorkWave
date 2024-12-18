@@ -153,17 +153,17 @@ const Starter = () => {
           bg="bg-blue-100 text-blue-600"
           title="Total Bookings"
           subtitle="Total Bookings"
-          earning={`${bookingsData.length}`}
+          earning={bookingsData.length}
           icon="bi bi-basket3"
         />
         <TopCards
           bg="bg-yellow-100 text-yellow-600"
           title="Pending Bookings"
           subtitle="Pending Bookings"
-          earning={`${
+          earning={
             bookingsData.filter((booking) => booking.status === "Pending")
               .length
-          }`}
+          }
           icon="bi bi-basket3"
         />
       </div>
