@@ -262,10 +262,16 @@ const Dashboard = () => {
                           className="border-b border-indigo-300 text-gray-700"
                         >
                           <td className="py-4">
-                            {booking.businessName || "Unknown Business"}
+                            {booking.businessName ||
+                              booking.business?.businessName ||
+                              booking.business?.name ||
+                              "Unknown Business"}
                           </td>
                           <td className="py-4">
-                            {booking.serviceName || "Unknown Service"}
+                            {booking.serviceName ||
+                              booking.service?.name ||
+                              booking.service?.serviceName ||
+                              "Unknown Service"}
                           </td>
                           <td className="py-4">
                             {booking.service?.price
