@@ -70,11 +70,11 @@ const Starter = () => {
         // const deletedBookingIds =
         //   JSON.parse(localStorage.getItem("deletedBookingIds")) || [];
 
-        const filteredBookings = sortedBookings.filter(
-          (booking) => !deletedBookingIds.includes(booking._id)
-        );
+        // const filteredBookings = sortedBookings.filter(
+        //   (booking) => !deletedBookingIds.includes(booking._id)
+        // );
 
-        setBookingsData(filteredBookings);
+        setBookingsData(sortedBookings);
 
         // Set total bookings to the length of the filtered list
         setTotalBookings(booking.length);
@@ -218,13 +218,13 @@ const Starter = () => {
                           : "No date specified"}
                       </p>
                     </div>
-                    <button
+                    {/* <button
                       onClick={() => removeNotification(booking._id)}
                       className="text-gray-400 hover:text-red-500 transition-colors ml-4"
                       aria-label="Remove notification"
                     >
                       <i className="bi bi-x-circle text-lg"></i>
-                    </button>
+                    </button> */}
                   </div>
                 ))}
               </div>
