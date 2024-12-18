@@ -4,6 +4,7 @@ import logo from "../assets/logosaas.png";
 import { FaHome } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { User, Calendar, MessageSquare } from "lucide-react";
+import { toast } from "react-toastify"; // Make sure you have toast installed
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
@@ -127,31 +128,47 @@ const Dashboard = () => {
     }
   };
 
+  // Function to update payment status after successful payment
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
+      const updatedBookings = [...bookings];
+      
+      // Optimistically update the payment status
+      const bookingIndex = updatedBookings.findIndex((booking) => booking.id === bookingId);
+      if (bookingIndex !== -1) {
+        updatedBookings[bookingIndex].paymentStatus = "Paid";  // Update payment status optimistically
+      }
+      
+      setBookings(updatedBookings); // Optimistically update UI
+
+      // Make the API call to update the payment status in the backend
       const response = await axios.put(
-        `https://workwave-aage.onrender.com/booking/updatePayment`,
+        `https://workwave-aage.onrender.com/booking/updatePayment`, // Ensure correct endpoint
         {
-          paymentId, // Send paymentId
-          bookingId, // Send bookingId
-          paymentStatus: "Paid", // Send paymentStatus
+          paymentId, // Send payment ID from Razorpay
+          bookingId, // Send the booking ID
+          paymentStatus: "Paid", // Send the payment status as "Paid"
         },
         { withCredentials: true }
       );
 
       if (response.status === 200) {
-        setBookings((prevBookings) =>
-          prevBookings.map((booking) =>
-            booking.id === bookingId
-              ? { ...booking, paymentStatus: "Paid", status: "Completed" }
-              : booking
-          )
-        );
+        toast.success("Payment status updated successfully!");
       } else {
-        console.error("Error updating booking status in backend");
+        throw new Error("Failed to update payment status");
       }
     } catch (error) {
-      console.error("Error updating booking status:", error);
+      console.error("Error updating payment status:", error);
+      
+      // Revert the UI update in case of error (optional)
+      const updatedBookings = [...bookings];
+      const bookingIndex = updatedBookings.findIndex((booking) => booking.id === bookingId);
+      if (bookingIndex !== -1) {
+        updatedBookings[bookingIndex].paymentStatus = "Pending"; // Revert to previous status
+      }
+      setBookings(updatedBookings);
+
+      toast.error("Failed to update payment status!");
     }
   };
 
