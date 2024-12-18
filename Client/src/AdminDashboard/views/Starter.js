@@ -84,13 +84,12 @@ const Starter = () => {
         const serviceNamesObj = {};
         for (let booking of filteredBookings) {
           if (booking.service) {
-            const serviceData = await fetchServiceDetails(booking.service);
-            if (serviceData) {
-              if (serviceData.price) {
-                earnings += serviceData.price;
-              }
-              serviceNamesObj[booking.service] = serviceData.name || "Service";
+            const serviceData = booking.service;
+            if (serviceData && serviceData.price) {
+              earnings += serviceData.price;
             }
+            serviceNamesObj[booking.service._id] =
+              serviceData.name || "Service";
           }
         }
         setTotalEarnings(earnings);
@@ -145,6 +144,13 @@ const Starter = () => {
           icon="bi bi-coin"
         />
         <TopCards
+          bg="bg-blue-100 text-blue-600"
+          title="Total Bookings"
+          subtitle="Total Bookings"
+          earning={`${totalBookings}`}
+          icon="bi bi-basket3"
+        />
+        <TopCards
           bg="bg-yellow-100 text-yellow-600"
           title="Pending Bookings"
           subtitle="Pending Bookings"
@@ -154,13 +160,6 @@ const Starter = () => {
           }`}
           icon="bi bi-basket3"
         />
-        <TopCards
-          bg="bg-blue-100 text-blue-600"
-          title="Total Bookings"
-          subtitle="Total Bookings"
-          earning={`${totalBookings}`}
-          icon="bi bi-basket3"
-        />
       </div>
 
       {/* Main Content Area */}
@@ -168,7 +167,9 @@ const Starter = () => {
         {/* Sales Chart */}
         <div className="bg-white rounded-xl shadow-lg p-6">
           <div className="border-b pb-4 mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">Sales Overview</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Sales Overview
+            </h2>
           </div>
           <SalesChart />
         </div>
@@ -178,7 +179,7 @@ const Starter = () => {
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-t-xl">
             <h3 className="text-lg font-semibold">Recent Notifications</h3>
           </div>
-          
+
           <div className="p-6">
             {isLoading ? (
               <div className="text-center text-gray-500 py-4">
