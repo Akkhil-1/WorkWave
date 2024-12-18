@@ -3,11 +3,7 @@ import axios from "axios";
 import logo from "../assets/logosaas.png";
 import { FaHome } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import {
-  User,
-  Calendar,
-  MessageSquare,
-} from "lucide-react";
+import { User, Calendar, MessageSquare } from "lucide-react";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
@@ -36,8 +32,8 @@ const Dashboard = () => {
 
         // Check if there's a payment ID and booking ID in the URL
         const urlParams = new URLSearchParams(window.location.search);
-        const paymentId = urlParams.get('payment_id');
-        const bookingId = urlParams.get('booking_id');
+        const paymentId = urlParams.get("payment_id");
+        const bookingId = urlParams.get("booking_id");
 
         if (paymentId && bookingId) {
           // Payment was successful, update status
@@ -78,10 +74,7 @@ const Dashboard = () => {
         user: userData.name || "Guest",
       };
 
-      await handleRazorpayScreen(
-        invoiceData.totalAmount,
-        booking.id
-      );
+      await handleRazorpayScreen(invoiceData.totalAmount, booking.id);
     } catch (error) {
       console.error("Error creating invoice:", error);
       alert("Failed to create invoice. Please try again.");
@@ -107,7 +100,7 @@ const Dashboard = () => {
 
       const options = {
         key: razorpayKey,
-        amount: amount * 100,
+        amount: amount * 100, // amount in paise
         currency: "INR",
         name: "WorkWave",
         description: "Payment to WORKWAVE",
@@ -116,7 +109,7 @@ const Dashboard = () => {
           setResponseId(response.razorpay_payment_id);
           alert("Payment successful!");
 
-          // Redirect to the same page with payment details in URL
+          // Update URL with payment_id and booking_id in query parameters
           window.location.href = `${window.location.origin}/user-dashboard?payment_id=${response.razorpay_payment_id}&booking_id=${bookingId}`;
         },
         prefill: {
@@ -125,11 +118,6 @@ const Dashboard = () => {
         },
         theme: {
           color: "#166534",
-        },
-        modal: {
-          ondismiss: function () {
-            alert("Payment window closed.");
-          },
         },
       };
 
@@ -225,7 +213,11 @@ const Dashboard = () => {
                   key={id}
                   onClick={() => setActiveTab(id)}
                   className={`flex items-center gap-2 px-4 py-2 transition-all duration-300
-                        ${activeTab === id ? "border-b-2 border-indigo-800 text-indigo-600" : "text-gray-600 hover:text-indigo-400"}`}
+                        ${
+                          activeTab === id
+                            ? "border-b-2 border-indigo-800 text-indigo-600"
+                            : "text-gray-600 hover:text-indigo-400"
+                        }`}
                 >
                   <Icon className="h-4 w-4" />
                   {label}

@@ -61,7 +61,6 @@ app.post("/orders", async (req, res) => {
 app.put('/usdashboard/bookings/:id', async (req, res) => {
   const { id } = req.params;
   const { paymentId, status, paymentStatus } = req.body;
-
   try {
     const booking = await Booking.findById(id);
 
@@ -80,6 +79,7 @@ app.put('/usdashboard/bookings/:id', async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 app.listen(3001, () => {
   console.log(`Running on port 3001`);
