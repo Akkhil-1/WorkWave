@@ -161,7 +161,7 @@ const Starter = () => {
           title="Pending Bookings"
           subtitle="Pending Bookings"
           earning={`${
-            bookingsData.filter((booking) => booking.status === "Pending")
+            bookingsData.filter((booking) => booking.status === "pending")
               .length
           }`}
           icon="bi bi-basket3"
