@@ -373,7 +373,7 @@ const getEarningsForLast10Days = async (req, res) => {
   }
 };
 const updatePaymentStatus = async (req, res) => {
-  const { bookingId, paymentStatus } = req.body;
+  const { paymentId, bookingId, paymentStatus } = req.body;
   const validStatuses = ["paid", "not paid", "Paid", "Not Paid"];
   
   if (!validStatuses.includes(paymentStatus)) {
@@ -383,7 +383,7 @@ const updatePaymentStatus = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
       bookingId,
-      { paymentStatus },
+      { paymentStatus: paymentStatus, paymentId: paymentId },
       { new: true }
     );
     
@@ -397,6 +397,7 @@ const updatePaymentStatus = async (req, res) => {
     res.status(500).json({ message: "Failed to update status", error: err.message });
   }
 };
+
 
 module.exports = {
   addBooking,

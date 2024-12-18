@@ -84,18 +84,18 @@ const Dashboard = () => {
   const handleRazorpayScreen = async (amount, bookingId) => {
     try {
       const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-  
+
       if (!res) {
         alert("Error loading Razorpay screen");
         return;
       }
-  
+
       const razorpayKey = process.env.REACT_APP_RAZORPAY_KEY_ID;
       if (!razorpayKey) {
         alert("Razorpay API key is missing.");
         return;
       }
-  
+
       const options = {
         key: razorpayKey,
         amount: amount * 100, // amount in paise
@@ -106,7 +106,7 @@ const Dashboard = () => {
         handler: async function (response) {
           setResponseId(response.razorpay_payment_id);
           alert("Payment successful!");
-  
+
           // After payment success, send the paymentId and bookingId to the backend
           await updateBookingStatus(response.razorpay_payment_id, bookingId);
         },
@@ -118,7 +118,7 @@ const Dashboard = () => {
           color: "#166534",
         },
       };
-  
+
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
@@ -126,13 +126,16 @@ const Dashboard = () => {
       alert("Failed to load Razorpay payment screen");
     }
   };
-  
 
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
       const response = await axios.put(
         `https://workwave-aage.onrender.com/booking/updatePayment`,
-        { paymentId, status: "Paid", paymentStatus: "Paid" },
+        {
+          paymentId, // Send paymentId
+          bookingId, // Send bookingId
+          paymentStatus: "Paid", // Send paymentStatus
+        },
         { withCredentials: true }
       );
 
