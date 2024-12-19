@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/logosaas.png";
-import { FaHome } from "react-icons/fa";
+import { FaHome ,FaUserCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { User, Calendar, MessageSquare } from "lucide-react";
 import { toast } from "react-toastify"; // Ensure you have toast notifications set up
@@ -11,6 +11,8 @@ const Dashboard = () => {
   const [userData, setUserData] = useState({});
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [messageText, setMessageText] = useState("");
 
   // Dynamically load Razorpay script
   useEffect(() => {
