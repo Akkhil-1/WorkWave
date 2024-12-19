@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 const dmSansClassName = 'font-dm-sans'; // Ensure this is defined in your CSS (globals.css).
 
 export const metadata = {
-  title: 'Light Saas Landing Page',
+  title: 'WorkWave',
   description: 'Template created by Frontend Tribe',
 };
 
