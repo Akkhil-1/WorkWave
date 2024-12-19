@@ -158,6 +158,9 @@ const Dashboard = () => {
       toast.error("Failed to update payment status!");
     }
   };
+  const sendMessage = () => {
+    alert("In Future!")
+  };
 
   if (loading) {
     return (
@@ -322,6 +325,38 @@ const Dashboard = () => {
                 </div>
               </div>
             )}
+            {activeTab === "messages" && (
+                <div className="w-full bg-white text-black rounded-lg shadow-md p-6 flex flex-col h-[400px]">
+                  <div className="flex flex-col h-full">
+                    <h5 className="text-xl font-semibold">Messages</h5>
+                    <div className="flex flex-col gap-4 mt-4 flex-grow overflow-y-auto border-t pt-4">
+                      {messages.map((msg, index) => (
+                        <div key={index} className="flex justify-start gap-2">
+                          <FaUserCircle className="text-xl text-gray-500" />
+                          <div className="p-2 rounded-lg bg-gray-200">
+                            {msg.content}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center mt-4 border-t pt-4">
+                      <input
+                        type="text"
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                        className="flex-grow p-2 border rounded-lg"
+                        placeholder="Type a message"
+                      />
+                      <button
+                        onClick={sendMessage}
+                        className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
+                      >
+                        Send
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
           </div>
         </div>
       </div>
