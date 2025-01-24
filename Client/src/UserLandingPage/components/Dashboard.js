@@ -77,10 +77,9 @@ const Dashboard = () => {
       );
 
       const { order_id, currency, amount: orderAmount } = response.data;
-
       // Initialize Razorpay payment options
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Replace with your Razorpay key
+        key: 'rzp_test_NbkJdr3tFrKZ8J', // Replace with your Razorpay key
         amount: orderAmount, // Amount received from backend (in paise)
         currency: currency,
         name: "WorkWave",
