@@ -7,8 +7,8 @@ const sendOtpA = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "amber1251.be22@chitkara.edu.in",
-      pass: "dhamaamber@5678",
+        user: 'amber1dhama@gmail.com',
+        pass: 'rrzo kbuy asvf jwte',
     },
   });
   const { email } = req.body;

@@ -4,8 +4,8 @@ exports.sendGreetMail2 = async (to, name) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: 'amber1251.be22@chitkara.edu.in',
-      pass: 'dhamaamber@5678',
+      user: 'amber1dhama@gmail.com',
+      pass: 'rrzo kbuy asvf jwte',
     },
   });
 
@@ -41,7 +41,7 @@ exports.sendGreetMail2 = async (to, name) => {
     </div>`;
 
   let mailOptions = {
-    from: "amber1251.be22@chitkara.edu.in",
+    from: "Workwave",
     to: to,
     subject: subject,
     html: html,
