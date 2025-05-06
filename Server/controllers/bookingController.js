@@ -41,8 +41,8 @@ const updateBookingStatus = async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "amber1251.be22@chitkara.edu.in", // Replace with your email
-    pass: "dhamaamber@5678", // Replace with your email password
+    user: "amber1dhama@gmail.com",
+    pass: "rrzo kbuy asvf jwte",
   },
 });
 
