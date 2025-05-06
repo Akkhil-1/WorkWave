@@ -19,9 +19,9 @@ exports.sendGreetMail = async (to, name) => {
          
         <div style="padding: 20px; background-color: #fff; border: 1px solid #ddd; border-radius: 10px;">
             <p>Dear ${name},</p>
-            <p>Welcome to the <strong>WorkWave Admin</strong> platform!</p>
+            <p>Welcome to the <strong>WorkWave User</strong> platform!</p>
             <p>
-                As an admin, you now have the power to manage and offer services on our platform, making it easier for users to find and book what they need. From adding new services to tracking the performance of your offerings, WorkWave Admin provides you with all the tools you need to succeed.
+                As an user, you now have the power to manage and offer services on our platform, making it easier for users to find and book what they need. From adding new services to tracking the performance of your offerings, WorkWave User provides you with all the tools you need to succeed.
             </p>
             <h3 style="color: #007bff;">Here's what you can do:</h3>
             <ul style="line-height: 1.6;">
@@ -33,7 +33,7 @@ exports.sendGreetMail = async (to, name) => {
                 We're here to support you every step of the way. If you have any questions or need assistance, don't hesitate to contact us at <a href="mailto:support@workwave.com">support@workwave.com</a>.
             </p>
             <p>
-                <a href="https://admin-dashboard-orpin-one-53.vercel.app/" style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Start Managing Services</a>
+                <a href="https://work-wave-five.vercel.app/user-landingpage" style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Start Managing Services</a>
             </p>
             <p>Thank you for being a part of WorkWave. We're excited to see what you'll achieve!</p>
             <p>Best regards,<br>Stack Surgeons<br>WorkWave Team</p>

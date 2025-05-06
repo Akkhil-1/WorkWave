@@ -33,7 +33,7 @@ exports.sendGreetMail2 = async (to, name) => {
                 We're here to support you every step of the way. If you have any questions or need assistance, don't hesitate to contact us at <a href="mailto:support@workwave.com">support@workwave.com</a>.
             </p>
             <p>
-                <a href="https://admin-dashboard-orpin-one-53.vercel.app/" style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Start Managing Services</a>
+                <a href="https://work-wave-five.vercel.app/" style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Start Managing Services</a>
             </p>
             <p>Thank you for being a part of WorkWave. We're excited to see what you'll achieve!</p>
             <p>Best regards,<br>Stack Surgeons<br>WorkWave Team</p>
