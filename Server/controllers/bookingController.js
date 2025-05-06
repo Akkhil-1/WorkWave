@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const updateBookingStatus = async (req, res) => {
-  const { bookingId , status } = req.body;
+  const { bookingId , status , serviceId } = req.body;
 
   // Validate the status input
   const validStatuses = ["pending", "confirmed", "Cancel"];
