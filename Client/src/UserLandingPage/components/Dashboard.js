@@ -71,7 +71,7 @@ const Dashboard = () => {
 
       const { order_id, currency, amount: orderAmount } = response.data;
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY,
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID,
         amount: orderAmount,
         currency: currency,
         name: "WorkWave",
