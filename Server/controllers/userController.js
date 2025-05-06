@@ -19,7 +19,7 @@ const register = async (req, res) => {
     }
 
     const existingAdmin = await Admin.findOne({
-      email: email,
+      email : email,
     });
     if (existingAdmin) {
       console.log("Email already exists as an admin");

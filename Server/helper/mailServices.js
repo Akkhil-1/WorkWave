@@ -8,7 +8,6 @@ exports.sendGreetMail = async (to, name) => {
             pass: 'rrzo kbuy asvf jwte',
         }
     });
-
     const subject = 'Welcome to WorkWave - Your Journey Begins Here⭐';
 
     const html = `
@@ -43,16 +42,15 @@ exports.sendGreetMail = async (to, name) => {
     </div>`;
 
     let mailOptions = {
-        from: 'Workwave',
+        from: '"Workwave" <amber1dhama@gmail.com>',
         to: to,
         subject: subject,
         html: html
-    };
-
+    };    
     try {
         let info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-    } catch (error) {
-        console.log('Error sending email: ' + error);
+        console.log("Email sent: " + info.response);
+      } catch (error) {
+        console.log("Error sending email: " + error);
     }
 };
