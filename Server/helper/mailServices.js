@@ -1,56 +1,56 @@
 const nodemailer = require("nodemailer");
 
 exports.sendGreetMail = async (to, name) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'amber1dhama@gmail.com',
-            pass: 'rrzo kbuy asvf jwte',
-        }
-    });
-    const subject = 'Welcome to WorkWave - Your Journey Begins Here⭐';
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "amber1dhama@gmail.com",
+      pass: "rrzo kbuy asvf jwte",
+    },
+  });
 
-    const html = `
+  const subject =
+    "Subject: Welcome to WorkWave! Your Business Solutions Await 🌟";
+  const html = `
     <div style="font-family: Arial, sans-serif; color: #333;">
         <img src="https://res.cloudinary.com/dwd71kz3s/image/upload/v1724846253/cmvtodvvvgafvhfkgepi.jpg" 
          alt="WorkWave User" 
          style="display: block; margin: 0 auto;">
+         
         <div style="padding: 20px; background-color: #fff; border: 1px solid #ddd; border-radius: 10px;">
             <p>Dear ${name},</p>
-            <p>We're thrilled to welcome you to <strong>WorkWave</strong>!</p>
+            <p>Welcome to the <strong>WorkWave Admin</strong> platform!</p>
             <p>
-                Thank you for choosing our platform to manage your bookings. Whether you're here to explore new services, 
-                book appointments, or manage your bookings with ease, we're here to help you every step of the way.
+                As an admin, you now have the power to manage and offer services on our platform, making it easier for users to find and book what they need. From adding new services to tracking the performance of your offerings, WorkWave Admin provides you with all the tools you need to succeed.
             </p>
-            <h3 style="color: #007bff;">What you can do now:</h3>
+            <h3 style="color: #007bff;">Here's what you can do:</h3>
             <ul style="line-height: 1.6;">
-                <li>Explore Services: Browse through our wide range of services and find the perfect fit for your needs.</li>
-                <li>Book Appointments: Schedule your appointments in just a few clicks.</li>
-                <li>Manage Your Bookings: Keep track of all your appointments with our easy-to-use dashboard.</li>
+                <li>Add Services: List your services and reach more users in your area.</li>
+                <li>Manage Offerings: Edit and update your service details at any time.</li>
+                <li>Track Performance: Get insights and statistics on your service bookings and sales.</li>
             </ul>
             <p>
-                We're committed to providing you with the best experience possible. If you have any questions or need assistance, 
-                our support team is just an email away at <a href="mailto:support@workwave.com">support@workwave.com</a>.
+                We're here to support you every step of the way. If you have any questions or need assistance, don't hesitate to contact us at <a href="mailto:support@workwave.com">support@workwave.com</a>.
             </p>
             <p>
-                <a href="https://landing-page-orpin-one-53.vercel.app/" style="background-color: #007bff; color: #fff; padding: 10px 20px; 
-                text-decoration: none; border-radius: 5px;">Start Exploring</a>
+                <a href="https://admin-dashboard-orpin-one-53.vercel.app/" style="background-color: #007bff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Start Managing Services</a>
             </p>
-            <p>Thank you for being part of our community. We look forward to serving you!</p>
+            <p>Thank you for being a part of WorkWave. We're excited to see what you'll achieve!</p>
             <p>Best regards,<br>Stack Surgeons<br>WorkWave Team</p>
         </div>
     </div>`;
 
-    let mailOptions = {
-        from: '"Workwave" <amber1dhama@gmail.com>',
-        to: to,
-        subject: subject,
-        html: html
-    };    
-    try {
-        let info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: " + info.response);
-      } catch (error) {
-        console.log("Error sending email: " + error);
-    }
+  let mailOptions = {
+    from: "Workwave",
+    to: to,
+    subject: subject,
+    html: html,
+  };
+
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+  } catch (error) {
+    console.log("Error sending email: " + error);
+  }
 };
