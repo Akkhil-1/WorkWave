@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import logo from "../assets/logosaas.png";
-import { FaHome ,FaUserCircle } from "react-icons/fa";
+import { FaHome, FaUserCircle } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { User, Calendar, MessageSquare } from "lucide-react";
-import { toast } from "react-toastify"; // Ensure you have toast notifications set up
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("bookings");
@@ -14,7 +14,6 @@ const Dashboard = () => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
 
-  // Dynamically load Razorpay script
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -26,7 +25,6 @@ const Dashboard = () => {
     };
     document.body.appendChild(script);
 
-    // Cleanup script on component unmount
     return () => {
       document.body.removeChild(script);
     };
@@ -36,8 +34,6 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // Fetch user and bookings data
         const userResponse = await axios.get(
           "https://workwave-aage.onrender.com/usdashboard/user",
           { withCredentials: true }
@@ -46,7 +42,6 @@ const Dashboard = () => {
           "https://workwave-aage.onrender.com/usdashboard/bookings",
           { withCredentials: true }
         );
-
         setUserData(userResponse.data);
         setBookings(bookingsResponse.data.bookings);
       } catch (error) {
@@ -61,36 +56,30 @@ const Dashboard = () => {
 
   const handleRazorpayPayment = async (amount, bookingId) => {
     try {
-      // Ensure Razorpay script is loaded
       if (typeof window.Razorpay === "undefined") {
         throw new Error("Razorpay script not loaded");
       }
 
-      // Request to your backend to create a Razorpay order
       const response = await axios.post(
-        "https://workwave-aage.onrender.com/orders", // Adjust the URL to your backend endpoint
+        "https://workwave-aage.onrender.com/orders",
         {
-          amount: amount * 100, // Convert the amount to paise (Razorpay works in paise)
-          currency: "INR", // Currency for the payment
+          amount: amount * 100,
+          currency: "INR",
         },
-        { withCredentials: true } // Pass cookies if needed for authentication
+        { withCredentials: true }
       );
 
       const { order_id, currency, amount: orderAmount } = response.data;
-      // Initialize Razorpay payment options
       const options = {
-        key: 'rzp_test_NbkJdr3tFrKZ8J', // Replace with your Razorpay key
-        amount: orderAmount, // Amount received from backend (in paise)
+        key: process.env.REACT_APP_RAZORPAY_KEY,
+        amount: orderAmount,
         currency: currency,
         name: "WorkWave",
         description: "Payment for booking",
         image: logo,
-        order_id: order_id, // Use the orderId from the backend
+        order_id: order_id,
         handler: async function (paymentResponse) {
-          // Payment was successful
           alert("Payment successful!");
-
-          // Send the paymentId and bookingId to the backend to update the payment status
           await updateBookingStatus(
             paymentResponse.razorpay_payment_id,
             bookingId
@@ -104,8 +93,6 @@ const Dashboard = () => {
           color: "#166534",
         },
       };
-
-      // Open Razorpay's payment window
       const razorpayObject = new window.Razorpay(options);
       razorpayObject.open();
     } catch (error) {
@@ -117,22 +104,20 @@ const Dashboard = () => {
   const updateBookingStatus = async (paymentId, bookingId) => {
     try {
       const updatedBookings = [...bookings];
-      // Optimistically update the payment status
       const bookingIndex = updatedBookings.findIndex(
         (booking) => booking._id === bookingId
       );
       if (bookingIndex !== -1) {
         updatedBookings[bookingIndex].paymentStatus = "Paid";
       }
-      setBookings(updatedBookings); // Optimistically update UI
+      setBookings(updatedBookings);
 
-      // Make the API call to update the payment status in the backend
       const response = await axios.put(
-        "https://workwave-aage.onrender.com/booking/updatePayment", // Correct endpoint for updating payment
+        "https://workwave-aage.onrender.com/booking/updatePayment",
         {
-          paymentId, // Send paymentId
-          bookingId, // Send bookingId
-          paymentStatus: "Paid", // Send paymentStatus
+          paymentId,
+          bookingId,
+          paymentStatus: "Paid",
         },
         { withCredentials: true }
       );
@@ -145,22 +130,22 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error updating payment status:", error);
 
-      // Revert the UI update in case of error (optional)
       const updatedBookings = [...bookings];
       const bookingIndex = updatedBookings.findIndex(
         (booking) => booking._id === bookingId
       );
       if (bookingIndex !== -1) {
-        updatedBookings[bookingIndex].paymentStatus = "Pending"; // Revert to previous status
-        updatedBookings[bookingIndex].status = "Pending"; // Revert booking status
+        updatedBookings[bookingIndex].paymentStatus = "Pending";
+        updatedBookings[bookingIndex].status = "Pending";
       }
       setBookings(updatedBookings);
 
       toast.error("Failed to update payment status!");
     }
   };
+
   const sendMessage = () => {
-    alert("In Future!")
+    alert("In Future!");
   };
 
   if (loading) {
@@ -173,7 +158,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      {/* Header */}
       <div className="bg-indigo-600 p-4 rounded-lg mb-6 backdrop-blur-sm shadow-lg">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -191,7 +175,6 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* User Profile Card */}
         <div className="bg-indigo-600 p-6 rounded-lg shadow-lg">
           <div className="flex flex-col items-center space-y-4">
             <div className="bg-black p-4 rounded-full hover:scale-110 transform transition-all">
@@ -214,9 +197,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Main Content Area */}
         <div className="md:col-span-3">
-          {/* Tabs */}
           <div className="mb-6">
             <div className="flex space-x-4 border-b border-indigo-500">
               {[
@@ -240,9 +221,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Tab Content */}
           <div className="bg-indigo-50 rounded-lg shadow-lg p-6">
-            {/* Bookings Tab */}
             {activeTab === "bookings" && (
               <div className="animate-fadeIn">
                 <div className="overflow-x-auto">
@@ -327,37 +306,37 @@ const Dashboard = () => {
               </div>
             )}
             {activeTab === "messages" && (
-                <div className="w-full bg-white text-black rounded-lg shadow-md p-6 flex flex-col h-[400px]">
-                  <div className="flex flex-col h-full">
-                    <h5 className="text-xl font-semibold">Messages</h5>
-                    <div className="flex flex-col gap-4 mt-4 flex-grow overflow-y-auto border-t pt-4">
-                      {messages.map((msg, index) => (
-                        <div key={index} className="flex justify-start gap-2">
-                          <FaUserCircle className="text-xl text-gray-500" />
-                          <div className="p-2 rounded-lg bg-gray-200">
-                            {msg.content}
-                          </div>
+              <div className="w-full bg-white text-black rounded-lg shadow-md p-6 flex flex-col h-[400px]">
+                <div className="flex flex-col h-full">
+                  <h5 className="text-xl font-semibold">Messages</h5>
+                  <div className="flex flex-col gap-4 mt-4 flex-grow overflow-y-auto border-t pt-4">
+                    {messages.map((msg, index) => (
+                      <div key={index} className="flex justify-start gap-2">
+                        <FaUserCircle className="text-xl text-gray-500" />
+                        <div className="p-2 rounded-lg bg-gray-200">
+                          {msg.content}
                         </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center mt-4 border-t pt-4">
-                      <input
-                        type="text"
-                        value={messageText}
-                        onChange={(e) => setMessageText(e.target.value)}
-                        className="flex-grow p-2 border rounded-lg"
-                        placeholder="Type a message"
-                      />
-                      <button
-                        onClick={sendMessage}
-                        className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
-                      >
-                        Send
-                      </button>
-                    </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center mt-4 border-t pt-4">
+                    <input
+                      type="text"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      className="flex-grow p-2 border rounded-lg"
+                      placeholder="Type a message"
+                    />
+                    <button
+                      onClick={sendMessage}
+                      className="ml-2 p-2 bg-blue-500 text-white rounded-lg"
+                    >
+                      Send
+                    </button>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
           </div>
         </div>
       </div>
