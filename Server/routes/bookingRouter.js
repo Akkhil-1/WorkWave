@@ -8,23 +8,23 @@ const userauthMiddleware = require("../middlewares/UserAuthMiddleware");
 const extractBusinessId = (req, res, next) => {
   req.businessId = req.params.businessId;
   console.log(req.businessId);
-  
+
   next();
 };
-router.get("/getBookingLast10Days" , bookingController.getEarningsForLast10Days);
+router.get("/getBookingLast10Days", bookingController.getEarningsForLast10Days);
 router.post(
-  "/addbooking/:businessId",
+  "/addbooking/:businessId/:serviceId",
   userauthMiddleware,
-  bookingValidate, 
+  bookingValidate,
   bookingDetailsAuth,
   extractBusinessId,
   bookingController.addBooking
-)
-router.post("/updateStatus" , bookingController.updateBookingStatus);
-router.put("/updatePayment" , bookingController.updatePaymentStatus);
+);
+
+router.post("/updateStatus", bookingController.updateBookingStatus);
+router.put("/updatePayment", bookingController.updatePaymentStatus);
 router.get("/getBooking", bookingController.getBusinesses);
 router.post("/update-booking/:id", bookingController.updateBookingDetails);
 router.post("/delete-booking/:id", bookingController.deleteBooking);
-
 
 module.exports = router;

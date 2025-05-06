@@ -125,7 +125,7 @@ const BookingForm = () => {
 
     try {
       const response = await fetch(
-        `https://workwave-aage.onrender.com/booking/addbooking/${id}`,
+        `https://workwave-aage.onrender.com/booking/addbooking/${id}/${serviceId}`,
         {
           method: "POST",
           headers: {
