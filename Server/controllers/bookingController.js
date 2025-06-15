@@ -1,4 +1,3 @@
-require("dotenv").config();
 const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
@@ -95,7 +94,7 @@ const addBooking = async (req, res) => {
       { $push: { bookings: booking._id } },
       { new: true }
     );
-    if (email && name && bookingDate && bookingTime && guestCount) {
+    if (email) {
       try {
         await sendBookingMail(
           email,

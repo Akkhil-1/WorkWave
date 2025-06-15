@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.sendBookingMail = async (email, name, bookingDate, bookingTime, guest) => {
+exports.sendGreetMail = async (to,name,bookingDate,bookingTime,guestCount) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -8,7 +8,6 @@ exports.sendBookingMail = async (email, name, bookingDate, bookingTime, guest) =
       pass: process.env.EMAIL_PASS,
     },
   });
-
   const subject = "WorkWave - Your Booking is Confirmed!";
 
   const html = `
@@ -25,7 +24,7 @@ exports.sendBookingMail = async (email, name, bookingDate, bookingTime, guest) =
             <ul style="line-height: 1.8; font-size: 16px; color: #aaa;">
                 <li><strong>Booking Date:</strong> ${bookingDate}</li>
                 <li><strong>Booking Time:</strong> ${bookingTime}</li>
-                <li><strong>Number of Guests:</strong> ${guest}</li>
+                <li><strong>Number of Guests:</strong> ${guestCount}</li>
             </ul>
             <p style="font-size: 16px; line-height: 1.6;">
                 We look forward to welcoming you. If you have any questions or need to modify your booking, feel free to contact us at 
@@ -42,7 +41,7 @@ exports.sendBookingMail = async (email, name, bookingDate, bookingTime, guest) =
 
   let mailOptions = {
     from: "Workwave",
-    to: email,
+    to: to,
     subject: subject,
     html: html,
   };
