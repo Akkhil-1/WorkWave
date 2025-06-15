@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require("mongoose");
 const Booking = require("../models/bookingDetails");
 const User = require("../models/users");
@@ -27,17 +28,11 @@ const updateBookingStatus = async (req, res) => {
     res.status(200).json({ message: "Booking status updated", booking });
   } catch (err) {
     console.error("Error updating status:", err);
-    res.status(500).json({ message: "Failed to update status", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to update status", error: err.message });
   }
 };
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-});
 
 const addBooking = async (req, res) => {
   try {
@@ -102,7 +97,18 @@ const addBooking = async (req, res) => {
       { new: true }
     );
 
+    // Send booking confirmation to user
+    await sendBookingMail(email, name, bookingDate, bookingTime, guestCount);
+
+    // Send notification to business owner
     const ownerEmail = businessDetails.ownerDetails.email;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: ownerEmail,
@@ -115,7 +121,9 @@ const addBooking = async (req, res) => {
   <div style="padding: 20px; background-color: #f9f9f9;">
     <p style="font-size: 16px; line-height: 1.5;">Hello,</p>
     <p style="font-size: 16px; line-height: 1.5;">
-      You have received a new booking for your business: <strong>${businessDetails.businessName}</strong>.
+      You have received a new booking for your business: <strong>${
+        businessDetails.businessName
+      }</strong>.
     </p>
     <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
       <h3 style="margin-top: 0; font-size: 20px; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Booking Details</h3>
@@ -126,7 +134,11 @@ const addBooking = async (req, res) => {
         <li><strong>Guest Count:</strong> ${guestCount}</li>
         <li><strong>Booking Date:</strong> ${bookingDate}</li>
         <li><strong>Booking Time:</strong> ${bookingTime}</li>
-        ${serviceDetails ? `<li><strong>Service:</strong> ${serviceDetails.name}</li>` : ""}
+        ${
+          serviceDetails
+            ? `<li><strong>Service:</strong> ${serviceDetails.name}</li>`
+            : ""
+        }
         <li><strong>Notes:</strong> ${customerNotes}</li>
       </ul>
     </div>
@@ -284,9 +296,14 @@ const getEarningsForLast10Days = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const adminId = decoded._id;
 
-    const admin = await Admin.findById(adminId).populate("adminBusinesses", "_id");
+    const admin = await Admin.findById(adminId).populate(
+      "adminBusinesses",
+      "_id"
+    );
     if (!admin || admin.adminBusinesses.length === 0) {
-      return res.status(404).json({ message: "No businesses found for this admin" });
+      return res
+        .status(404)
+        .json({ message: "No businesses found for this admin" });
     }
 
     const businessId = admin.adminBusinesses[0]._id;
@@ -323,7 +340,9 @@ const getEarningsForLast10Days = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching earnings:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -349,7 +368,9 @@ const updatePaymentStatus = async (req, res) => {
     res.status(200).json({ message: "Payment status updated", booking });
   } catch (err) {
     console.error("Error updating status:", err);
-    res.status(500).json({ message: "Failed to update status", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Failed to update status", error: err.message });
   }
 };
 
@@ -361,5 +382,5 @@ module.exports = {
   deleteBooking,
   updateBookingStatus,
   getEarningsForLast10Days,
-  updatePaymentStatus
+  updatePaymentStatus,
 };
