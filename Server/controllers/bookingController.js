@@ -7,7 +7,6 @@ const Admin = require("../models/admin");
 const Services = require("../models/services");
 const { sendBookingMail } = require("../helper/bookingMail");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 
 const updateBookingStatus = async (req, res) => {
   const { bookingId, status, serviceId } = req.body;
@@ -96,69 +95,20 @@ const addBooking = async (req, res) => {
       { $push: { bookings: booking._id } },
       { new: true }
     );
-
-    // Send booking confirmation to user
-    await sendBookingMail(email, name, bookingDate, bookingTime, guestCount);
-
-    // Send notification to business owner
-    const ownerEmail = businessDetails.ownerDetails.email;
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: ownerEmail,
-      subject: "New Booking Received!",
-      html: `
-<div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-  <div style="background-color: #007bff; color: white; padding: 15px; text-align: center;">
-    <h2 style="margin: 0; font-size: 24px;">New Booking Alert!</h2>
-  </div>
-  <div style="padding: 20px; background-color: #f9f9f9;">
-    <p style="font-size: 16px; line-height: 1.5;">Hello,</p>
-    <p style="font-size: 16px; line-height: 1.5;">
-      You have received a new booking for your business: <strong>${
-        businessDetails.businessName
-      }</strong>.
-    </p>
-    <div style="margin: 20px 0; padding: 15px; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
-      <h3 style="margin-top: 0; font-size: 20px; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Booking Details</h3>
-      <ul style="list-style: none; padding: 0; margin: 0; font-size: 16px; line-height: 1.8;">
-        <li><strong>Name:</strong> ${name}</li>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Mobile Number:</strong> ${mobileNumber}</li>
-        <li><strong>Guest Count:</strong> ${guestCount}</li>
-        <li><strong>Booking Date:</strong> ${bookingDate}</li>
-        <li><strong>Booking Time:</strong> ${bookingTime}</li>
-        ${
-          serviceDetails
-            ? `<li><strong>Service:</strong> ${serviceDetails.name}</li>`
-            : ""
-        }
-        <li><strong>Notes:</strong> ${customerNotes}</li>
-      </ul>
-    </div>
-    <p style="font-size: 16px; line-height: 1.5;">
-      Please visit your dashboard for more details about this booking.
-    </p>
-    <div style="text-align: center; margin-top: 20px;">
-      <a href="https://your-business-dashboard-link.com" 
-         style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Go to Dashboard</a>
-    </div>
-  </div>
-  <div style="background-color: #007bff; color: white; padding: 10px; text-align: center; font-size: 14px;">
-    <p style="margin: 0;">Thank you for using our services!</p>
-  </div>
-</div>
-`,
-    };
-
-    await transporter.sendMail(mailOptions);
-
+    if (email && name && bookingDate && bookingTime && guestCount) {
+      try {
+        await sendBookingMail(
+          email,
+          name,
+          bookingDate,
+          bookingTime,
+          guestCount
+        );
+        console.log("Booking details mail sent");
+      } catch (error) {
+        console.log("Error sending the mail " + error);
+      }
+    }
     res.status(201).json({
       msg: "Booking created successfully!",
       data: booking,
