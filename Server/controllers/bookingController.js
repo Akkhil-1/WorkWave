@@ -34,8 +34,8 @@ const updateBookingStatus = async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "amber1dhama@gmail.com",
-    pass: "rrzo kbuy asvf jwte",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   },
 });
 
@@ -104,7 +104,7 @@ const addBooking = async (req, res) => {
 
     const ownerEmail = businessDetails.ownerDetails.email;
     const mailOptions = {
-      from: "amber1251.be22@chitkara.edu.in",
+      from: process.env.EMAIL_USER,
       to: ownerEmail,
       subject: "New Booking Received!",
       html: `

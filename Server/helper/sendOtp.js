@@ -1,29 +1,29 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 const UserModel = require("../models/users");
-const crypto = require('crypto');
-const otp = crypto.randomInt(100000,999999).toString();
+const crypto = require("crypto");
+const otp = crypto.randomInt(100000, 999999).toString();
 
-const sendOtp = async (req,res) => {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth:{
-            user: 'amber1dhama@gmail.com',
-            pass: 'rrzo kbuy asvf jwte',
-        }
-    })
-    const {email} = req.body;
-    const user = await UserModel.findOne({email:email})
-    if(!user){
-        return res.status(400).json({
-            msg:"User not found"
-        })
-    }
+const sendOtp = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+  const { email } = req.body;
+  const user = await UserModel.findOne({ email: email });
+  if (!user) {
+    return res.status(400).json({
+      msg: "User not found",
+    });
+  }
 
-    const mailOptions = {
-        from: 'amber1251.be22@chitkara.edu.in',
-        to: email,
-        subject: 'Password Reset',
-        html: `
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Password Reset",
+    html: `
             <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -167,23 +167,23 @@ const sendOtp = async (req,res) => {
     </div>
 </body>
 </html>
-        `
-    }
+        `,
+  };
 
-    transporter.sendMail(mailOptions,(err,info)=>{
-        if(err){
-            console.log(err)
-            return res.status(500).json({
-                msg:"Failed to send email "
-            })
-        }
-        res.status(200).json({
-            msg:"Otp send successfully",
-            otp
-        })
-    })
-}
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({
+        msg: "Failed to send email ",
+      });
+    }
+    res.status(200).json({
+      msg: "Otp send successfully",
+      otp,
+    });
+  });
+};
 module.exports = {
-    sendOtp,
-    otp,
-}
+  sendOtp,
+  otp,
+};

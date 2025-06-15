@@ -4,8 +4,8 @@ exports.sendGreetMail2 = async (to, name) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: 'amber1dhama@gmail.com',
-      pass: 'rrzo kbuy asvf jwte',
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 

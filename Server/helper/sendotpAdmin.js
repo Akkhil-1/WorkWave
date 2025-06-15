@@ -7,8 +7,8 @@ const sendOtpA = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: 'amber1dhama@gmail.com',
-        pass: 'rrzo kbuy asvf jwte',
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
   const { email } = req.body;
@@ -20,7 +20,7 @@ const sendOtpA = async (req, res) => {
   }
 
   const mailOptions = {
-    from: "amber1251.be22@chitkara.edu.in",
+    from: process.env.EMAIL_USER,
     to: email,
     subject: "Password Reset",
     html: `
