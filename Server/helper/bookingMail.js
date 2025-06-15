@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.sendGreetMail = async (to,name,bookingDate,bookingTime,guestCount) => {
+exports.sendBookingMail = async (to,name,bookingDate,bookingTime,guestCount) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
