@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-exports.sendBookingMail = async (to, name, bookingDate, bookingTime, guest) => {
+exports.sendBookingMail = async (email, name, bookingDate, bookingTime, guest) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -42,7 +42,7 @@ exports.sendBookingMail = async (to, name, bookingDate, bookingTime, guest) => {
 
   let mailOptions = {
     from: "Workwave",
-    to: to,
+    to: email,
     subject: subject,
     html: html,
   };
