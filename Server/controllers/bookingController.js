@@ -61,7 +61,7 @@ const addBooking = async (req, res) => {
     if (!businessDetails) {
       return res.status(404).json({ msg: "Business not found" });
     }
-
+    const ownerEmail = businessDetails?.ownerDetails?.email;
     let serviceDetails;
     if (serviceId) {
       serviceDetails = await Services.findById(serviceId);
@@ -96,6 +96,7 @@ const addBooking = async (req, res) => {
     );
     if (email) {
       try {
+        console.log("Mail is sent to :- " + email);
         await sendBookingMail(
           email,
           name,
