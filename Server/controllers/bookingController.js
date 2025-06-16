@@ -69,7 +69,6 @@ const addBooking = async (req, res) => {
         return res.status(404).json({ msg: "Service not found" });
       }
     }
-
     const booking = await Booking.create({
       name,
       email,
@@ -96,9 +95,9 @@ const addBooking = async (req, res) => {
     );
     if (email) {
       try {
-        console.log("Mail is sent to :- " + email);
+        console.log("Mail is sent to :- " + req.body.email);
         await sendBookingMail(
-          email,
+          req.body.email,
           name,
           bookingDate,
           bookingTime,

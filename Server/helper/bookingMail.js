@@ -45,7 +45,7 @@ exports.sendBookingMail = async (to,name,bookingDate,bookingTime,guestCount) => 
     subject: subject,
     html: html,
   };
-
+  console.log("Mail sent to : " + to);
   try {
     let info = await transporter.sendMail(mailOptions);
     console.log("Email sent: " + info.response);
