@@ -13,9 +13,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const navigate = useNavigate();
 
-  const getCookie = (name) => {
-    return Cookies.get(name); // Using js-cookie to get cookies
-  };
+  const getCookie = (name) => Cookies.get(name);
 
   const fetchInfo = async () => {
     try {
@@ -23,11 +21,10 @@ const Header = () => {
       const role = getCookie("role");
 
       if (!token || !role) {
-        setIsLoggedIn(false); // If no token or role, set logged out state
+        setIsLoggedIn(false);
         return;
       }
 
-      // Make the API call to fetch user information based on the token
       const response = await axios.get(
         "https://workwave-aage.onrender.com/user/user-profile",
         {
@@ -38,15 +35,20 @@ const Header = () => {
         }
       );
 
-      // If response data is available, set the user name, role, and logged-in state
-      if (response.data && response.data.name) {
+      if (response.data?.name) {
         setUserName(response.data.name);
-        setUserRole(role);  // Set user role from cookie
-        setIsLoggedIn(true); // Update login state after successful data fetch
+        setUserRole(role);
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
       }
     } catch (error) {
-      console.error("Error fetching user info:", error);
-      setIsLoggedIn(false); // On error, set logged out state
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        setIsLoggedIn(false);
+        return; // 🔕 silent fail
+      }
+      console.error("Unexpected error fetching user info:", error);
+      setIsLoggedIn(false);
     }
   };
 
@@ -190,7 +192,11 @@ const Header = () => {
                     {dropdownVisible && (
                       <div className="absolute top-0 left-0 w-full bg-white text-black p-4 shadow-lg">
                         <NavLink
-                          to={userRole === "admin" ? "/admin-dashboard" : "/user-dashboard"}
+                          to={
+                            userRole === "admin"
+                              ? "/admin-dashboard"
+                              : "/user-dashboard"
+                          }
                           className="block py-2 text-center"
                         >
                           Dashboard
@@ -237,7 +243,14 @@ const Header = () => {
                   </button>
                   {dropdownVisible && (
                     <div className="absolute right-0 mt-2 bg-white text-black shadow-lg rounded-lg p-2 w-40">
-                      <NavLink to={userRole === "admin" ? "/admin-dashboard" : "/user-dashboard"} className="block px-4 py-2">
+                      <NavLink
+                        to={
+                          userRole === "admin"
+                            ? "/admin-dashboard"
+                            : "/user-dashboard"
+                        }
+                        className="block px-4 py-2"
+                      >
                         Dashboard
                       </NavLink>
                       <NavLink
