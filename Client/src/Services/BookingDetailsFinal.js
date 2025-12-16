@@ -22,24 +22,46 @@ const FinalBusinessDetails = () => {
   useEffect(() => {
     const getBusinessDetails = async () => {
       try {
-        const businessRes = await fetchBusinessDetails(id);
-        setBusiness(businessRes.data);
+        // ✅ Business
+        const businessData = await fetchBusinessDetails(id);
 
+        if (!businessData) {
+          setBusiness(null);
+          setService([]);
+          setReviews([]);
+          return;
+        }
+
+        setBusiness(businessData);
+
+        // ✅ Services (ignore missing ones)
         const serviceRes = await Promise.all(
-          businessRes.data.services.map(async (s) => {
-            const tempRes = await fetchServiceDetails(s);
-            return tempRes.data;
+          businessData.services.map(async (s) => {
+            const service = await fetchServiceDetails(s);
+            return service; // may be null
           })
         );
-        setService(serviceRes);
 
-        // Fetch reviews
-        const reviewsRes = await axios.get(
-          `https://workwave-aage.onrender.com/reviews/get/${id}`
-        );
-        setReviews(reviewsRes.data);
+        // remove null services
+        setService(serviceRes.filter(Boolean));
+
+        // ✅ Reviews (safe fetch)
+        try {
+          const reviewsRes = await axios.get(
+            `https://workwave-aage.onrender.com/reviews/get/${id}`
+          );
+          setReviews(reviewsRes.data || []);
+        } catch (reviewErr) {
+          if (reviewErr.response?.status === 404) {
+            setReviews([]); // no reviews is OK
+          } else {
+            console.error("Review fetch failed:", reviewErr);
+            setReviews([]);
+          }
+        }
       } catch (err) {
-        setError("Failed to fetch business reviews");
+        console.error("Business fetch failed:", err);
+        setError("Failed to load business details");
       } finally {
         setLoading(false);
       }
