@@ -22,52 +22,24 @@ const FinalBusinessDetails = () => {
   useEffect(() => {
     const getBusinessDetails = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        // 1️⃣ Business
-        const businessData = await fetchBusinessDetails(id);
-
-        if (!businessData) {
-          setBusiness(null);
-          setService([]);
-          setReviews([]);
-          return;
-        }
-
-        setBusiness(businessData);
-
-        // 2️⃣ Services (GUARDED)
-        const servicesArray = Array.isArray(businessData.services)
-          ? businessData.services
-          : [];
+        const businessRes = await fetchBusinessDetails(id);
+        setBusiness(businessRes.data);
 
         const serviceRes = await Promise.all(
-          servicesArray.map(async (s) => {
-            const service = await fetchServiceDetails(s);
-            return service;
+          businessRes.data.services.map(async (s) => {
+            const tempRes = await fetchServiceDetails(s);
+            return tempRes.data;
           })
         );
+        setService(serviceRes);
 
-        setService(serviceRes.filter(Boolean));
-
-        // 3️⃣ Reviews (ISOLATED ERROR HANDLING)
-        try {
-          const reviewsRes = await axios.get(
-            `https://workwave-aage.onrender.com/reviews/get/${id}`
-          );
-          setReviews(Array.isArray(reviewsRes.data) ? reviewsRes.data : []);
-        } catch (reviewErr) {
-          if (reviewErr.response?.status === 404) {
-            setReviews([]); // no reviews is OK
-          } else {
-            console.error("Review fetch failed:", reviewErr);
-            setReviews([]);
-          }
-        }
+        // Fetch reviews
+        const reviewsRes = await axios.get(
+          `https://workwave-aage.onrender.com/reviews/get/${id}`
+        );
+        setReviews(reviewsRes.data);
       } catch (err) {
-        console.error("Business fetch failed:", err);
-        setError("Failed to load business details");
+        setError("Failed to fetch business reviews");
       } finally {
         setLoading(false);
       }
