@@ -8,7 +8,12 @@ export const fetchServiceDetails = async (id) => {
     const response = await axios.get(`${API_BASE_URL}/services/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching business details:", error);
-    throw error;
+    if (error.response?.status === 404) {
+      console.warn("Service not found, continuing app flow");
+      return null;
+    }
+
+    console.error("Unexpected error fetching service details:", error);
+    return null;
   }
 };
